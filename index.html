@@ -10,50 +10,7 @@
 <meta name="theme-color" content="#7c6dfa" id="theme-color-meta">
 <title>NoteZ</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBKK7lSt7_S9zhibXEkpAl75gBUWxKcwmA",
-    authDomain: "notez-e2e36.firebaseapp.com",
-    databaseURL: "https://notez-e2e36-default-rtdb.firebaseio.com",
-    projectId: "notez-e2e36",
-    storageBucket: "notez-e2e36.firebasestorage.app",
-    messagingSenderId: "40028336367",
-    appId: "1:40028336367:web:fb1dd35125899ef0d1ab1a"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
-  const auth = getAuth(app);
-
-  // Expose to global scope for non-module functions
-  window._firebaseDB = database;
-  window._firebaseAuth = auth;
-  window._firebaseRef = ref;
-  window._firebaseSet = set;
-  window._firebaseGet = get;
-  window._firebaseUpdate = update;
-  window._firebaseRemove = remove;
-  window._firebaseSignIn = signInWithEmailAndPassword;
-  window._firebaseCreateUser = createUserWithEmailAndPassword;
-  window._firebaseSignOut = signOut;
-  window._firebaseOnAuthStateChanged = onAuthStateChanged;
-  window._firebaseUpdateProfile = updateProfile;
-
-  // Auth state listener
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      window._currentFirebaseUser = user;
-      window._onFirebaseLogin && window._onFirebaseLogin(user);
-    } else {
-      window._currentFirebaseUser = null;
-      window._onFirebaseLogout && window._onFirebaseLogout();
-    }
-  });
-</script>
 <style>
   :root {
     --bg: #0f0f11;
@@ -998,24 +955,21 @@ let pendingFile = null;
 let renameTarget = null;
 let deleteTarget = null;
 
-// Firebase helpers
-function getDB() { return window._firebaseDB; }
-function userRef(path) { return window._firebaseRef(getDB(), `users/${currentUser}/${path}`); }
-
+// Firebase helpers (REST API - no SDK)
 async function loadUserDataFromFirebase() {
-  const snap = await window._firebaseGet(userRef('data'));
-  const data = snap.val() || { notes: [], folders: [], settings: { theme:'dark', accent:'purple' } };
-  notes = data.notes || [];
-  folders = data.folders || [];
-  settings = data.settings || { theme:'dark', accent:'purple' };
+  const data = await fbDbGet(`users/${_fbUid}/data`);
+  const d = data || { notes: [], folders: [], settings: { theme:'dark', accent:'purple' } };
+  notes = d.notes || [];
+  folders = d.folders || [];
+  settings = d.settings || { theme:'dark', accent:'purple' };
 }
 
 async function saveUserData() {
-  await window._firebaseSet(userRef('data'), { notes, folders, settings });
+  await fbDbSet(`users/${_fbUid}/data`, { notes, folders, settings });
 }
 
 // ============================================================
-// LOGIN / AUTH (Firebase)
+// LOGIN / AUTH (Firebase REST)
 // ============================================================
 function switchLoginTab(tab) {
   document.getElementById('tab-login').classList.toggle('active', tab==='login');
@@ -1029,13 +983,12 @@ async function doLogin() {
   const p = document.getElementById('login-password').value;
   const err = document.getElementById('login-err');
   if (!email || !p) { err.textContent = 'Please fill in all fields.'; return; }
-  // Support username or email
   const loginEmail = email.includes('@') ? email : email + '@notez.app';
   try {
-    const cred = await window._firebaseSignIn(window._firebaseAuth, loginEmail, p);
-    // loginSuccess will be called by onAuthStateChanged
+    const user = await fbSignIn(loginEmail, p);
+    await loginSuccess(user);
   } catch(e) {
-    err.textContent = e.code === 'auth/invalid-credential' ? 'Invalid username or password.' : e.message;
+    err.textContent = e.message.includes('INVALID_LOGIN_CREDENTIALS') || e.message.includes('INVALID_PASSWORD') || e.message.includes('EMAIL_NOT_FOUND') ? 'Invalid username or password.' : e.message;
   }
 }
 
@@ -1048,20 +1001,19 @@ async function doSignup() {
   if (!u || !p) { err.textContent = 'Username and password are required.'; return; }
   if (p !== c) { err.textContent = 'Passwords do not match.'; return; }
   if (p.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
-  // Use email if provided, else fabricate one from username
   const loginEmail = emailInput || (u + '@notez.app');
   try {
-    const cred = await window._firebaseCreateUser(window._firebaseAuth, loginEmail, p);
-    await window._firebaseUpdateProfile(cred.user, { displayName: u });
-    // loginSuccess will be called by onAuthStateChanged
+    const user = await fbSignUp(loginEmail, p, u);
+    await loginSuccess(user);
   } catch(e) {
-    err.textContent = e.code === 'auth/email-already-in-use' ? 'Username already taken.' : e.message;
+    err.textContent = e.message.includes('EMAIL_EXISTS') ? 'Username already taken.' : e.message;
   }
 }
 
-async function loginSuccess(firebaseUser) {
-  currentUser = firebaseUser.uid;
-  const displayName = firebaseUser.displayName || firebaseUser.email.split('@')[0];
+async function loginSuccess(user) {
+  currentUser = user.uid;
+  _fbUid = user.uid;
+  const displayName = user.displayName || 'User';
   await loadUserDataFromFirebase();
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
@@ -1072,8 +1024,9 @@ async function loginSuccess(firebaseUser) {
 }
 
 async function doLogout() {
-  await window._firebaseSignOut(window._firebaseAuth);
+  fbSignOut();
   currentUser = null;
+  _fbUid = null;
   notes = []; folders = []; settings = { theme:'dark', accent:'purple' };
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
@@ -1081,25 +1034,7 @@ async function doLogout() {
 
 function getUserData() { return { notes, folders, settings }; }
 
-// Auto-login via Firebase auth state
-window._onFirebaseLogin = async (user) => {
-  await loginSuccess(user);
-  document.getElementById('app-loading').style.display = 'none';
-};
-window._onFirebaseLogout = () => {
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('app-loading').style.display = 'none';
-};
-
-window.addEventListener('DOMContentLoaded', () => {
-  // Enter key on login
-  document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-  document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-
-  setupDragResize();
-  setupUploadZone();
-});
+// Setup runs from Firebase init block at bottom of body
 
 // ============================================================
 // SETTINGS / THEMES
@@ -1748,6 +1683,153 @@ document.getElementById('folder-name-input').addEventListener('keydown', e => { 
     if (e.target === this) this.classList.remove('open');
   });
 });
+</script>
+
+<!-- Firebase via REST API - no SDK needed, works without CDN -->
+<script>
+// ============================================================
+// FIREBASE REST API WRAPPER (no SDK - pure fetch)
+// ============================================================
+const FB_API_KEY = "AIzaSyBKK7lSt7_S9zhibXEkpAl75gBUWxKcwmA";
+const FB_DB_URL  = "https://notez-e2e36-default-rtdb.firebaseio.com";
+const FB_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts";
+
+let _fbIdToken = null;
+let _fbRefreshToken = null;
+let _fbUid = null;
+let _fbDisplayName = null;
+let _tokenExpiry = 0;
+
+// Persist session in localStorage
+function _saveSession(idToken, refreshToken, uid, displayName, expiresIn) {
+  _fbIdToken = idToken;
+  _fbRefreshToken = refreshToken;
+  _fbUid = uid;
+  _fbDisplayName = displayName;
+  _tokenExpiry = Date.now() + (parseInt(expiresIn) - 60) * 1000;
+  localStorage.setItem('notez_fb_session', JSON.stringify({ idToken, refreshToken, uid, displayName, expiresIn: _tokenExpiry }));
+}
+
+function _clearSession() {
+  _fbIdToken = null; _fbRefreshToken = null; _fbUid = null; _fbDisplayName = null; _tokenExpiry = 0;
+  localStorage.removeItem('notez_fb_session');
+}
+
+async function _getToken() {
+  if (_fbIdToken && Date.now() < _tokenExpiry) return _fbIdToken;
+  // Refresh token
+  if (!_fbRefreshToken) return null;
+  try {
+    const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB_API_KEY}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ grant_type:'refresh_token', refresh_token: _fbRefreshToken })
+    });
+    const d = await r.json();
+    if (d.id_token) {
+      _fbIdToken = d.id_token;
+      _fbRefreshToken = d.refresh_token;
+      _tokenExpiry = Date.now() + (parseInt(d.expires_in) - 60) * 1000;
+      const sess = JSON.parse(localStorage.getItem('notez_fb_session') || '{}');
+      sess.idToken = _fbIdToken; sess.refreshToken = _fbRefreshToken; sess.expiresIn = _tokenExpiry;
+      localStorage.setItem('notez_fb_session', JSON.stringify(sess));
+      return _fbIdToken;
+    }
+  } catch(e) {}
+  _clearSession();
+  return null;
+}
+
+async function fbSignIn(email, password) {
+  const r = await fetch(`${FB_AUTH_URL}:signInWithPassword?key=${FB_API_KEY}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  _saveSession(d.idToken, d.refreshToken, d.localId, d.displayName || email.split('@')[0], d.expiresIn);
+  return { uid: d.localId, displayName: d.displayName || email.split('@')[0], email: d.email };
+}
+
+async function fbSignUp(email, password, displayName) {
+  const r = await fetch(`${FB_AUTH_URL}:signUp?key=${FB_API_KEY}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  // Set display name
+  await fetch(`${FB_AUTH_URL}:update?key=${FB_API_KEY}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ idToken: d.idToken, displayName, returnSecureToken: false })
+  });
+  _saveSession(d.idToken, d.refreshToken, d.localId, displayName, d.expiresIn);
+  return { uid: d.localId, displayName, email: d.email };
+}
+
+function fbSignOut() {
+  _clearSession();
+}
+
+async function fbDbGet(path) {
+  const token = await _getToken();
+  if (!token) throw new Error('Not authenticated');
+  const r = await fetch(`${FB_DB_URL}/${path}.json?auth=${token}`);
+  return await r.json();
+}
+
+async function fbDbSet(path, data) {
+  const token = await _getToken();
+  if (!token) throw new Error('Not authenticated');
+  const r = await fetch(`${FB_DB_URL}/${path}.json?auth=${token}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  return await r.json();
+}
+
+// ============================================================
+// INIT - check for saved session and boot app
+// ============================================================
+async function initApp() {
+  setupDragResize();
+  setupUploadZone();
+
+  document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+  // Try to restore session
+  try {
+    const sess = JSON.parse(localStorage.getItem('notez_fb_session') || 'null');
+    if (sess && sess.refreshToken) {
+      _fbIdToken = sess.idToken;
+      _fbRefreshToken = sess.refreshToken;
+      _fbUid = sess.uid;
+      _fbDisplayName = sess.displayName;
+      _tokenExpiry = sess.expiresIn || 0;
+      // Validate by getting a fresh token
+      const token = await _getToken();
+      if (token) {
+        currentUser = _fbUid;
+        await loadUserDataFromFirebase();
+        const displayName = _fbDisplayName || 'User';
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        document.getElementById('user-avatar-text').textContent = displayName[0].toUpperCase();
+        document.getElementById('user-avatar-text').title = displayName;
+        applySettings();
+        renderAll();
+        document.getElementById('app-loading').style.display = 'none';
+        return;
+      }
+    }
+  } catch(e) { _clearSession(); }
+
+  // No valid session
+  document.getElementById('app-loading').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+initApp();
 </script>
 </body>
 </html>
