@@ -1328,16 +1328,97 @@ let renameTarget = null;
 let deleteTarget = null;
 
 // Firebase helpers (REST API - no SDK)
-async function loadUserDataFromFirebase() {
-  const data = await fbDbGet(`users/${_fbUid}/data`);
-  const d = data || { notes: [], folders: [], settings: { theme:'dark', accent:'purple' } };
-  notes = d.notes || [];
-  folders = d.folders || [];
-  settings = d.settings || { theme:'dark', accent:'purple' };
+// ============================================================
+// PERSISTENCE — localStorage primary, Firebase background sync
+// ============================================================
+const LS_KEY = () => `notez_data_${_fbUid}`;
+
+function saveLocal() {
+  try {
+    localStorage.setItem(LS_KEY(), JSON.stringify({ notes, folders, settings }));
+  } catch(e) {
+    // localStorage full? try without content
+    try {
+      const slim = { notes: notes.map(({content,...r})=>r), folders, settings };
+      localStorage.setItem(LS_KEY(), JSON.stringify(slim));
+    } catch(e2) { console.warn('localStorage full', e2); }
+  }
 }
 
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY());
+    if (!raw) return false;
+    const d = JSON.parse(raw);
+    notes = d.notes || [];
+    folders = d.folders || [];
+    settings = d.settings || { theme:'dark', accent:'purple' };
+    return true;
+  } catch(e) { return false; }
+}
+
+// Firebase sync — runs in background, non-blocking
+async function syncToFirebase() {
+  if (!_fbUid) return;
+  try {
+    const token = await _getToken();
+    if (!token) return;
+    // Save metadata (no content — content saved per-note)
+    const meta = { notes: notes.map(({content,...r})=>r), folders, settings };
+    await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(meta)
+    });
+    // Save each note's content
+    await Promise.all(notes.map(n =>
+      fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${n.id}.json?auth=${token}`, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(n.content || '')
+      })
+    ));
+  } catch(e) { console.log('Firebase sync skipped:', e.message); }
+}
+
+async function loadFromFirebase() {
+  try {
+    const token = await _getToken();
+    if (!token) return false;
+    const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`);
+    const meta = await r.json();
+    if (!meta || meta.error) return false;
+
+    const noteMeta = meta.notes || [];
+    folders = meta.folders || [];
+    settings = meta.settings || { theme:'dark', accent:'purple' };
+
+    // Load content for each note
+    const loaded = await Promise.all(noteMeta.map(async nm => {
+      try {
+        const cr = await fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${nm.id}.json?auth=${token}`);
+        const content = await cr.json();
+        return { ...nm, content: content || '' };
+      } catch(e) { return { ...nm, content: '' }; }
+    }));
+    notes = loaded;
+    return true;
+  } catch(e) { return false; }
+}
+
+// Main save — always save locally first (instant), then sync to Firebase
 async function saveUserData() {
-  await fbDbSet(`users/${_fbUid}/data`, { notes, folders, settings });
+  saveLocal();
+  syncToFirebase(); // fire-and-forget
+}
+
+async function loadUserDataFromFirebase() {
+  // Try Firebase first (has full history across devices)
+  const fbOk = await loadFromFirebase();
+  if (fbOk) {
+    saveLocal(); // cache locally
+    return;
+  }
+  // Fall back to localStorage
+  loadLocal();
 }
 
 // ============================================================
@@ -2134,7 +2215,7 @@ function saveNote() {
     pendingFile = null;
     uploadTags = [];
     document.getElementById('upload-form').style.display = 'none';
-    showToast('Note saved!');
+    showToast('Note saved! ✓');
     navigate('home');
     renderAll();
   };
@@ -2542,23 +2623,6 @@ async function fbSignUp(email, password, displayName) {
 
 function fbSignOut() {
   _clearSession();
-}
-
-async function fbDbGet(path) {
-  const token = await _getToken();
-  if (!token) throw new Error('Not authenticated');
-  const r = await fetch(`${FB_DB_URL}/${path}.json?auth=${token}`);
-  return await r.json();
-}
-
-async function fbDbSet(path, data) {
-  const token = await _getToken();
-  if (!token) throw new Error('Not authenticated');
-  const r = await fetch(`${FB_DB_URL}/${path}.json?auth=${token}`, {
-    method: 'PUT', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(data)
-  });
-  return await r.json();
 }
 
 // ============================================================
