@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#7c6dfa",
-  "background_color": "#0f0f11",
+  "background_color": "#ffffff",
   "prefer_related_applications": false,
   "icons": [
     {
@@ -28,7 +28,13 @@
       "name": "Create Note",
       "short_name": "New Note",
       "url": "/NoteZ/?action=new",
-      "icons": [{ "src": "/NoteZ/logo1.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/NoteZ/logo1.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
