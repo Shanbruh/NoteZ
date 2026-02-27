@@ -3,306 +3,910 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>NoteZ</title>
-<meta name="theme-color" content="#16161a">
-<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NoteZ">
-<link rel="manifest" href="data:application/json,{%22name%22:%22NoteZ%22,%22short_name%22:%22NoteZ%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f0f11%22,%22theme_color%22:%22%237c6dfa%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20192%20192'%3E%3Crect%20width='192'%20height='192'%20rx='42'%20fill='white'/%3E%3Ctext%20x='28'%20y='158'%20font-family='Georgia,serif'%20font-weight='900'%20font-size='148'%20fill='%237c6dfa'%3EZ%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22},{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20512%20512'%3E%3Crect%20width='512'%20height='512'%20rx='112'%20fill='white'/%3E%3Ctext%20x='60'%20y='430'%20font-family='Georgia,serif'%20font-weight='900'%20font-size='400'%20fill='%237c6dfa'%3EZ%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22}]}">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='white'/><text x='4' y='26' font-family='Georgia,serif' font-weight='900' font-size='26' fill='%237c6dfa'>Z</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='white'/><text x='20' y='148' font-family='Georgia,serif' font-weight='900' font-size='140' fill='%237c6dfa'>Z</text></svg>">
+<meta name="theme-color" content="#7c6dfa" id="theme-color-meta">
+<title>NoteZ</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
 <style>
   :root {
-    --bg:#0f0f11;--bg2:#16161a;--bg3:#1e1e24;--bg4:#26262e;
-    --border:#2e2e38;--text:#e8e8f0;--text2:#9090a8;--text3:#5a5a72;
-    --accent:#7c6dfa;--accent2:#a594ff;--accent-glow:rgba(124,109,250,0.18);
-    --danger:#ff5b6b;--success:#3ddc97;
-    --sidebar-w:260px;--radius:10px;
-    --font:'Syne',sans-serif;--mono:'DM Mono',monospace;
-    --transition:0.18s cubic-bezier(.4,0,.2,1);
+    --bg: #0f0f11;
+    --bg2: #16161a;
+    --bg3: #1e1e24;
+    --bg4: #26262e;
+    --border: #2e2e38;
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --accent: #7c6dfa;
+    --accent2: #a594ff;
+    --accent-glow: rgba(124,109,250,0.18);
+    --danger: #ff5b6b;
+    --success: #3ddc97;
+    --warn: #f4a24b;
+    --sidebar-w: 260px;
+    --radius: 10px;
+    --font: 'Syne', sans-serif;
+    --mono: 'DM Mono', monospace;
+    --transition: 0.18s cubic-bezier(.4,0,.2,1);
   }
-  [data-theme="light"]{--bg:#f5f4f8;--bg2:#ffffff;--bg3:#eeedf3;--bg4:#e4e3ea;--border:#d4d3e0;--text:#18181f;--text2:#55546a;--text3:#9998b0;--accent:#6b5ce7;--accent2:#8878ff;--accent-glow:rgba(107,92,231,0.12);}
-  [data-theme="navy"]{--bg:#0a0f1e;--bg2:#0e1529;--bg3:#131d38;--bg4:#1a2648;--border:#1f3060;--text:#d0dcff;--text2:#7a92cc;--text3:#3a5090;--accent:#4d9fff;--accent2:#74b8ff;--accent-glow:rgba(77,159,255,0.15);}
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  html{height:100%;overflow:hidden;background:#0f0f11;}
-  body{height:100%;overflow:hidden;font-family:var(--font);background:var(--bg);color:var(--text);transition:background var(--transition),color var(--transition);}
+  [data-theme="light"] {
+    --bg: #f5f4f8;
+    --bg2: #ffffff;
+    --bg3: #eeedf3;
+    --bg4: #e4e3ea;
+    --border: #d4d3e0;
+    --text: #18181f;
+    --text2: #55546a;
+    --text3: #9998b0;
+    --accent: #6b5ce7;
+    --accent2: #8878ff;
+    --accent-glow: rgba(107,92,231,0.12);
+  }
+  [data-theme="navy"] {
+    --bg: #0a0f1e;
+    --bg2: #0e1529;
+    --bg3: #131d38;
+    --bg4: #1a2648;
+    --border: #1f3060;
+    --text: #d0dcff;
+    --text2: #7a92cc;
+    --text3: #3a5090;
+    --accent: #4d9fff;
+    --accent2: #74b8ff;
+    --accent-glow: rgba(77,159,255,0.15);
+  }
 
-  /* DUOTONE */
-  .dt-icon{width:18px;height:18px;display:block;}
-  .dt-bg{fill:var(--text3);opacity:0.25;}
-  .dt-stroke{stroke:var(--text2);}
-  .dt-stroke-only{stroke:var(--text2);}
-  .sb-nav-btn.active .dt-bg,.mob-nav-btn.active .dt-bg{fill:var(--accent);opacity:0.3;}
-  .sb-nav-btn.active .dt-stroke,.mob-nav-btn.active .dt-stroke{stroke:var(--accent2);}
-  .sb-nav-btn.active .dt-stroke-only,.mob-nav-btn.active .dt-stroke-only{stroke:var(--accent2);}
-  .sb-nav-btn:hover .dt-bg{fill:var(--text2);opacity:0.2;}
-  .sb-nav-btn:hover .dt-stroke{stroke:var(--text);}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: var(--accent); }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    transition: background var(--transition), color var(--transition);
+    position: relative;
+    height: 100%;
+    /* Safe area for notched phones */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* DUOTONE ICONS */
+  .dt-icon { width: 18px; height: 18px; display: block; }
+  .dt-bg { fill: var(--text3); opacity: 0.25; }
+  .dt-stroke { stroke: var(--text2); }
+  .dt-stroke-only { stroke: var(--text2); }
+  .sb-nav-btn.active .dt-bg { fill: var(--accent); opacity: 0.3; }
+  .sb-nav-btn.active .dt-stroke { stroke: var(--accent2); }
+  .sb-nav-btn.active .dt-stroke-only { stroke: var(--accent2); }
+  .sb-nav-btn:hover .dt-bg { fill: var(--text2); opacity: 0.2; }
+  .sb-nav-btn:hover .dt-stroke { stroke: var(--text); }
 
   /* LAYOUT */
-  #app{display:flex;height:100vh;}
-
-  /* LOADING */
-  #loading-screen{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
-  .loading-logo{font-size:2rem;font-weight:800;letter-spacing:-1px;}
-  .loading-logo span{color:var(--accent);}
-  .spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);animation:spin 0.7s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+  #app { display: flex; height: 100vh; position: relative; z-index: 1; }
 
   /* LOGIN */
-  #login-screen{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;align-items:center;justify-content:center;flex-direction:column;}
-  #login-screen.visible{display:flex;}
-  .login-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:48px 44px;width:100%;max-width:400px;text-align:center;box-shadow:0 8px 60px rgba(0,0,0,0.35);}
-  .login-logo{font-size:2.6rem;font-weight:800;letter-spacing:-1px;margin-bottom:6px;}
-  .login-logo span{color:var(--accent);}
-  .login-sub{color:var(--text2);font-size:0.9rem;margin-bottom:32px;}
-  .login-card input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:var(--font);font-size:0.95rem;margin-bottom:12px;outline:none;transition:border var(--transition),box-shadow var(--transition);}
-  .login-card input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
-  .login-tabs{display:flex;margin-bottom:28px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
-  .login-tab{flex:1;padding:10px;cursor:pointer;background:transparent;border:none;color:var(--text2);font-family:var(--font);font-size:0.9rem;transition:all var(--transition);}
-  .login-tab.active{background:var(--accent);color:#fff;font-weight:600;}
-  .login-err{color:var(--danger);font-size:0.83rem;margin-top:8px;min-height:18px;}
+  #login-screen {
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  #login-screen .login-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 48px 44px;
+    width: 100%; max-width: 400px;
+    text-align: center;
+    box-shadow: 0 8px 60px rgba(0,0,0,0.35);
+  }
+  .login-logo {
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+  }
+  .login-logo span { color: var(--accent); }
+  .login-sub { color: var(--text2); font-size: 0.9rem; margin-bottom: 32px; }
+  .login-card input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    outline: none;
+    transition: border var(--transition), box-shadow var(--transition);
+  }
+  .login-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .login-card .btn-primary {
+    width: 100%; margin-top: 6px;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 1rem; font-weight: 700;
+  }
+  .login-tabs { display: flex; gap: 0; margin-bottom: 28px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .login-tab { flex: 1; padding: 10px; cursor: pointer; background: transparent; border: none; color: var(--text2); font-family: var(--font); font-size: 0.9rem; transition: all var(--transition); }
+  .login-tab.active { background: var(--accent); color: #fff; font-weight: 600; }
+  .login-err { color: var(--danger); font-size: 0.83rem; margin-top: 8px; min-height: 18px; }
 
   /* SIDEBAR */
-  .sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:transform var(--transition);position:relative;z-index:10;}
-  .sidebar.collapsed{transform:translateX(-100%);position:absolute;}
-  .sidebar-logo{padding:22px 20px 14px;font-size:1.5rem;font-weight:800;letter-spacing:-0.5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;}
-  .sidebar-logo span.z{color:var(--accent);}
-  .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
-  .sidebar-section{padding:10px 12px 4px;font-size:0.7rem;font-weight:700;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;}
-  .sidebar-scroll{flex:1;overflow-y:auto;padding-bottom:10px;}
-  .sidebar-scroll::-webkit-scrollbar{width:4px;}
-  .sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-  .folder-header{display:flex;align-items:center;gap:7px;padding:7px 10px 7px 14px;margin:1px 8px;border-radius:7px;cursor:pointer;font-size:0.88rem;font-weight:500;color:var(--text2);transition:all var(--transition);user-select:none;}
-  .folder-header:hover{background:var(--bg3);color:var(--text);}
-  .folder-arrow{font-size:0.65rem;transition:transform var(--transition);flex-shrink:0;}
-  .folder-arrow.open{transform:rotate(90deg);}
-  .folder-children{display:none;}
-  .folder-children.open{display:block;}
-  .folder-note-item{padding:6px 10px 6px 12px;margin:1px 8px;border-radius:6px;cursor:pointer;font-size:0.83rem;color:var(--text3);transition:all var(--transition);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px;}
-  .folder-note-item:hover{background:var(--bg3);color:var(--text2);}
-  .folder-note-item.active{color:var(--accent2);background:var(--accent-glow);}
-  .new-folder-btn{display:flex;align-items:center;gap:7px;padding:7px 14px;margin:2px 8px;border-radius:7px;cursor:pointer;font-size:0.82rem;font-weight:600;color:var(--accent2);border:1px dashed var(--border);background:transparent;width:calc(100% - 16px);transition:all var(--transition);}
-  .new-folder-btn:hover{border-color:var(--accent);background:var(--accent-glow);}
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transition: transform var(--transition), width var(--transition), min-width var(--transition);
+    position: relative;
+    z-index: 10;
+  }
+  .sidebar.collapsed { transform: translateX(-100%); position: absolute; }
 
-  /* SIDEBAR BOTTOM NAV (desktop) */
-  .sidebar-bottom-nav{display:flex;align-items:center;gap:2px;padding:8px 10px;border-top:1px solid var(--border);flex-shrink:0;background:var(--bg2);}
-  .sb-nav-btn{width:36px;height:36px;border-radius:8px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all var(--transition);flex-shrink:0;}
-  .sb-nav-btn:hover{background:var(--bg3);}
-  .sb-nav-btn.active{background:var(--accent-glow);}
-  .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;color:#fff;flex-shrink:0;}
+  .sidebar-logo {
+    padding: 22px 20px 14px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sidebar-logo span.z { color: var(--accent); }
+  .sidebar-logo .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+  .sidebar-section { padding: 10px 12px 4px; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px; color: var(--text3); text-transform: uppercase; }
+
+  .sidebar-btn {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 14px;
+    margin: 1px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text2);
+    transition: all var(--transition);
+    border: none; background: transparent; width: calc(100% - 16px);
+    text-align: left;
+  }
+  .sidebar-btn:hover, .sidebar-btn.active { background: var(--bg3); color: var(--text); }
+  .sidebar-btn .icon { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
+
+  .sidebar-scroll { flex: 1; overflow-y: auto; padding-bottom: 10px; }
+  .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Folder tree */
+  .folder-item { }
+  .folder-header {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 10px 7px 14px;
+    margin: 1px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.88rem; font-weight: 500;
+    color: var(--text2);
+    transition: all var(--transition);
+    user-select: none;
+  }
+  .folder-header:hover { background: var(--bg3); color: var(--text); }
+  .folder-header.active { background: var(--accent-glow); color: var(--accent2); }
+  .folder-arrow { font-size: 0.65rem; transition: transform var(--transition); flex-shrink: 0; }
+  .folder-arrow.open { transform: rotate(90deg); }
+  .folder-children { display: none; padding-left: 14px; }
+  .folder-children.open { display: block; }
+  .folder-note-item {
+    padding: 6px 10px 6px 12px;
+    margin: 1px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.83rem;
+    color: var(--text3);
+    transition: all var(--transition);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .folder-note-item:hover { background: var(--bg3); color: var(--text2); }
+  .folder-note-item.active { color: var(--accent2); background: var(--accent-glow); }
 
   /* MAIN */
-  .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
-  .topbar{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0;z-index:5;}
-  .topbar-btn{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;color:var(--text2);transition:all var(--transition);flex-shrink:0;}
-  .topbar-btn:hover{background:var(--bg3);color:var(--text);}
-  .topbar-title{font-weight:700;font-size:1rem;flex:1;}
-  .topbar-actions{display:flex;align-items:center;gap:6px;}
-  .view-toggle{display:flex;background:var(--bg3);border-radius:7px;padding:2px;gap:1px;}
-  .view-btn{width:28px;height:28px;border-radius:5px;border:none;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);}
-  .view-btn.active{background:var(--bg2);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+  .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 
-  /* CONTENT */
-  .content-area{flex:1;overflow-y:auto;padding:24px 28px;}
-  .content-area::-webkit-scrollbar{width:5px;}
-  .content-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-  .page-header{margin-bottom:24px;}
-  .page-title{font-size:1.7rem;font-weight:800;letter-spacing:-0.5px;}
-  .page-meta{color:var(--text3);font-size:0.82rem;margin-top:5px;font-family:var(--mono);}
+  /* TOPBAR */
+  .topbar {
+    height: 54px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px;
+    flex-shrink: 0;
+    z-index: 5;
+  }
+  .topbar-btn {
+    width: 34px; height: 34px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text2); font-size: 1.05rem;
+    transition: all var(--transition);
+    flex-shrink: 0;
+  }
+  .topbar-btn:hover { background: var(--bg3); color: var(--text); }
+  .topbar-title { font-weight: 700; font-size: 1rem; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar-actions { display: flex; align-items: center; gap: 6px; }
 
-  /* TAGS */
-  .tag-filter-bar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;align-items:center;}
-  .tag-chip{padding:4px 12px;border-radius:20px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text2);transition:all var(--transition);}
-  .tag-chip:hover{border-color:var(--accent);color:var(--accent);}
-  .tag-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .tag-chip.all{border-style:dashed;}
-  .active-tag-indicator{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-glow);border-radius:8px;font-size:0.84rem;color:var(--accent2);margin-bottom:16px;}
-  .clear-tag{cursor:pointer;font-size:0.9rem;margin-left:auto;}
+  /* VIEW TOGGLE */
+  .view-toggle { display: flex; background: var(--bg3); border-radius: 7px; padding: 2px; gap: 1px; }
+  .view-btn { width: 28px; height: 28px; border-radius: 5px; border: none; background: transparent; color: var(--text2); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
+  .view-btn.active { background: var(--bg2); color: var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
 
-  /* NOTES */
-  .notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
-  .notes-list{display:flex;flex-direction:column;gap:8px;}
-  .note-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all var(--transition);position:relative;overflow:hidden;}
-  .note-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform var(--transition);}
-  .note-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,0.18);}
-  .note-card:hover::before{transform:scaleX(1);}
-  .note-card-icon{margin-bottom:10px;}
-  .note-card-name{font-weight:700;font-size:0.95rem;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .note-card-meta{display:flex;flex-wrap:wrap;gap:5px;}
-  .note-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:0.72rem;font-weight:600;background:var(--accent-glow);color:var(--accent2);}
-  .note-folder-path{font-size:0.72rem;color:var(--text3);font-family:var(--mono);margin-top:4px;}
-  .note-card-actions{display:flex;gap:5px;margin-top:12px;opacity:0;transition:opacity var(--transition);}
-  .note-card:hover .note-card-actions{opacity:1;}
-  .note-act-btn{flex:1;padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:0.75rem;font-family:var(--font);cursor:pointer;transition:all var(--transition);font-weight:600;}
-  .note-act-btn:hover{background:var(--bg4);color:var(--text);}
-  .note-act-btn.danger:hover{background:rgba(255,91,107,0.15);color:var(--danger);border-color:var(--danger);}
-  .note-list-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all var(--transition);}
-  .note-list-item:hover{border-color:var(--accent);background:var(--bg3);}
-  .note-list-icon{flex-shrink:0;}
-  .note-list-name{font-weight:600;font-size:0.92rem;flex:1;}
-  .note-list-tags{display:flex;gap:5px;flex-wrap:wrap;}
-  .note-list-path{font-size:0.75rem;color:var(--text3);font-family:var(--mono);}
-  .note-list-actions{display:flex;gap:5px;opacity:0;transition:opacity var(--transition);}
-  .note-list-item:hover .note-list-actions{opacity:1;}
+  /* CONTENT AREA */
+  .content-area {
+    flex: 1; overflow-y: auto; padding: 24px 28px;
+    position: relative;
+  }
+  .content-area::-webkit-scrollbar { width: 5px; }
+  .content-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* PAGE HEADER */
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px; }
+  .page-meta { color: var(--text3); font-size: 0.82rem; margin-top: 5px; font-family: var(--mono); }
+
+  /* TAG FILTER */
+  .tag-filter-bar { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; align-items: center; }
+  .tag-chip {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text2);
+    transition: all var(--transition);
+  }
+  .tag-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .tag-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tag-chip.all { border-style: dashed; }
+
+  /* NOTES GRID */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .notes-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .note-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .note-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform var(--transition);
+  }
+  .note-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.18); }
+  .note-card:hover::before { transform: scaleX(1); }
+  .note-card-icon { font-size: 1.6rem; margin-bottom: 10px; }
+  .note-card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .note-card-meta { display: flex; flex-wrap: wrap; gap: 5px; }
+  .note-tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; background: var(--accent-glow); color: var(--accent2); }
+  .note-folder-path { font-size: 0.72rem; color: var(--text3); font-family: var(--mono); margin-top: 4px; }
+  .note-card-actions { display: flex; gap: 5px; margin-top: 12px; opacity: 0; transition: opacity var(--transition); }
+  .note-card:hover .note-card-actions { opacity: 1; }
+  .note-act-btn {
+    flex: 1; padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text2); font-size: 0.75rem; font-family: var(--font);
+    cursor: pointer; transition: all var(--transition); font-weight: 600;
+  }
+  .note-act-btn:hover { background: var(--bg4); color: var(--text); }
+  .note-act-btn.danger:hover { background: rgba(255,91,107,0.15); color: var(--danger); border-color: var(--danger); }
+
+  /* LIST VIEW */
+  .note-list-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    transition: all var(--transition);
+  }
+  .note-list-item:hover { border-color: var(--accent); background: var(--bg3); }
+  .note-list-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .note-list-name { font-weight: 600; font-size: 0.92rem; flex: 1; }
+  .note-list-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .note-list-path { font-size: 0.75rem; color: var(--text3); font-family: var(--mono); }
+  .note-list-actions { display: flex; gap: 5px; opacity: 0; transition: opacity var(--transition); }
+  .note-list-item:hover .note-list-actions { opacity: 1; }
 
   /* BUTTONS */
-  .btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:var(--font);font-weight:700;font-size:0.88rem;cursor:pointer;transition:all var(--transition);display:inline-flex;align-items:center;gap:6px;}
-  .btn-primary:hover{opacity:0.88;transform:translateY(-1px);}
-  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-  .btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:var(--font);font-weight:600;font-size:0.88rem;cursor:pointer;transition:all var(--transition);}
-  .btn-secondary:hover{background:var(--bg4);color:var(--text);}
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--bg3);
+    color: var(--text2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: var(--font);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .btn-secondary:hover { background: var(--bg4); color: var(--text); }
 
-  /* UPLOAD */
-  .upload-zone{border:2px dashed var(--border);border-radius:12px;padding:32px 24px;text-align:center;cursor:pointer;transition:all var(--transition);margin-bottom:24px;background:var(--bg2);}
-  .upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:var(--accent-glow);}
-  .upload-zone .upload-icon{margin-bottom:10px;display:flex;justify-content:center;}
-  .upload-zone p{color:var(--text2);font-size:0.88rem;}
-  .upload-zone strong{color:var(--accent);}
+  /* UPLOAD DROP ZONE */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-bottom: 24px;
+    background: var(--bg2);
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+  .upload-zone .upload-icon { font-size: 2rem; margin-bottom: 10px; }
+  .upload-zone p { color: var(--text2); font-size: 0.88rem; }
+  .upload-zone strong { color: var(--accent); }
 
-  /* NOTE VIEWER */
-  #note-viewer{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);}
-  #note-viewer.open{display:flex;}
-  .note-window{position:absolute;background:var(--bg2);border:1px solid var(--border);border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,0.5);display:flex;flex-direction:column;overflow:hidden;min-width:320px;min-height:200px;}
-  .note-window-titlebar{height:42px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 12px;cursor:grab;user-select:none;flex-shrink:0;}
-  .note-window-titlebar:active{cursor:grabbing;}
-  .win-title{flex:1;font-size:0.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .win-btn{width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);flex-shrink:0;}
-  .win-btn.close{background:var(--danger);color:#fff;}
-  .win-btn.fullscreen{background:var(--success);color:#fff;}
-  .win-btn:hover{opacity:0.8;transform:scale(1.1);}
-  .note-window-body{flex:1;overflow:hidden;}
-  .note-window-body iframe{width:100%;height:100%;border:none;background:#fff;}
-  .resize-handle{position:absolute;bottom:0;right:0;width:18px;height:18px;cursor:se-resize;display:flex;align-items:flex-end;justify-content:flex-end;padding:3px;z-index:2;}
-  .note-window.fullscreen-win{inset:0!important;width:100%!important;height:100%!important;border-radius:0;}
-  .note-window.fullscreen-win .resize-handle{display:none;}
+  /* NOTE VIEWER OVERLAY */
+  #note-viewer {
+    display: none;
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  }
+  #note-viewer.open { display: flex; }
+  .note-window {
+    position: absolute;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    min-width: 320px; min-height: 200px;
+  }
+  .note-window-titlebar {
+    height: 42px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 12px;
+    cursor: grab; user-select: none;
+    flex-shrink: 0;
+  }
+  .note-window-titlebar:active { cursor: grabbing; }
+  .win-title { flex: 1; font-size: 0.88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .win-btn { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
+  .win-btn.close { background: var(--danger); color: #fff; }
+  .win-btn.fullscreen { background: var(--success); color: #fff; }
+  .win-btn.close:hover, .win-btn.fullscreen:hover { opacity: 0.8; transform: scale(1.1); }
+  .note-window-body { flex: 1; overflow: hidden; position: relative; }
+  .note-window-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
+  .resize-handle {
+    position: absolute; bottom: 0; right: 0;
+    width: 18px; height: 18px;
+    cursor: se-resize;
+    display: flex; align-items: flex-end; justify-content: flex-end;
+    padding: 3px;
+    color: var(--text3);
+    font-size: 0.7rem;
+    z-index: 2;
+  }
+  .note-window.fullscreen-win {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+  .note-window.fullscreen-win .resize-handle { display: none; }
+  .note-window.fullscreen-win .note-window-titlebar { display: none; }
+  .note-window.fullscreen-win .note-window-body { height: 100%; }
 
-  /* MODALS */
-  .modal-overlay{display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
-  .modal-overlay.open{display:flex;}
-  .modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px 28px 24px;width:90%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.4);}
-  .modal h3{font-size:1.15rem;font-weight:800;margin-bottom:16px;}
-  .modal input,.modal select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font);font-size:0.9rem;margin-bottom:10px;outline:none;transition:border var(--transition);}
-  .modal input:focus,.modal select:focus{border-color:var(--accent);}
-  .modal-actions{display:flex;gap:8px;margin-top:6px;justify-content:flex-end;}
-  .modal label{font-size:0.8rem;color:var(--text2);display:block;margin-bottom:4px;font-weight:600;}
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 60;
+    background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 28px 24px;
+    width: 90%; max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .modal h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 16px; }
+  .modal input, .modal select {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; color: var(--text);
+    font-family: var(--font); font-size: 0.9rem; margin-bottom: 10px; outline: none;
+    transition: border var(--transition);
+  }
+  .modal input:focus, .modal select:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end; }
+  .modal label { font-size: 0.8rem; color: var(--text2); display: block; margin-bottom: 4px; font-weight: 600; letter-spacing: 0.3px; }
 
   /* TAGS INPUT */
-  .tags-input-wrap{display:flex;flex-wrap:wrap;gap:5px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px;margin-bottom:10px;cursor:text;}
-  .tags-input-wrap:focus-within{border-color:var(--accent);}
-  .tag-pill{background:var(--accent);color:#fff;border-radius:20px;padding:2px 8px 2px 10px;font-size:0.77rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;}
-  .tag-pill-remove{cursor:pointer;opacity:0.7;}
-  .tag-pill-remove:hover{opacity:1;}
-  .tags-input-wrap input{border:none;background:transparent;outline:none;font-family:var(--font);color:var(--text);font-size:0.88rem;flex:1;min-width:80px;}
+  .tags-input-wrap { display: flex; flex-wrap: wrap; gap: 5px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 7px; margin-bottom: 10px; cursor: text; }
+  .tags-input-wrap:focus-within { border-color: var(--accent); }
+  .tag-pill { background: var(--accent); color: #fff; border-radius: 20px; padding: 2px 8px 2px 10px; font-size: 0.77rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+  .tag-pill-remove { cursor: pointer; opacity: 0.7; font-size: 0.8rem; }
+  .tag-pill-remove:hover { opacity: 1; }
+  .tags-input-wrap input { border: none; background: transparent; outline: none; font-family: var(--font); color: var(--text); font-size: 0.88rem; flex: 1; min-width: 80px; }
 
-  /* SETTINGS */
-  .settings-section-title{font-size:0.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;margin-top:8px;}
-  .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-  .theme-opt{border-radius:9px;padding:12px 8px;text-align:center;cursor:pointer;border:2px solid transparent;font-size:0.8rem;font-weight:700;transition:all var(--transition);}
-  .theme-opt:hover{transform:scale(1.03);}
-  .theme-opt.active{border-color:var(--accent);}
-  .theme-opt.dark{background:#0f0f11;color:#e8e8f0;}
-  .theme-opt.light{background:#f5f4f8;color:#18181f;}
-  .theme-opt.navy{background:#0a0f1e;color:#d0dcff;}
-  .accent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-  .accent-opt{height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all var(--transition);}
-  .accent-opt:hover{transform:scale(1.05);}
-  .accent-opt.active{border-color:var(--text);}
+  /* SETTINGS / WALLPAPER PANEL */
+  .settings-panel {
+    display: none; flex-direction: column; gap: 12px; padding: 24px 28px;
+    overflow-y: auto; flex: 1;
+  }
+  .settings-panel.open { display: flex; }
+  .settings-section-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; margin-top: 8px; }
+  .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .theme-opt {
+    border-radius: 9px; padding: 12px 8px; text-align: center; cursor: pointer;
+    border: 2px solid transparent; font-size: 0.8rem; font-weight: 700;
+    transition: all var(--transition);
+  }
+  .theme-opt:hover { transform: scale(1.03); }
+  .theme-opt.active { border-color: var(--accent); }
+  .theme-opt.dark { background: #0f0f11; color: #e8e8f0; }
+  .theme-opt.light { background: #f5f4f8; color: #18181f; }
+  .theme-opt.navy { background: #0a0f1e; color: #d0dcff; }
+  .accent-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .accent-opt {
+    height: 36px; border-radius: 8px; cursor: pointer; border: 2px solid transparent;
+    transition: all var(--transition);
+  }
+  .accent-opt:hover { transform: scale(1.05); }
+  .accent-opt.active { border-color: var(--text); }
+  .wallpaper-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .wp-opt {
+    height: 60px; border-radius: 8px; cursor: pointer; border: 2px solid transparent;
+    transition: all var(--transition); overflow: hidden; position: relative;
+    background-size: cover; background-position: center;
+  }
+  .wp-opt:hover { border-color: var(--accent); }
+  .wp-opt.active { border-color: var(--accent); }
+  .wp-none { display: flex; align-items: center; justify-content: center; background: var(--bg3); font-size: 0.8rem; color: var(--text2); font-weight: 600; }
+  .wp-custom-btn { grid-column: span 3; }
 
   /* EMPTY STATE */
-  .empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
-  .empty-state .empty-icon{display:flex;justify-content:center;margin-bottom:14px;}
-  .empty-state p{font-size:0.9rem;}
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 14px; }
+  .empty-state p { font-size: 0.9rem; }
+
+  /* FOLDER FORM */
+  .new-folder-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 14px; margin: 2px 8px;
+    border-radius: 7px; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; color: var(--accent2);
+    border: 1px dashed var(--border); background: transparent;
+    width: calc(100% - 16px); transition: all var(--transition);
+  }
+  .new-folder-btn:hover { border-color: var(--accent); background: var(--accent-glow); }
 
   /* TOAST */
-  #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 18px;font-size:0.88rem;font-weight:600;z-index:200;transition:transform 0.3s ease;pointer-events:none;white-space:nowrap;}
-  #toast.show{transform:translateX(-50%) translateY(0);}
-
-  /* MOBILE BOTTOM NAV */
-  #mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--bg2);border-top:1px solid var(--border);padding:6px 4px 6px;padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px));justify-content:space-around;align-items:center;opacity:0;transition:opacity 0.2s;}
-  #mobile-bottom-nav.app-ready{opacity:1;}
-  .mob-nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:10px;border:none;background:transparent;cursor:pointer;color:var(--text3);transition:all var(--transition);flex:1;}
-  .mob-nav-btn.active{color:var(--accent2);}
-  .mob-nav-btn span{font-size:0.62rem;font-weight:700;letter-spacing:0.3px;}
-  /* Profile avatar in mobile nav */
-  .mob-avatar-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;border-radius:10px;border:none;background:transparent;cursor:pointer;flex:1;}
-  .mob-avatar-circle{width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.78rem;color:#fff;}
-  .mob-avatar-btn span{font-size:0.62rem;font-weight:700;color:var(--text3);letter-spacing:0.3px;}
-
-  /* PROFILE TRAY */
-  #profile-tray-overlay{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,0.45);backdrop-filter:blur(3px);}
-  #profile-tray-overlay.open{display:block;}
-  #profile-tray{
-    display:none;
-    position:fixed;bottom:0;left:0;right:0;z-index:51;
-    background:var(--bg2);border-top:1px solid var(--border);
-    border-radius:20px 20px 0 0;
-    padding:0 0 calc(env(safe-area-inset-bottom, 0px) + 16px);
-    transform:translateY(100%);transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 18px; font-size: 0.88rem; font-weight: 600;
+    z-index: 200; transition: transform 0.3s ease; pointer-events: none;
+    white-space: nowrap;
   }
-  #profile-tray.open{display:block;transform:translateY(0);}
-  #profile-tray.closing{display:block;transform:translateY(100%);}
-  .tray-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0;}
-  .tray-user{display:flex;align-items:center;gap:12px;padding:18px 20px 14px;}
-  .tray-avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;flex-shrink:0;}
-  .tray-user-name{font-weight:800;font-size:0.95rem;}
-  .tray-user-email{font-size:0.75rem;color:var(--text2);margin-top:1px;}
-  .tray-divider{height:1px;background:var(--border);margin:0 20px;}
-  .tray-section-label{font-size:0.65rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);padding:14px 20px 8px;}
-  .tray-theme-row{display:flex;gap:8px;padding:0 20px 14px;}
-  .tray-theme-btn{flex:1;padding:10px 4px;border-radius:10px;border:1.5px solid var(--border);background:transparent;font-family:var(--font);font-size:0.78rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all var(--transition);}
-  .tray-theme-btn.active{border-color:var(--accent);color:var(--accent2);background:var(--accent-glow);}
-  .tray-theme-btn.t-dark{background:#0f0f11;color:#e8e8f0;}
-  .tray-theme-btn.t-dark.active{border-color:var(--accent);}
-  .tray-theme-btn.t-light{background:#f5f4f8;color:#18181f;}
-  .tray-theme-btn.t-navy{background:#0a0f1e;color:#d0dcff;}
-  .tray-accent-row{display:flex;gap:10px;padding:0 20px 16px;align-items:center;}
-  .tray-accent-dot{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:all var(--transition);}
-  .tray-accent-dot:hover{transform:scale(1.1);}
-  .tray-accent-dot.active{border-color:var(--text);}
-  .tray-action-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 20px;border:none;background:transparent;font-family:var(--font);font-size:0.92rem;font-weight:600;color:var(--text2);cursor:pointer;transition:background var(--transition);}
-  .tray-action-btn:hover{background:var(--bg3);}
-  .tray-action-btn.danger{color:var(--danger);}
-  .tray-action-btn svg{flex-shrink:0;}
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  @media (max-width: 700px) {
+    #toast { bottom: 68px; }
+  }
 
-  /* WIN BTN new-window */
-  .win-btn.newwin{background:var(--bg4);color:var(--text2);}
-  .win-btn.newwin:hover{background:var(--bg3);color:var(--text);opacity:1;transform:none;}
+  /* SIDEBAR BOTTOM NAV */
+  .sidebar-bottom-nav {
+    display: flex; align-items: center; gap: 2px;
+    padding: 8px 10px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg2);
+  }
+  .sb-nav-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: none; background: transparent;
+    cursor: pointer; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text2);
+    transition: all var(--transition);
+    flex-shrink: 0;
+  }
+  .sb-nav-btn:hover { background: var(--bg3); color: var(--text); }
+  .sb-nav-btn.active { background: var(--accent-glow); color: var(--accent2); }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.85rem; color: #fff;
+    flex-shrink: 0;
+  }
+
+  /* SEARCH TAG INDICATOR */
+  .active-tag-indicator {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    background: var(--accent-glow);
+    border-radius: 8px;
+    font-size: 0.84rem;
+    color: var(--accent2);
+    margin-bottom: 16px;
+  }
+  .clear-tag { cursor: pointer; font-size: 0.9rem; margin-left: auto; }
 
   /* MOBILE */
-  @media(max-width:700px){
-    .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:20;transform:translateX(-100%);transition:transform 0.25s cubic-bezier(.4,0,.2,1);}
-    .sidebar.mobile-open{transform:translateX(0);}
-    .sidebar-bottom-nav{display:none;}
-    #mobile-bottom-nav{display:flex;}
-    .mobile-overlay{display:none;position:fixed;inset:0;z-index:15;background:rgba(0,0,0,0.4);}
-    .mobile-overlay.open{display:block;}
-    .notes-grid{grid-template-columns:1fr 1fr;}
-    .content-area{padding:16px 16px calc(80px + env(safe-area-inset-bottom, 0px));}
-    .note-window{width:92vw!important;height:75vh!important;left:4vw!important;top:10vh!important;transform:none!important;}
-    #toast{bottom:90px;}
-    .topbar-btn#sidebar-toggle-btn{display:flex;}
+  @media (max-width: 700px) {
+    .sidebar {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      z-index: 20;
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .mobile-overlay {
+      display: none; position: fixed; inset: 0; z-index: 15;
+      background: rgba(0,0,0,0.4);
+    }
+    .mobile-overlay.open { display: block; }
+    .notes-grid { grid-template-columns: 1fr 1fr; }
+    .content-area { padding: 16px; }
+    .note-window { width: 92vw !important; height: 75vh !important; left: 4vw !important; top: 10vh !important; }
+
+    /* Mobile bottom tab bar */
+    .mobile-bottom-nav {
+      display: flex !important;
+    }
+    .topbar { display: none; }
+    .main { padding-bottom: 60px; }
+    .sidebar-bottom-nav { display: none !important; }
   }
-  @media(max-width:420px){.notes-grid{grid-template-columns:1fr;}}
-  ::-webkit-scrollbar{width:5px;height:5px;}
-  ::-webkit-scrollbar-track{background:transparent;}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-  .page-hidden{display:none!important;}
+
+  /* Mobile bottom nav bar */
+  .mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 56px;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    z-index: 30;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: env(safe-area-inset-bottom);
+    flex-shrink: 0;
+  }
+  .mob-nav-btn {
+    flex: 1; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text2); font-size: 0.62rem; font-weight: 600;
+    gap: 3px; transition: all var(--transition);
+    padding: 0;
+  }
+  .mob-nav-btn svg { flex-shrink: 0; }
+  .mob-nav-btn.active { color: var(--accent); }
+  .mob-nav-btn.active .dt-bg { fill: var(--accent); opacity: 0.3; }
+  .mob-nav-btn.active .dt-stroke { stroke: var(--accent); }
+  .mob-nav-btn.active .dt-stroke-only { stroke: var(--accent); }
+  .mob-nav-btn:hover { color: var(--text); }
+
+  @media (max-width: 420px) {
+    .notes-grid { grid-template-columns: 1fr; }
+  }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* LOADING OVERLAY */
+  #app-loading {
+    position: fixed; inset: 0; z-index: 999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
+  }
+  #app-loading .spin {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #app-loading .load-logo { font-size: 1.8rem; font-weight: 800; }
+  #app-loading .load-logo span { color: var(--accent); }
+
+  /* HOME BREADCRUMB */
+  .home-breadcrumb {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+    margin-bottom: 16px; font-size: 0.82rem; font-weight: 600;
+  }
+  .bc-item {
+    color: var(--text3); cursor: pointer; padding: 3px 6px;
+    border-radius: 5px; transition: all var(--transition);
+  }
+  .bc-item:hover { color: var(--accent); background: var(--accent-glow); }
+  .bc-item.current { color: var(--text); cursor: default; }
+  .bc-item.current:hover { background: transparent; color: var(--text); }
+  .bc-sep { color: var(--text3); opacity: 0.4; font-size: 0.75rem; }
+
+  /* FOLDER CARD GRID */
+  .folder-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .folder-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px 14px;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .folder-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform var(--transition);
+  }
+  .folder-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.18); }
+  .folder-card:hover::before { transform: scaleX(1); }
+  .folder-card-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--accent-glow);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .folder-card-name {
+    font-weight: 800; font-size: 1rem; margin-bottom: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .folder-card-meta {
+    font-size: 0.75rem; color: var(--text3); font-family: var(--mono);
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .folder-card-meta span { display: flex; align-items: center; gap: 3px; }
+
+  /* SUBFOLDER PILLS inside folder card */
+  .folder-card-subs {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;
+  }
+  .folder-sub-pill {
+    font-size: 0.7rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    background: var(--bg3); color: var(--text3);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  /* SECTION DIVIDER for notes below folders */
+  .home-section-title {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--text3);
+    margin: 20px 0 10px; padding: 0 2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .home-section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  @media (max-width: 700px) {
+    .folder-card-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  }
+  @media (max-width: 420px) {
+    .folder-card-grid { grid-template-columns: 1fr; }
+  }
+
+  /* LOGOUT BUTTON - always red */
+  .logout-btn { color: var(--danger) !important; }
+  .logout-btn .dt-bg { fill: var(--danger) !important; opacity: 0.2 !important; }
+  .logout-btn .dt-stroke { stroke: var(--danger) !important; }
+  .logout-btn:hover { background: rgba(255,91,107,0.15) !important; color: var(--danger) !important; }
+  .mob-nav-btn.logout-btn { color: var(--danger) !important; }
+  .mob-nav-btn.logout-btn .dt-stroke { stroke: var(--danger) !important; }
+  .mob-nav-btn.logout-btn .dt-bg { fill: var(--danger) !important; opacity: 0.2 !important; }
+
+  /* FOLDER DRAG-OVER highlight */
+  .folder-header.drag-over {
+    background: var(--accent-glow) !important;
+    border: 1px dashed var(--accent) !important;
+    border-radius: 7px;
+  }
+  .folder-drop-hint { font-size: 0.7rem; color: var(--accent2); padding: 3px 10px 5px 28px; display: none; }
+  .folder-header.drag-over + .folder-drop-hint { display: block; }
+
+  /* FOLDER CONTEXT MENU (right-click) */
+  .folder-ctx-menu {
+    position: fixed; z-index: 300;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 9px; padding: 5px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    min-width: 150px;
+    display: none;
+  }
+  .folder-ctx-menu.open { display: block; }
+  .ctx-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-radius: 6px;
+    font-size: 0.84rem; font-weight: 600; cursor: pointer;
+    color: var(--text2); transition: all var(--transition);
+  }
+  .ctx-item:hover { background: var(--bg3); color: var(--text); }
+  .ctx-item.danger { color: var(--danger); }
+  .ctx-item.danger:hover { background: rgba(255,91,107,0.12); }
+
+  /* PROFILE PANEL */
+  #profile-panel {
+    position: fixed; inset: 0; z-index: 200;
+    display: none; align-items: flex-end; justify-content: flex-start;
+  }
+  #profile-panel.open { display: flex; }
+  .profile-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(3px);
+  }
+  .profile-sheet {
+    position: relative; z-index: 1;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; margin: 12px;
+    width: 300px; max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column;
+  }
+  @media (max-width: 700px) {
+    #profile-panel { align-items: flex-end; justify-content: center; }
+    .profile-sheet { width: calc(100% - 24px); margin: 12px; border-radius: 20px 20px 12px 12px; }
+  }
+  .profile-header {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .profile-avatar-big {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.3rem; flex-shrink: 0;
+  }
+  .profile-name { font-weight: 800; font-size: 1rem; }
+  .profile-email { font-size: 0.75rem; color: var(--text3); font-family: var(--mono); margin-top: 2px; }
+  .profile-close {
+    margin-left: auto; width: 28px; height: 28px; border-radius: 50%;
+    border: none; background: var(--bg3); cursor: pointer; color: var(--text2);
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    transition: all var(--transition); flex-shrink: 0;
+  }
+  .profile-close:hover { background: var(--bg4); color: var(--text); }
+  .profile-section { padding: 14px 16px 6px; }
+  .profile-section-title {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
+  }
+  .profile-theme-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; margin-bottom: 4px; }
+  .profile-theme-opt {
+    border-radius: 8px; padding: 10px 6px; text-align: center;
+    cursor: pointer; border: 2px solid transparent;
+    font-size: 0.75rem; font-weight: 700; transition: all var(--transition);
+  }
+  .profile-theme-opt:hover { transform: scale(1.04); }
+  .profile-theme-opt.active { border-color: var(--accent); }
+  .profile-theme-opt.dark { background:#0f0f11; color:#e8e8f0; }
+  .profile-theme-opt.light { background:#f5f4f8; color:#18181f; }
+  .profile-theme-opt.navy { background:#0a0f1e; color:#d0dcff; }
+  .profile-accent-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; margin-bottom: 4px; }
+  .profile-accent-opt {
+    height: 32px; border-radius: 7px; cursor: pointer;
+    border: 2px solid transparent; transition: all var(--transition);
+  }
+  .profile-accent-opt:hover { transform: scale(1.06); }
+  .profile-accent-opt.active { border-color: var(--text); }
+
+  /* TEXT STYLE OPTIONS */
+  .text-style-grid { display: flex; flex-direction: column; gap: 6px; }
+  .text-style-opt {
+    padding: 10px 13px; border-radius: 8px; cursor: pointer;
+    border: 1.5px solid var(--border); background: var(--bg3);
+    transition: all var(--transition); display: flex; flex-direction: column; gap: 2px;
+  }
+  .text-style-opt:hover { border-color: var(--accent); }
+  .text-style-opt.active { border-color: var(--accent); background: var(--accent-glow); }
+  .text-style-preview { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+  .text-style-label { font-size: 0.68rem; color: var(--text3); font-weight: 600; letter-spacing: 0.3px; }
+
+  /* FONT SIZE SLIDER */
+  .font-size-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .font-size-row input[type=range] {
+    flex: 1; -webkit-appearance: none; height: 4px;
+    background: var(--bg4); border-radius: 4px; outline: none;
+    border: none; margin: 0; padding: 0;
+  }
+  .font-size-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--accent); cursor: pointer;
+  }
+  .font-size-val { font-size: 0.78rem; color: var(--text2); font-family: var(--mono); min-width: 30px; text-align: right; }
+
+  /* PROFILE DIVIDER */
+  .profile-divider { height: 1px; background: var(--border); margin: 6px 16px; }
+
+  /* REUPLOAD modal */
+  #reupload-modal .reupload-zone {
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 24px; text-align: center; cursor: pointer;
+    transition: all var(--transition); background: var(--bg3); margin-bottom: 12px;
+  }
+  #reupload-modal .reupload-zone:hover,
+  #reupload-modal .reupload-zone.dragover { border-color: var(--accent); background: var(--accent-glow); }
+  #reupload-modal .reupload-zone p { color: var(--text2); font-size: 0.85rem; }
+  #reupload-modal .reupload-zone strong { color: var(--accent); }
+
+  .page-hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loading-screen">
-  <div class="loading-logo">Note<span>Z</span></div>
-  <div class="spinner"></div>
+<!-- LOADING OVERLAY -->
+<div id="app-loading">
+  <div class="load-logo">Note<span>Z</span></div>
+  <div class="spin"></div>
 </div>
 
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- LOGIN -->
+<!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">Note<span class="z">Z</span></div>
@@ -312,70 +916,80 @@
       <button class="login-tab" id="tab-signup" onclick="switchLoginTab('signup')">Sign Up</button>
     </div>
     <div id="login-form">
-      <input type="email" id="login-email" placeholder="Email" autocomplete="email">
+      <input type="text" id="login-username" placeholder="Username or Email" autocomplete="username">
       <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
-      <button class="btn-primary" id="login-btn" style="width:100%;margin-top:6px;padding:13px" onclick="doLogin()">Sign In →</button>
+      <button class="btn-primary" style="width:100%;margin-top:6px;padding:13px" onclick="doLogin()">Sign In →</button>
       <div class="login-err" id="login-err"></div>
     </div>
     <div id="signup-form" style="display:none">
-      <input type="text" id="signup-displayname" placeholder="Display name">
-      <input type="email" id="signup-email" placeholder="Email">
-      <input type="password" id="signup-password" placeholder="Password (min 6 chars)">
+      <input type="text" id="signup-username" placeholder="Choose a username" autocomplete="username">
+      <input type="email" id="signup-email" placeholder="Email (optional)">
+      <input type="password" id="signup-password" placeholder="Password">
       <input type="password" id="signup-confirm" placeholder="Confirm password">
-      <button class="btn-primary" id="signup-btn" style="width:100%;margin-top:6px;padding:13px" onclick="doSignup()">Create Account →</button>
+      <button class="btn-primary" style="width:100%;margin-top:6px;padding:13px" onclick="doSignup()">Create Account →</button>
       <div class="login-err" id="signup-err"></div>
     </div>
   </div>
 </div>
 
-<!-- APP -->
+<!-- MAIN APP -->
 <div id="app" style="display:none">
+  <!-- Mobile overlay -->
   <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileSidebar()"></div>
 
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-logo"><span class="logo-dot"></span>Note<span class="z">Z</span></div>
+    <div class="sidebar-logo">
+      <span class="logo-dot"></span>
+      Note<span class="z">Z</span>
+    </div>
     <div class="sidebar-scroll">
       <div style="height:8px"></div>
       <div class="sidebar-section">Folders</div>
       <div id="folder-tree"></div>
       <button class="new-folder-btn" onclick="openNewFolderModal()">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Folder
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Folder
       </button>
     </div>
-    <!-- Desktop bottom nav -->
+
+    <!-- BOTTOM NAV -->
     <div class="sidebar-bottom-nav">
-      <div class="user-avatar" id="user-avatar-text" style="cursor:default">U</div>
+      <div class="user-avatar" id="user-avatar-text" title="Profile & Settings" style="cursor:pointer" onclick="openProfilePanel()">U</div>
+      <!-- Home -->
       <button class="sb-nav-btn active" id="nav-home" onclick="navigate('home')" title="All Notes">
         <svg viewBox="0 0 24 24" class="dt-icon"><path class="dt-bg" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path class="dt-stroke" d="M3 10.5L12 3l9 7.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="dt-stroke" d="M9 21v-6h6v6" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
       </button>
+      <!-- Upload -->
       <button class="sb-nav-btn" id="nav-upload" onclick="navigate('upload')" title="Upload">
         <svg viewBox="0 0 24 24" class="dt-icon"><rect class="dt-bg" x="3" y="15" width="18" height="6" rx="1"/><path class="dt-stroke" d="M12 3v12M7 8l5-5 5 5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
+      <!-- Settings -->
       <button class="sb-nav-btn" id="nav-settings" onclick="navigate('settings')" title="Settings">
         <svg viewBox="0 0 24 24" class="dt-icon"><circle class="dt-bg" cx="12" cy="12" r="9"/><circle class="dt-stroke-only" cx="12" cy="12" r="3" fill="none" stroke-width="1.8"/><path class="dt-stroke" d="M12 5v2M12 17v2M5 12H3M21 12h-2M7.05 7.05L5.64 5.64M18.36 18.36l-1.41-1.41M7.05 16.95l-1.41 1.41M18.36 5.64l-1.41 1.41" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
-      <button class="sb-nav-btn" onclick="doLogout()" title="Sign out" style="margin-left:auto">
-        <svg viewBox="0 0 24 24" class="dt-icon"><rect class="dt-bg" x="3" y="3" width="10" height="18" rx="1"/><path class="dt-stroke" d="M15 8l4 4-4 4M9 12h10" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
   </div>
 
   <!-- MAIN -->
   <div class="main">
+    <!-- TOPBAR -->
     <div class="topbar">
-      <button class="topbar-btn" onclick="toggleSidebar()">
+      <button class="topbar-btn" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="topbar-title" id="topbar-title">All Notes</div>
       <div class="topbar-actions">
         <div class="view-toggle" id="view-toggle">
+          <!-- Grid -->
           <button class="view-btn active" id="view-grid" onclick="setView('grid')" title="Grid">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           </button>
+          <!-- List -->
           <button class="view-btn" id="view-list" onclick="setView('list')" title="List">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1" fill="currentColor"/><circle cx="3.5" cy="12" r="1" fill="currentColor"/><circle cx="3.5" cy="18" r="1" fill="currentColor"/></svg>
           </button>
+          <!-- Tree -->
           <button class="view-btn" id="view-tree" onclick="setView('tree')" title="Folder Tree">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h7v4H3zM14 4h7v4h-7zM14 16h7v4h-7z"/><path d="M6 8v4M6 12h8M17.5 12v4"/></svg>
           </button>
@@ -384,10 +998,12 @@
       </div>
     </div>
 
-    <!-- HOME -->
+    <!-- HOME PAGE -->
     <div id="page-home" class="content-area">
-      <div class="page-header">
-        <div class="page-title">All Notes</div>
+      <!-- Breadcrumb nav -->
+      <div id="home-breadcrumb" class="home-breadcrumb" style="display:none"></div>
+      <div class="page-header" id="home-page-header">
+        <div class="page-title" id="home-page-title">All Notes</div>
         <div class="page-meta" id="notes-count-meta">0 notes</div>
       </div>
       <div id="tag-filter-bar" class="tag-filter-bar"></div>
@@ -397,615 +1013,1662 @@
       </div>
       <div id="notes-container"></div>
       <div id="empty-state" class="empty-state" style="display:none">
-        <div class="empty-icon"><svg viewBox="0 0 64 64" width="52" height="52"><path d="M8 20h48v36a2 2 0 01-2 2H10a2 2 0 01-2-2V20z" fill="var(--accent)" opacity="0.12"/><path d="M8 20l8-12h16l4 6h20a2 2 0 012 2" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 40h16M24 48h10" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="empty-icon">
+          <svg viewBox="0 0 64 64" width="52" height="52"><path d="M8 20h48v36a2 2 0 01-2 2H10a2 2 0 01-2-2V20z" fill="var(--accent)" opacity="0.12"/><path d="M8 20l8-12h16l4 6h20a2 2 0 012 2" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 40h16M24 48h10" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
         <p>No notes yet. Upload some HTML files to get started!</p>
       </div>
     </div>
 
-    <!-- UPLOAD -->
+    <!-- UPLOAD PAGE -->
     <div id="page-upload" class="content-area page-hidden">
       <div class="page-header">
         <div class="page-title">Upload Note</div>
         <div class="page-meta">Drop HTML files to add them to NoteZ</div>
       </div>
       <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
-        <div class="upload-icon"><svg viewBox="0 0 48 48" width="44" height="44"><rect x="6" y="28" width="36" height="14" rx="3" fill="var(--accent)" opacity="0.18"/><path d="M24 6v26M14 16l10-10 10 10" fill="none" stroke="var(--accent2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="upload-icon">
+          <svg viewBox="0 0 48 48" width="44" height="44">
+            <rect x="6" y="28" width="36" height="14" rx="3" fill="var(--accent)" opacity="0.18"/>
+            <path d="M24 6v26M14 16l10-10 10 10" fill="none" stroke="var(--accent2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <p><strong>Click or drag & drop</strong> HTML files here</p>
         <p style="margin-top:6px;font-size:0.8rem;color:var(--text3)">Only .html files are accepted</p>
       </div>
       <input type="file" id="file-input" accept=".html,.htm" multiple style="display:none" onchange="handleFiles(this.files)">
+
       <div id="upload-form" style="display:none">
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px">
           <div id="upload-file-name" style="font-weight:700;font-size:1rem;margin-bottom:16px"></div>
+
           <label>Note Name</label>
           <input type="text" id="upload-name" placeholder="Name your note">
+
           <label>Folder</label>
-          <select id="upload-folder"><option value="">— No folder —</option></select>
+          <select id="upload-folder">
+            <option value="">— No folder —</option>
+          </select>
+
           <label>Tags (press Enter to add)</label>
           <div class="tags-input-wrap" id="upload-tags-wrap" onclick="document.getElementById('upload-tag-input').focus()">
             <input type="text" id="upload-tag-input" placeholder="Type a tag…" onkeydown="handleTagInput(event)">
           </div>
+
           <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn-primary" id="save-note-btn" onclick="saveNote()">Save Note</button>
+            <button class="btn-primary" onclick="saveNote()">Save Note</button>
             <button class="btn-secondary" onclick="cancelUpload()">Cancel</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SETTINGS -->
+    <!-- SETTINGS PAGE -->
     <div id="page-settings" class="content-area page-hidden">
-      <div class="page-header"><div class="page-title">Settings</div></div>
+      <div class="page-header">
+        <div class="page-title">Settings</div>
+      </div>
+
       <div class="settings-section-title">Theme</div>
       <div class="theme-grid">
         <div class="theme-opt dark active" data-theme="dark" onclick="setTheme('dark')">Dark</div>
         <div class="theme-opt light" data-theme="light" onclick="setTheme('light')">Light</div>
         <div class="theme-opt navy" data-theme="navy" onclick="setTheme('navy')">Navy</div>
       </div>
+
       <div class="settings-section-title" style="margin-top:20px">Accent Color</div>
       <div class="accent-grid">
-        <div class="accent-opt active" data-accent="purple" style="background:linear-gradient(135deg,#7c6dfa,#a594ff)" onclick="setAccent('purple')"></div>
-        <div class="accent-opt" data-accent="blue" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)" onclick="setAccent('blue')"></div>
-        <div class="accent-opt" data-accent="green" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="setAccent('green')"></div>
-        <div class="accent-opt" data-accent="orange" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)" onclick="setAccent('orange')"></div>
+        <div class="accent-opt active" data-accent="purple" style="background:linear-gradient(135deg,#7c6dfa,#a594ff)" onclick="setAccent('purple','#7c6dfa','#a594ff','rgba(124,109,250,0.18)')"></div>
+        <div class="accent-opt" data-accent="blue" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)" onclick="setAccent('blue','#3b82f6','#60a5fa','rgba(59,130,246,0.15)')"></div>
+        <div class="accent-opt" data-accent="green" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="setAccent('green','#10b981','#34d399','rgba(16,185,129,0.15)')"></div>
+        <div class="accent-opt" data-accent="orange" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)" onclick="setAccent('orange','#f59e0b','#fbbf24','rgba(245,158,11,0.15)')"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MOBILE BOTTOM NAV -->
-<div id="mobile-bottom-nav">
-  <button class="mob-nav-btn active" id="mob-nav-home" onclick="navigate('home')">
-    <svg viewBox="0 0 24 24" width="22" height="22"><path class="dt-bg" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path class="dt-stroke" d="M3 10.5L12 3l9 7.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="dt-stroke" d="M9 21v-6h6v6" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <span>Home</span>
-  </button>
-  <button class="mob-nav-btn" id="mob-nav-upload" onclick="navigate('upload')">
-    <svg viewBox="0 0 24 24" width="22" height="22"><rect class="dt-bg" x="3" y="15" width="18" height="6" rx="1"/><path class="dt-stroke" d="M12 3v12M7 8l5-5 5 5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <span>Upload</span>
-  </button>
-  <button class="mob-nav-btn" id="mob-nav-settings" onclick="navigate('settings')">
-    <svg viewBox="0 0 24 24" width="22" height="22"><circle class="dt-bg" cx="12" cy="12" r="9"/><circle class="dt-stroke-only" cx="12" cy="12" r="3" fill="none" stroke-width="1.8"/><path class="dt-stroke" d="M12 5v2M12 17v2M5 12H3M21 12h-2" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
-    <span>Settings</span>
-  </button>
-  <!-- Profile avatar — opens tray -->
-  <button class="mob-avatar-btn" onclick="openProfileTray()" id="mob-avatar-btn">
-    <div class="mob-avatar-circle" id="mob-avatar-circle">U</div>
-    <span>Profile</span>
-  </button>
-</div>
-
-<!-- PROFILE TRAY OVERLAY -->
-<div id="profile-tray-overlay" onclick="closeProfileTray()"></div>
-
-<!-- PROFILE TRAY -->
-<div id="profile-tray">
-  <div class="tray-handle"></div>
-  <div class="tray-user">
-    <div class="tray-avatar" id="tray-avatar">U</div>
-    <div>
-      <div class="tray-user-name" id="tray-name">User</div>
-      <div class="tray-user-email" id="tray-email"></div>
-    </div>
-  </div>
-  <div class="tray-divider"></div>
-  <div class="tray-section-label">Theme</div>
-  <div class="tray-theme-row">
-    <button class="tray-theme-btn t-dark active" data-theme="dark" onclick="setTheme('dark');syncTrayTheme()">Dark</button>
-    <button class="tray-theme-btn t-light" data-theme="light" onclick="setTheme('light');syncTrayTheme()">Light</button>
-    <button class="tray-theme-btn t-navy" data-theme="navy" onclick="setTheme('navy');syncTrayTheme()">Navy</button>
-  </div>
-  <div class="tray-section-label">Accent</div>
-  <div class="tray-accent-row">
-    <div class="tray-accent-dot active" data-accent="purple" style="background:linear-gradient(135deg,#7c6dfa,#a594ff)" onclick="setAccent('purple');syncTrayAccent()"></div>
-    <div class="tray-accent-dot" data-accent="blue" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)" onclick="setAccent('blue');syncTrayAccent()"></div>
-    <div class="tray-accent-dot" data-accent="green" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="setAccent('green');syncTrayAccent()"></div>
-    <div class="tray-accent-dot" data-accent="orange" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)" onclick="setAccent('orange');syncTrayAccent()"></div>
-  </div>
-  <div class="tray-divider"></div>
-  <button class="tray-action-btn" id="tray-install-btn" onclick="installPWA()" style="display:none">
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v13M7 10l5 5 5-5"/><path d="M3 18h18v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z"/></svg>
-    Add to Home Screen
-  </button>
-  <button class="tray-action-btn danger" onclick="closeProfileTray();doLogout()">
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="10" height="18" rx="1" stroke="var(--danger)"/><path d="M15 8l4 4-4 4M9 12h10" stroke="var(--danger)"/></svg>
-    Sign out
-  </button>
-  <div style="height:8px"></div>
-</div>
-
-<!-- NOTE VIEWER -->
+<!-- NOTE VIEWER OVERLAY -->
 <div id="note-viewer">
   <div class="note-window" id="note-window" style="width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%)">
     <div class="note-window-titlebar" id="note-win-titlebar">
       <span class="win-title" id="note-win-title">Note</span>
-      <button class="win-btn newwin" id="win-newwin-btn" onclick="openNoteInNewWindow()" title="Open in new window">
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <button class="win-btn fullscreen" onclick="toggleFullscreenWin()" title="Fullscreen">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M21 16v3a2 2 0 01-2 2h-3M8 21H5a2 2 0 01-2-2v-3"/></svg>
       </button>
-      <button class="win-btn fullscreen" onclick="toggleFullscreenWin()" title="Fullscreen"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M21 16v3a2 2 0 01-2 2h-3M8 21H5a2 2 0 01-2-2v-3"/></svg></button>
-      <button class="win-btn close" onclick="closeNoteViewer()" title="Close"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <button class="win-btn close" onclick="closeNoteViewer()" title="Close">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div class="note-window-body"><iframe id="note-iframe" sandbox="allow-scripts allow-same-origin"></iframe></div>
-    <div class="resize-handle" id="resize-handle"><svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="var(--text3)" stroke-width="1.2" stroke-linecap="round"><line x1="9" y1="1" x2="1" y2="9"/><line x1="9" y1="5" x2="5" y2="9"/></svg></div>
+    <div class="note-window-body">
+      <iframe id="note-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+    <div class="resize-handle" id="resize-handle">
+      <svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="var(--text3)" stroke-width="1.2" stroke-linecap="round"><line x1="9" y1="1" x2="1" y2="9"/><line x1="9" y1="5" x2="5" y2="9"/></svg>
+    </div>
   </div>
 </div>
 
-<!-- MODALS -->
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <button class="mob-nav-btn active" id="mob-nav-home" onclick="navigate('home')" title="All Notes">
+    <svg viewBox="0 0 24 24" class="dt-icon" width="22" height="22"><path class="dt-bg" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path class="dt-stroke" d="M3 10.5L12 3l9 7.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="dt-stroke" d="M9 21v-6h6v6" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="mob-nav-btn" id="mob-nav-upload" onclick="navigate('upload')" title="Upload">
+    <svg viewBox="0 0 24 24" class="dt-icon" width="22" height="22"><rect class="dt-bg" x="3" y="15" width="18" height="6" rx="1"/><path class="dt-stroke" d="M12 3v12M7 8l5-5 5 5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Upload</span>
+  </button>
+  <button class="mob-nav-btn" id="mob-nav-settings" onclick="navigate('settings')" title="Settings">
+    <svg viewBox="0 0 24 24" class="dt-icon" width="22" height="22"><circle class="dt-bg" cx="12" cy="12" r="9"/><circle class="dt-stroke-only" cx="12" cy="12" r="3" fill="none" stroke-width="1.8"/><path class="dt-stroke" d="M12 5v2M12 17v2M5 12H3M21 12h-2M7.05 7.05L5.64 5.64M18.36 18.36l-1.41-1.41M7.05 16.95l-1.41 1.41M18.36 5.64l-1.41 1.41" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span>Settings</span>
+  </button>
+  <button class="mob-nav-btn logout-btn" onclick="doLogout()" title="Sign out">
+    <svg viewBox="0 0 24 24" class="dt-icon" width="22" height="22"><rect class="dt-bg" x="3" y="3" width="10" height="18" rx="1"/><path class="dt-stroke" d="M15 8l4 4-4 4M9 12h10" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Logout</span>
+  </button>
+</div>
+<!-- FOLDER CONTEXT MENU -->
+<div class="folder-ctx-menu" id="folder-ctx-menu">
+  <div class="ctx-item" id="ctx-rename-folder" onclick="ctxRenameFolder()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Rename
+  </div>
+  <div class="ctx-item danger" id="ctx-delete-folder" onclick="ctxDeleteFolder()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    Delete Folder
+  </div>
+</div>
+
+<!-- PROFILE PANEL -->
+<div id="profile-panel">
+  <div class="profile-backdrop" onclick="closeProfilePanel()"></div>
+  <div class="profile-sheet">
+    <div class="profile-header">
+      <div class="profile-avatar-big" id="profile-avatar-big">U</div>
+      <div>
+        <div class="profile-name" id="profile-name-display">User</div>
+        <div class="profile-email" id="profile-email-display"></div>
+      </div>
+      <button class="profile-close" onclick="closeProfilePanel()">✕</button>
+    </div>
+
+    <!-- Theme -->
+    <div class="profile-section">
+      <div class="profile-section-title">Theme</div>
+      <div class="profile-theme-grid">
+        <div class="profile-theme-opt dark" data-ptheme="dark" onclick="setTheme('dark')">Dark</div>
+        <div class="profile-theme-opt light" data-ptheme="light" onclick="setTheme('light')">Light</div>
+        <div class="profile-theme-opt navy" data-ptheme="navy" onclick="setTheme('navy')">Navy</div>
+      </div>
+    </div>
+    <div class="profile-divider"></div>
+
+    <!-- Accent Color -->
+    <div class="profile-section">
+      <div class="profile-section-title">Accent Color</div>
+      <div class="profile-accent-grid">
+        <div class="profile-accent-opt" data-paccent="purple" style="background:linear-gradient(135deg,#7c6dfa,#a594ff)" onclick="setAccent('purple')"></div>
+        <div class="profile-accent-opt" data-paccent="blue" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)" onclick="setAccent('blue')"></div>
+        <div class="profile-accent-opt" data-paccent="green" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="setAccent('green')"></div>
+        <div class="profile-accent-opt" data-paccent="orange" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)" onclick="setAccent('orange')"></div>
+        <div class="profile-accent-opt" data-paccent="pink" style="background:linear-gradient(135deg,#ec4899,#f472b6)" onclick="setAccent('pink')"></div>
+        <div class="profile-accent-opt" data-paccent="red" style="background:linear-gradient(135deg,#ef4444,#f87171)" onclick="setAccent('red')"></div>
+        <div class="profile-accent-opt" data-paccent="teal" style="background:linear-gradient(135deg,#14b8a6,#2dd4bf)" onclick="setAccent('teal')"></div>
+        <div class="profile-accent-opt" data-paccent="yellow" style="background:linear-gradient(135deg,#eab308,#facc15)" onclick="setAccent('yellow')"></div>
+      </div>
+    </div>
+    <div class="profile-divider"></div>
+
+    <!-- Text Style -->
+    <div class="profile-section">
+      <div class="profile-section-title">Text Style</div>
+      <div class="text-style-grid">
+        <div class="text-style-opt" data-textstyle="default" onclick="setTextStyle('default')">
+          <span class="text-style-preview" style="font-family:'Syne',sans-serif">The quick brown fox</span>
+          <span class="text-style-label">Default — Syne</span>
+        </div>
+        <div class="text-style-opt" data-textstyle="mono" onclick="setTextStyle('mono')">
+          <span class="text-style-preview" style="font-family:'DM Mono',monospace">The quick brown fox</span>
+          <span class="text-style-label">Mono — DM Mono</span>
+        </div>
+        <div class="text-style-opt" data-textstyle="serif" onclick="setTextStyle('serif')">
+          <span class="text-style-preview" style="font-family:Georgia,serif">The quick brown fox</span>
+          <span class="text-style-label">Serif — Georgia</span>
+        </div>
+        <div class="text-style-opt" data-textstyle="rounded" onclick="setTextStyle('rounded')">
+          <span class="text-style-preview" style="font-family:'Trebuchet MS',sans-serif">The quick brown fox</span>
+          <span class="text-style-label">Rounded — Trebuchet</span>
+        </div>
+      </div>
+    </div>
+    <div class="profile-divider"></div>
+
+    <!-- Font Size -->
+    <div class="profile-section">
+      <div class="profile-section-title">Font Size</div>
+      <div class="font-size-row">
+        <span style="font-size:0.75rem;color:var(--text3)">A</span>
+        <input type="range" min="12" max="20" value="15" id="font-size-slider" oninput="setFontSize(this.value)">
+        <span style="font-size:1.1rem;color:var(--text2)">A</span>
+        <span class="font-size-val" id="font-size-val">15px</span>
+      </div>
+    </div>
+    <div class="profile-divider"></div>
+
+    <!-- Danger zone -->
+    <div class="profile-section" style="padding-bottom:16px">
+      <div class="profile-section-title">Account</div>
+      <button onclick="doLogout();closeProfilePanel();" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--danger);background:transparent;color:var(--danger);font-family:var(--font);font-weight:700;font-size:0.88rem;cursor:pointer;transition:all var(--transition)" onmouseover="this.style.background='rgba(255,91,107,0.12)'" onmouseout="this.style.background='transparent'">
+        Sign Out
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- New Folder Modal -->
 <div class="modal-overlay" id="folder-modal">
   <div class="modal">
     <h3>New Folder</h3>
-    <label>Folder Name</label><input type="text" id="folder-name-input" placeholder="e.g. Projects">
-    <label>Parent Folder (optional)</label><select id="folder-parent-select"><option value="">— Root —</option></select>
-    <div class="modal-actions"><button class="btn-secondary" onclick="closeFolderModal()">Cancel</button><button class="btn-primary" onclick="createFolder()">Create</button></div>
+    <label>Folder Name</label>
+    <input type="text" id="folder-name-input" placeholder="e.g. Projects">
+    <label>Parent Folder (optional)</label>
+    <select id="folder-parent-select"><option value="">— Root —</option></select>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeFolderModal()">Cancel</button>
+      <button class="btn-primary" onclick="createFolder()">Create</button>
+    </div>
   </div>
 </div>
+
+<!-- Rename Modal -->
 <div class="modal-overlay" id="rename-modal">
   <div class="modal">
     <h3>Rename Note</h3>
-    <label>New Name</label><input type="text" id="rename-input" placeholder="New name">
-    <div class="modal-actions"><button class="btn-secondary" onclick="closeRenameModal()">Cancel</button><button class="btn-primary" onclick="confirmRename()">Rename</button></div>
+    <label>New Name</label>
+    <input type="text" id="rename-input" placeholder="New name">
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeRenameModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmRename()">Rename</button>
+    </div>
   </div>
 </div>
+
+<!-- Delete Confirm Modal -->
 <div class="modal-overlay" id="delete-modal">
   <div class="modal">
     <h3>Delete Note</h3>
     <p style="color:var(--text2);font-size:0.9rem;margin-bottom:16px">Are you sure you want to delete <strong id="delete-note-name"></strong>? This cannot be undone.</p>
-    <div class="modal-actions"><button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button><button class="btn-primary" style="background:var(--danger)" onclick="confirmDelete()">Delete</button></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-primary" style="background:var(--danger)" onclick="confirmDelete()">Delete</button>
+    </div>
   </div>
 </div>
 
-<script type="module">
-import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword,
-         signInWithEmailAndPassword, signOut,
-         onAuthStateChanged, updateProfile }                      from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc,
-         collection, getDocs, addDoc, deleteDoc }                 from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+<!-- Delete Folder Modal -->
+<div class="modal-overlay" id="delete-folder-modal">
+  <div class="modal">
+    <h3>Delete Folder</h3>
+    <p style="color:var(--text2);font-size:0.9rem;margin-bottom:8px">Delete <strong id="delete-folder-name"></strong>?</p>
+    <p style="color:var(--text3);font-size:0.82rem;margin-bottom:16px">Notes inside will be moved to root (not deleted).</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeDeleteFolderModal()">Cancel</button>
+      <button class="btn-primary" style="background:var(--danger)" onclick="confirmDeleteFolder()">Delete Folder</button>
+    </div>
+  </div>
+</div>
 
-const firebaseConfig = {
-  apiKey:            "AIzaSyBKK7lSt7_S9zhibXEkpAl75gBUWxKcwmA",
-  authDomain:        "notez-e2e36.firebaseapp.com",
-  databaseURL:       "https://notez-e2e36-default-rtdb.firebaseio.com",
-  projectId:         "notez-e2e36",
-  storageBucket:     "notez-e2e36.firebasestorage.app",
-  messagingSenderId: "40028336367",
-  appId:             "1:40028336367:web:fb1dd35125899ef0d1ab1a"
-};
+<!-- Rename Folder Modal -->
+<div class="modal-overlay" id="rename-folder-modal">
+  <div class="modal">
+    <h3>Rename Folder</h3>
+    <label>New Name</label>
+    <input type="text" id="rename-folder-input" placeholder="Folder name">
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeRenameFolderModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmRenameFolder()">Rename</button>
+    </div>
+  </div>
+</div>
 
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+<!-- Reupload Modal -->
+<div class="modal-overlay" id="reupload-modal">
+  <div class="modal">
+    <h3>Update Note</h3>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:14px">Replacing: <strong id="reupload-note-name" style="color:var(--text)"></strong></p>
+    <div class="reupload-zone" id="reupload-zone" onclick="document.getElementById('reupload-file-input').click()">
+      <p><strong>Click or drag & drop</strong> a new HTML file</p>
+      <p style="margin-top:4px;font-size:0.78rem;color:var(--text3)" id="reupload-selected-name">No file selected</p>
+    </div>
+    <input type="file" id="reupload-file-input" accept=".html,.htm" style="display:none" onchange="handleReuploadFile(this.files)">
+    <div class="modal-actions" style="justify-content:space-between">
+      <button class="btn-secondary" style="background:rgba(255,91,107,0.12);color:var(--danger);border-color:var(--danger)" onclick="deleteFromReuploadModal()">🗑 Delete Note</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" onclick="closeReuploadModal()">Cancel</button>
+        <button class="btn-primary" id="reupload-confirm-btn" onclick="confirmReupload()" disabled style="opacity:0.5">Replace File</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-// Immediately detect file:// and warn — Firebase won't work there
-if (location.protocol === 'file:' || location.protocol === 'content:') {
-  setTimeout(() => {
-    document.getElementById('loading-screen').style.display = 'none';
-    document.getElementById('mobile-bottom-nav').classList.add('app-ready');
-    document.getElementById('login-screen').classList.add('visible');
-    document.getElementById('login-err').style.cssText = 'color:#f4a24b;font-size:0.82rem;margin-top:10px;line-height:1.5;';
-    document.getElementById('login-err').innerHTML =
-      '⚠️ <strong>NoteZ needs to be hosted online.</strong><br>You\'re opening it as a local file. Please upload it to GitHub Pages and open from there.';
-  }, 100);
-}
-
-// ─── STATE ───────────────────────────────────────────────────
+<script>
+// ============================================================
+// STATE & STORAGE
+// ============================================================
 let currentUser = null;
-let notes = [], folders = [];
-let settings = { theme:'dark', accent:'purple' };
-let currentView = 'grid', activeTag = null, currentPage = 'home';
-let uploadTags = [], pendingFile = null, renameTarget = null, deleteTarget = null;
+let notes = [];
+let folders = [];
+let settings = { theme: 'dark', accent: 'purple' };
+let currentView = 'grid';
+let activeTag = null;
+let currentPage = 'home';
+let uploadTags = [];
+let pendingFile = null;
+let renameTarget = null;
+let deleteTarget = null;
 
-const userDoc    = ()  => doc(db, 'users', currentUser.uid);
-const notesCol   = ()  => collection(db, 'users', currentUser.uid, 'notes');
-const foldersCol = ()  => collection(db, 'users', currentUser.uid, 'folders');
+// Firebase helpers (REST API - no SDK)
+// ============================================================
+// PERSISTENCE — localStorage primary, Firebase background sync
+// ============================================================
+const LS_KEY = () => `notez_data_${_fbUid}`;
 
-// ─── LOAD USER DATA ──────────────────────────────────────────
-async function loadUserData() {
-  const snap = await getDoc(userDoc());
-  if (snap.exists()) {
-    settings = snap.data().settings || { theme:'dark', accent:'purple' };
-  } else {
-    await setDoc(userDoc(), { settings: { theme:'dark', accent:'purple' } });
+function saveLocal() {
+  try {
+    localStorage.setItem(LS_KEY(), JSON.stringify({ notes, folders, settings }));
+  } catch(e) {
+    // localStorage full? try without content
+    try {
+      const slim = { notes: notes.map(({content,...r})=>r), folders, settings };
+      localStorage.setItem(LS_KEY(), JSON.stringify(slim));
+    } catch(e2) { console.warn('localStorage full', e2); }
   }
-  const [ns, fs] = await Promise.all([getDocs(notesCol()), getDocs(foldersCol())]);
-  notes   = ns.docs.map(d => ({ id:d.id, ...d.data() }));
-  folders = fs.docs.map(d => ({ id:d.id, ...d.data() }));
 }
 
-// ─── AUTH STATE ──────────────────────────────────────────────
-// Fallback: if Firebase doesn't respond in 5s (e.g. file:// URL), show error
-const authTimeout = setTimeout(() => {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('mobile-bottom-nav').classList.add('app-ready');
-  document.getElementById('login-screen').classList.add('visible');
-  document.getElementById('login-err').textContent =
-    '⚠️ NoteZ must be opened from a hosted URL (not a local file). Please visit shanbruh.github.io/NoteZ to use it.';
-}, 5000);
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY());
+    if (!raw) return false;
+    const d = JSON.parse(raw);
+    notes = d.notes || [];
+    folders = d.folders || [];
+    settings = d.settings || { theme:'dark', accent:'purple' };
+    return true;
+  } catch(e) { return false; }
+}
 
-onAuthStateChanged(auth, async (user) => {
-  clearTimeout(authTimeout);
-  document.getElementById('loading-screen').style.display = 'none';
-  // Now safe to show mobile nav
-  document.getElementById('mobile-bottom-nav').classList.add('app-ready');
-  if (user) {
-    currentUser = user;
-    await loadUserData();
-    document.getElementById('login-screen').classList.remove('visible');
-    document.getElementById('app').style.display = 'flex';
-    const name    = user.displayName || user.email || 'User';
-    const initial = name[0].toUpperCase();
-    // Desktop sidebar avatar
-    document.getElementById('user-avatar-text').textContent = initial;
-    document.getElementById('user-avatar-text').title = name;
-    // Mobile nav avatar
-    document.getElementById('mob-avatar-circle').textContent = initial;
-    // Profile tray
-    document.getElementById('tray-avatar').textContent = initial;
-    document.getElementById('tray-name').textContent = user.displayName || 'User';
-    document.getElementById('tray-email').textContent = user.email || '';
-    applySettings();
-    syncTrayTheme();
-    syncTrayAccent();
-    renderAll();
-  } else {
-    currentUser = null;
-    document.getElementById('login-screen').classList.add('visible');
-    document.getElementById('app').style.display = 'none';
+// Firebase sync — runs in background, non-blocking
+async function syncToFirebase() {
+  if (!_fbUid) return;
+  try {
+    const token = await _getToken();
+    if (!token) return;
+    // Save metadata (no content — content saved per-note)
+    const meta = { notes: notes.map(({content,...r})=>r), folders, settings };
+    await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(meta)
+    });
+    // Save each note's content
+    await Promise.all(notes.map(n =>
+      fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${n.id}.json?auth=${token}`, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(n.content || '')
+      })
+    ));
+  } catch(e) { console.log('Firebase sync skipped:', e.message); }
+}
+
+async function loadFromFirebase() {
+  try {
+    const token = await _getToken();
+    if (!token) return false;
+    const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`);
+    const meta = await r.json();
+    if (!meta || meta.error) return false;
+
+    const noteMeta = meta.notes || [];
+    folders = meta.folders || [];
+    settings = meta.settings || { theme:'dark', accent:'purple' };
+
+    // Load content for each note
+    const loaded = await Promise.all(noteMeta.map(async nm => {
+      try {
+        const cr = await fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${nm.id}.json?auth=${token}`);
+        const content = await cr.json();
+        return { ...nm, content: content || '' };
+      } catch(e) { return { ...nm, content: '' }; }
+    }));
+    notes = loaded;
+    return true;
+  } catch(e) { return false; }
+}
+
+// Main save — always save locally first (instant), then sync to Firebase
+async function saveUserData() {
+  saveLocal();
+  syncToFirebase(); // fire-and-forget
+}
+
+async function loadUserDataFromFirebase() {
+  // Try Firebase first (has full history across devices)
+  const fbOk = await loadFromFirebase();
+  if (fbOk) {
+    saveLocal(); // cache locally
+    return;
   }
-});
+  // Fall back to localStorage
+  loadLocal();
+}
 
-// ─── AUTH FUNCTIONS ──────────────────────────────────────────
-window.switchLoginTab = (tab) => {
+// ============================================================
+// LOGIN / AUTH (Firebase REST)
+// ============================================================
+function switchLoginTab(tab) {
   document.getElementById('tab-login').classList.toggle('active', tab==='login');
   document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
-  document.getElementById('login-form').style.display  = tab==='login'  ? '' : 'none';
+  document.getElementById('login-form').style.display = tab==='login' ? '' : 'none';
   document.getElementById('signup-form').style.display = tab==='signup' ? '' : 'none';
-};
+}
 
-window.doLogin = async () => {
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-password').value;
-  const err   = document.getElementById('login-err');
-  const btn   = document.getElementById('login-btn');
-  if (!email||!pass) { err.textContent='Please fill in all fields.'; return; }
-  btn.disabled=true; btn.textContent='Signing in…';
+async function doLogin() {
+  const email = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value;
+  const err = document.getElementById('login-err');
+  if (!email || !p) { err.textContent = 'Please fill in all fields.'; return; }
+  const loginEmail = email.includes('@') ? email : email + '@notez.app';
   try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    err.textContent='';
+    const user = await fbSignIn(loginEmail, p);
+    await loginSuccess(user);
   } catch(e) {
-    err.textContent = e.code==='auth/invalid-credential' ? 'Wrong email or password.' : e.message;
-  } finally { btn.disabled=false; btn.textContent='Sign In →'; }
-};
+    err.textContent = e.message.includes('INVALID_LOGIN_CREDENTIALS') || e.message.includes('INVALID_PASSWORD') || e.message.includes('EMAIL_NOT_FOUND') ? 'Invalid username or password.' : e.message;
+  }
+}
 
-window.doSignup = async () => {
-  const name  = document.getElementById('signup-displayname').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const pass  = document.getElementById('signup-password').value;
-  const conf  = document.getElementById('signup-confirm').value;
-  const err   = document.getElementById('signup-err');
-  const btn   = document.getElementById('signup-btn');
-  if (!name||!email||!pass) { err.textContent='All fields are required.'; return; }
-  if (pass!==conf)           { err.textContent='Passwords do not match.'; return; }
-  if (pass.length<6)         { err.textContent='Password must be at least 6 characters.'; return; }
-  btn.disabled=true; btn.textContent='Creating…';
+async function doSignup() {
+  const u = document.getElementById('signup-username').value.trim();
+  const emailInput = document.getElementById('signup-email').value.trim();
+  const p = document.getElementById('signup-password').value;
+  const c = document.getElementById('signup-confirm').value;
+  const err = document.getElementById('signup-err');
+  if (!u || !p) { err.textContent = 'Username and password are required.'; return; }
+  if (p !== c) { err.textContent = 'Passwords do not match.'; return; }
+  if (p.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
+  const loginEmail = emailInput || (u + '@notez.app');
   try {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    await updateProfile(cred.user, { displayName: name });
-    err.textContent='';
+    const user = await fbSignUp(loginEmail, p, u);
+    await loginSuccess(user);
   } catch(e) {
-    err.textContent = e.code==='auth/email-already-in-use' ? 'Email already in use.' : e.message;
-  } finally { btn.disabled=false; btn.textContent='Create Account →'; }
-};
+    err.textContent = e.message.includes('EMAIL_EXISTS') ? 'Username already taken.' : e.message;
+  }
+}
 
-window.doLogout = async () => { await signOut(auth); };
+async function loginSuccess(user) {
+  currentUser = user.uid;
+  _fbUid = user.uid;
+  const displayName = user.displayName || 'User';
+  await loadUserDataFromFirebase();
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('user-avatar-text').textContent = displayName[0].toUpperCase();
+  document.getElementById('user-avatar-text').title = displayName;
+  applySettings();
+  renderAll();
+}
 
-// ─── SETTINGS ────────────────────────────────────────────────
+async function doLogout() {
+  fbSignOut();
+  currentUser = null;
+  _fbUid = null;
+  notes = []; folders = []; settings = { theme:'dark', accent:'purple' };
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+function getUserData() { return { notes, folders, settings }; }
+
+// Setup runs from Firebase init block at bottom of body
+
+// ============================================================
+// SETTINGS / THEMES
+// ============================================================
 const ACCENTS = {
-  purple:['#7c6dfa','#a594ff','rgba(124,109,250,0.18)'],
-  blue:  ['#3b82f6','#60a5fa','rgba(59,130,246,0.15)'],
-  green: ['#10b981','#34d399','rgba(16,185,129,0.15)'],
-  orange:['#f59e0b','#fbbf24','rgba(245,158,11,0.15)'],
+  purple: ['#7c6dfa','#a594ff','rgba(124,109,250,0.18)'],
+  blue:   ['#3b82f6','#60a5fa','rgba(59,130,246,0.15)'],
+  green:  ['#10b981','#34d399','rgba(16,185,129,0.15)'],
+  orange: ['#f59e0b','#fbbf24','rgba(245,158,11,0.15)'],
+  pink:   ['#ec4899','#f472b6','rgba(236,72,153,0.15)'],
+  red:    ['#ef4444','#f87171','rgba(239,68,68,0.15)'],
+  teal:   ['#14b8a6','#2dd4bf','rgba(20,184,166,0.15)'],
+  yellow: ['#eab308','#facc15','rgba(234,179,8,0.15)'],
 };
+const TEXT_STYLES = {
+  default: { font: "'Syne', sans-serif" },
+  mono:    { font: "'DM Mono', monospace" },
+  serif:   { font: "Georgia, 'Times New Roman', serif" },
+  rounded: { font: "'Trebuchet MS', 'Arial Rounded MT Bold', sans-serif" },
+};
+
 function applySettings() {
-  document.documentElement.setAttribute('data-theme', settings.theme||'dark');
-  const a = ACCENTS[settings.accent]||ACCENTS.purple;
-  document.documentElement.style.setProperty('--accent',      a[0]);
-  document.documentElement.style.setProperty('--accent2',     a[1]);
-  document.documentElement.style.setProperty('--accent-glow', a[2]);
+  document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
+  const acc = ACCENTS[settings.accent] || ACCENTS.purple;
+  document.documentElement.style.setProperty('--accent', acc[0]);
+  document.documentElement.style.setProperty('--accent2', acc[1]);
+  document.documentElement.style.setProperty('--accent-glow', acc[2]);
+  const tcm = document.getElementById('theme-color-meta');
+  if (tcm) tcm.setAttribute('content', acc[0]);
+  document.documentElement.style.setProperty('background', acc[0]);
+
+  // Text style
+  const ts = TEXT_STYLES[settings.textStyle] || TEXT_STYLES.default;
+  document.documentElement.style.setProperty('--font', ts.font);
+
+  // Font size
+  if (settings.fontSize) {
+    document.documentElement.style.setProperty('font-size', settings.fontSize + 'px');
+  }
+
+  // Sync all theme/accent/text opt UI
   document.querySelectorAll('.theme-opt').forEach(el => el.classList.toggle('active', el.dataset.theme===settings.theme));
   document.querySelectorAll('.accent-opt').forEach(el => el.classList.toggle('active', el.dataset.accent===settings.accent));
-}
-window.setTheme  = async(t) => { settings.theme=t;  applySettings(); await updateDoc(userDoc(),{settings}); };
-window.setAccent = async(n) => { settings.accent=n; applySettings(); await updateDoc(userDoc(),{settings}); };
+  document.querySelectorAll('.profile-theme-opt').forEach(el => el.classList.toggle('active', el.dataset.ptheme===settings.theme));
+  document.querySelectorAll('.profile-accent-opt').forEach(el => el.classList.toggle('active', el.dataset.paccent===settings.accent));
+  document.querySelectorAll('.text-style-opt').forEach(el => el.classList.toggle('active', el.dataset.textstyle===(settings.textStyle||'default')));
 
-// ─── NAVIGATION ──────────────────────────────────────────────
-window.navigate = (page) => {
+  // Font size slider
+  const slider = document.getElementById('font-size-slider');
+  const val = document.getElementById('font-size-val');
+  if (slider && settings.fontSize) { slider.value = settings.fontSize; }
+  if (val && settings.fontSize) { val.textContent = settings.fontSize + 'px'; }
+}
+
+function setTheme(t) { settings.theme = t; saveSettings(); applySettings(); }
+function setAccent(name) { settings.accent = name; saveSettings(); applySettings(); }
+function setTextStyle(style) { settings.textStyle = style; saveSettings(); applySettings(); }
+function setFontSize(size) {
+  settings.fontSize = parseInt(size);
+  document.documentElement.style.setProperty('font-size', size + 'px');
+  const val = document.getElementById('font-size-val');
+  if (val) val.textContent = size + 'px';
+  saveSettings();
+}
+async function saveSettings() {
+  if (!currentUser) return;
+  await saveUserData();
+}
+
+// ============================================================
+// PROFILE PANEL
+// ============================================================
+function openProfilePanel() {
+  const displayName = _fbDisplayName || 'User';
+  const email = _fbDisplayName ? (_fbDisplayName + '@notez.app') : '';
+  document.getElementById('profile-avatar-big').textContent = displayName[0].toUpperCase();
+  document.getElementById('profile-name-display').textContent = displayName;
+  document.getElementById('profile-email-display').textContent = email;
+  // Sync slider
+  const slider = document.getElementById('font-size-slider');
+  const val = document.getElementById('font-size-val');
+  if (slider) slider.value = settings.fontSize || 15;
+  if (val) val.textContent = (settings.fontSize || 15) + 'px';
+  applySettings();
+  document.getElementById('profile-panel').classList.add('open');
+}
+function closeProfilePanel() {
+  document.getElementById('profile-panel').classList.remove('open');
+}
+
+// ============================================================
+// FOLDER CONTEXT MENU
+// ============================================================
+let ctxFolderId = null;
+function openFolderCtxMenu(e, folderId) {
+  e.preventDefault(); e.stopPropagation();
+  ctxFolderId = folderId;
+  const menu = document.getElementById('folder-ctx-menu');
+  menu.classList.add('open');
+  // Position near cursor, keep in viewport
+  const x = Math.min(e.clientX, window.innerWidth - 160);
+  const y = Math.min(e.clientY, window.innerHeight - 90);
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+}
+function closeFolderCtxMenu() {
+  document.getElementById('folder-ctx-menu').classList.remove('open');
+  ctxFolderId = null;
+}
+document.addEventListener('click', () => closeFolderCtxMenu());
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeFolderCtxMenu(); });
+
+function ctxRenameFolder() {
+  const f = folders.find(x => x.id === ctxFolderId);
+  if (!f) return;
+  document.getElementById('rename-folder-input').value = f.name;
+  document.getElementById('rename-folder-modal').classList.add('open');
+  setTimeout(() => document.getElementById('rename-folder-input').focus(), 50);
+  closeFolderCtxMenu();
+}
+function closeRenameFolderModal() { document.getElementById('rename-folder-modal').classList.remove('open'); }
+async function confirmRenameFolder() {
+  const val = document.getElementById('rename-folder-input').value.trim();
+  if (!val || !ctxFolderId) return;
+  // ctxFolderId might be cleared — store it
+  const fid = document.getElementById('rename-folder-input').dataset.fid || ctxFolderId;
+  const f = folders.find(x => x.id === fid);
+  if (f) { f.name = val; await saveUserData(); renderAll(); showToast('Folder renamed!'); }
+  closeRenameFolderModal();
+}
+
+let deleteFolderTarget = null;
+function ctxDeleteFolder() {
+  deleteFolderTarget = ctxFolderId;
+  const f = folders.find(x => x.id === deleteFolderTarget);
+  if (!f) return;
+  document.getElementById('delete-folder-name').textContent = f.name;
+  document.getElementById('delete-folder-modal').classList.add('open');
+  closeFolderCtxMenu();
+}
+function closeDeleteFolderModal() {
+  document.getElementById('delete-folder-modal').classList.remove('open');
+  deleteFolderTarget = null;
+}
+async function confirmDeleteFolder() {
+  if (!deleteFolderTarget) return;
+  // Move notes in this folder to root
+  notes.forEach(n => { if (n.folder === deleteFolderTarget) n.folder = null; });
+  // Also remove child folders recursively
+  function removeFolder(fid) {
+    const children = folders.filter(f => f.parent === fid);
+    children.forEach(c => removeFolder(c.id));
+    folders = folders.filter(f => f.id !== fid);
+  }
+  removeFolder(deleteFolderTarget);
+  await saveUserData();
+  closeDeleteFolderModal();
+  renderAll();
+  showToast('Folder deleted!');
+}
+function navigate(page) {
   currentPage = page;
+  if (page === 'home') homeFolderId = null;
   ['home','upload','settings'].forEach(p => {
     document.getElementById('page-'+p).classList.toggle('page-hidden', p!==page);
-    const nb=document.getElementById('nav-'+p);    if(nb) nb.classList.toggle('active',p===page);
-    const mb=document.getElementById('mob-nav-'+p); if(mb) mb.classList.toggle('active',p===page);
+    const nb = document.getElementById('nav-'+p);
+    if (nb) nb.classList.toggle('active', p===page);
+    const mob = document.getElementById('mob-nav-'+p);
+    if (mob) mob.classList.toggle('active', p===page);
   });
-  const titles={home:'All Notes',upload:'Upload Note',settings:'Settings'};
-  document.getElementById('topbar-title').textContent = titles[page]||'';
-  document.getElementById('view-toggle').style.display = page==='home'?'':'none';
-  if(window.innerWidth<=700) closeMobileSidebar();
-};
+  const titles = { home:'All Notes', upload:'Upload Note', settings:'Settings' };
+  document.getElementById('topbar-title').textContent = titles[page] || '';
+  document.getElementById('view-toggle').style.display = page==='home' ? '' : 'none';
+  if (window.innerWidth <= 700) closeMobileSidebar();
+}
 
-// ─── SIDEBAR ─────────────────────────────────────────────────
-let sidebarCollapsed=false;
-window.toggleSidebar = () => {
-  if(window.innerWidth<=700) {
+
+// ============================================================
+// SIDEBAR
+// ============================================================
+let sidebarCollapsed = false;
+function toggleSidebar() {
+  if (window.innerWidth <= 700) {
     document.getElementById('sidebar').classList.toggle('mobile-open');
     document.getElementById('mobile-overlay').classList.toggle('open');
   } else {
-    sidebarCollapsed=!sidebarCollapsed;
-    document.getElementById('sidebar').classList.toggle('collapsed',sidebarCollapsed);
+    sidebarCollapsed = !sidebarCollapsed;
+    document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
   }
-};
-window.closeMobileSidebar = () => {
+}
+function closeMobileSidebar() {
   document.getElementById('sidebar').classList.remove('mobile-open');
   document.getElementById('mobile-overlay').classList.remove('open');
-};
+}
 
-// ─── PROFILE TRAY ─────────────────────────────────────────────
-window.openProfileTray = () => {
-  document.getElementById('profile-tray-overlay').classList.add('open');
-  const tray = document.getElementById('profile-tray');
-  tray.classList.remove('closing');
-  tray.classList.add('open');
-  syncTrayTheme(); syncTrayAccent();
-};
-window.closeProfileTray = () => {
-  document.getElementById('profile-tray-overlay').classList.remove('open');
-  const tray = document.getElementById('profile-tray');
-  tray.classList.add('closing');
-  tray.classList.remove('open');
-  // After animation ends, truly hide it
-  setTimeout(() => {
-    tray.classList.remove('closing');
-  }, 320);
-};
-window.syncTrayTheme = () => {
-  document.querySelectorAll('.tray-theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === settings.theme));
-};
-window.syncTrayAccent = () => {
-  document.querySelectorAll('.tray-accent-dot').forEach(d => d.classList.toggle('active', d.dataset.accent === settings.accent));
-};
-
-// ─── OPEN IN NEW WINDOW ───────────────────────────────────────
-let currentOpenNoteId = null;
-window.openNoteInNewWindow = () => {
-  if (!currentOpenNoteId) return;
-  const note = notes.find(n => n.id === currentOpenNoteId);
-  if (!note) return;
-  const blob = new Blob([note.content], { type:'text/html' });
-  const url  = URL.createObjectURL(blob);
-  window.open(url, '_blank');
-};
-
-// ─── FOLDERS ─────────────────────────────────────────────────
-window.openNewFolderModal = () => {
-  renderFolderOptions('folder-parent-select',true);
-  document.getElementById('folder-name-input').value='';
+// ============================================================
+// FOLDERS
+// ============================================================
+function openNewFolderModal() {
+  renderFolderOptions('folder-parent-select', true);
+  document.getElementById('folder-name-input').value = '';
   document.getElementById('folder-modal').classList.add('open');
-  setTimeout(()=>document.getElementById('folder-name-input').focus(),50);
-};
-window.closeFolderModal = () => document.getElementById('folder-modal').classList.remove('open');
-window.createFolder = async () => {
-  const name=document.getElementById('folder-name-input').value.trim(); if(!name) return;
-  const parent=document.getElementById('folder-parent-select').value||null;
-  const ref=await addDoc(foldersCol(),{name,parent});
-  folders.push({id:ref.id,name,parent});
-  closeFolderModal(); renderFolderTree(); renderFolderOptions('upload-folder'); showToast('Folder created!');
-};
+  setTimeout(() => document.getElementById('folder-name-input').focus(), 50);
+}
+function closeFolderModal() { document.getElementById('folder-modal').classList.remove('open'); }
+async function createFolder() {
+  const name = document.getElementById('folder-name-input').value.trim();
+  if (!name) return;
+  const parent = document.getElementById('folder-parent-select').value;
+  const id = 'f_' + Date.now();
+  folders.push({ id, name, parent: parent || null });
+  await saveUserData();
+  closeFolderModal();
+  renderFolderTree();
+  renderFolderOptions('upload-folder');
+  showToast('Folder created!');
+}
 
-function renderFolderOptions(selectId,withRoot=false) {
-  const sel=document.getElementById(selectId); if(!sel) return;
-  sel.innerHTML=withRoot?'<option value="">— Root —</option>':'<option value="">— No folder —</option>';
-  function add(pid,d){folders.filter(f=>(f.parent||null)===(pid||null)).forEach(f=>{const o=document.createElement('option');o.value=f.id;o.textContent='  '.repeat(d)+(d>0?'└ ':'')+f.name;sel.appendChild(o);add(f.id,d+1);});}
-  add(null,0);
+function renderFolderOptions(selectId, withRoot=false) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  sel.innerHTML = withRoot ? '<option value="">— Root —</option>' : '<option value="">— No folder —</option>';
+  function addOpts(parentId, depth) {
+    folders.filter(f => f.parent===(parentId||null)).forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f.id;
+      opt.textContent = '  '.repeat(depth) + (depth>0?'└ ':'') + f.name;
+      sel.appendChild(opt);
+      addOpts(f.id, depth+1);
+    });
+  }
+  addOpts(null, 0);
 }
 
 function renderFolderTree() {
-  const c=document.getElementById('folder-tree'); c.innerHTML='';
-  const fSVG=`<svg viewBox="0 0 24 24" width="15" height="15" style="flex-shrink:0"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" fill="var(--accent)" opacity="0.18"/><path d="M3 8l3-5h5l2 3h8" fill="none" stroke="var(--accent2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  const nSVG=`<svg viewBox="0 0 24 24" width="13" height="13" style="flex-shrink:0;opacity:0.6"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--text3)" opacity="0.5"/><path d="M14 2v6h6" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
-  function build(pid,target,depth){
-    folders.filter(f=>(f.parent||null)===(pid||null)).forEach(f=>{
-      const ni=notes.filter(n=>n.folder===f.id);
-      const hasSub=folders.some(sf=>sf.parent===f.id);
-      const hasKids=ni.length>0||hasSub;
-      const div=document.createElement('div'); div.className='folder-item';
-      const hdr=document.createElement('div'); hdr.className='folder-header'; hdr.style.paddingLeft=(14+depth*12)+'px';
-      hdr.innerHTML=`<span class="folder-arrow" style="${!hasKids?'opacity:0.2;':''}">▶</span>${fSVG}<span>${f.name}</span><span style="margin-left:auto;font-size:0.72rem;color:var(--text3)">${ni.length}</span>`;
-      const kids=document.createElement('div'); kids.className='folder-children'; kids.id='fc_'+f.id;
-      ni.forEach(n=>{const el=document.createElement('div');el.className='folder-note-item';el.id='sfn_'+n.id;el.style.paddingLeft=(14+depth*12+12)+'px';el.innerHTML=`${nSVG} ${n.name}`;el.onclick=()=>{openNote(n.id);if(window.innerWidth<=700)closeMobileSidebar();};kids.appendChild(el);});
-      build(f.id,kids,depth+1);
-      hdr.addEventListener('click',()=>{if(!hasKids)return;const a=hdr.querySelector('.folder-arrow');const o=a.classList.toggle('open');kids.classList.toggle('open',o);});
-      div.appendChild(hdr); div.appendChild(kids); target.appendChild(div);
+  const container = document.getElementById('folder-tree');
+  container.innerHTML = '';
+
+  // Root drop zone (unfiled)
+  const rootDrop = document.createElement('div');
+  rootDrop.className = 'folder-header';
+  rootDrop.style.cssText = 'padding-left:14px;color:var(--text3);font-size:0.82rem;border:1px dashed transparent;transition:all 0.18s;';
+  rootDrop.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" style="flex-shrink:0;opacity:0.5"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" fill="var(--text3)" opacity="0.18"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1" fill="none" stroke="var(--text3)" stroke-width="1.7" stroke-linecap="round"/></svg><span style="margin-left:4px">Drop here (no folder)</span>`;
+  rootDrop.style.display = 'none';
+  rootDrop.id = 'root-drop-zone';
+  setupFolderDropTarget(rootDrop, null);
+  container.appendChild(rootDrop);
+
+  function buildTree(parentId, targetEl, depth) {
+    const children = folders.filter(f => (f.parent || null) === (parentId || null));
+    children.forEach(f => {
+      const notesInFolder = notes.filter(n => n.folder === f.id);
+      const hasSubfolders = folders.some(sf => sf.parent === f.id);
+      const hasChildren = notesInFolder.length > 0 || hasSubfolders;
+      const indent = depth * 12;
+
+      const div = document.createElement('div');
+      div.className = 'folder-item';
+
+      const header = document.createElement('div');
+      header.className = 'folder-header';
+      header.style.paddingLeft = (14 + indent) + 'px';
+      const folderSVG = `<svg viewBox="0 0 24 24" width="15" height="15" style="flex-shrink:0"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" fill="var(--accent)" opacity="0.18"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1" fill="none" stroke="var(--accent2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      const noteSVG = `<svg viewBox="0 0 24 24" width="13" height="13" style="flex-shrink:0;opacity:0.6"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--text3)" opacity="0.5"/><path d="M14 2v6h6" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+      header.innerHTML = `
+        <span class="folder-arrow" style="${!hasChildren ? 'opacity:0.2;' : ''}">▶</span>
+        ${folderSVG}
+        <span>${f.name}</span>
+        <span style="margin-left:auto;font-size:0.72rem;color:var(--text3)">${notesInFolder.length}</span>
+      `;
+
+      // Right-click / long-press for context menu
+      header.addEventListener('contextmenu', e => openFolderCtxMenu(e, f.id));
+      header.addEventListener('click', e => {
+        // Store folderId for rename modal
+        document.getElementById('rename-folder-input').dataset.fid = f.id;
+      });
+
+      // Make folder header a drop target
+      setupFolderDropTarget(header, f.id);
+
+      const childrenEl = document.createElement('div');
+      childrenEl.className = 'folder-children';
+      childrenEl.id = 'fc_' + f.id;
+
+      notesInFolder.forEach(n => {
+        const noteEl = document.createElement('div');
+        noteEl.className = 'folder-note-item';
+        noteEl.id = 'sfn_' + n.id;
+        noteEl.style.paddingLeft = (14 + indent + 12) + 'px';
+        noteEl.innerHTML = `${noteSVG} ${n.name}`;
+        noteEl.onclick = () => { openNote(n.id); if(window.innerWidth<=700) closeMobileSidebar(); };
+        childrenEl.appendChild(noteEl);
+      });
+
+      buildTree(f.id, childrenEl, depth + 1);
+
+      header.addEventListener('click', e => {
+        document.getElementById('rename-folder-input').dataset.fid = f.id;
+        // Navigate home to this folder
+        if (!header._dragging) {
+          navigate('home');
+          navigateHome(f.id);
+        }
+        if (!hasChildren) return;
+        const arrow = header.querySelector('.folder-arrow');
+        const isOpen = arrow.classList.toggle('open');
+        childrenEl.classList.toggle('open', isOpen);
+      });
+
+      div.appendChild(header);
+      div.appendChild(childrenEl);
+      targetEl.appendChild(div);
     });
   }
-  build(null,c,0);
+
+  buildTree(null, container, 0);
 }
 
-// ─── RENDER ──────────────────────────────────────────────────
-function renderAll(){
-  renderFolderTree(); renderFolderOptions('upload-folder'); renderNotes();
-  document.getElementById('notes-count-meta').textContent=notes.length+' note'+(notes.length!==1?'s':'');
+function setupFolderDropTarget(el, folderId) {
+  el.addEventListener('dragenter', e => {
+    if (!e.dataTransfer.types.includes('Files')) return;
+    e.preventDefault();
+    el.classList.add('drag-over');
+    el._dragging = true;
+    // Show root drop zone if dragging over sidebar
+    const rdz = document.getElementById('root-drop-zone');
+    if (rdz && folderId !== null) rdz.style.display = 'flex';
+  });
+  el.addEventListener('dragover', e => {
+    if (!e.dataTransfer.types.includes('Files')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+  el.addEventListener('dragleave', e => {
+    el.classList.remove('drag-over');
+    el._dragging = false;
+    const rdz = document.getElementById('root-drop-zone');
+    if (rdz) rdz.style.display = 'none';
+  });
+  el.addEventListener('drop', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    el.classList.remove('drag-over');
+    el._dragging = false;
+    const rdz = document.getElementById('root-drop-zone');
+    if (rdz) rdz.style.display = 'none';
+    handleFilesIntoFolder(e.dataTransfer.files, folderId);
+  });
 }
 
-function getFolderPath(fid){if(!fid)return'';const p=[];let c=fid;while(c){const f=folders.find(x=>x.id===c);if(!f)break;p.unshift(f.name);c=f.parent;}return p.join(' / ');}
-
-function renderNotes(){
-  const container=document.getElementById('notes-container');
-  const empty=document.getElementById('empty-state');
-  const filtered=activeTag?notes.filter(n=>n.tags&&n.tags.includes(activeTag)):notes;
-  const allTags=[...new Set(notes.flatMap(n=>n.tags||[]))];
-  const bar=document.getElementById('tag-filter-bar'); bar.innerHTML='';
-  if(allTags.length>0){const a=document.createElement('div');a.className='tag-chip all'+(activeTag?'':' active');a.textContent='All';a.onclick=()=>clearTagFilter();bar.appendChild(a);allTags.forEach(t=>{const ch=document.createElement('div');ch.className='tag-chip'+(activeTag===t?' active':'');ch.textContent='#'+t;ch.onclick=()=>{activeTag=t;renderNotes();};bar.appendChild(ch);});}
-  const ati=document.getElementById('active-tag-indicator');ati.style.display=activeTag?'flex':'none';if(activeTag)document.getElementById('active-tag-label').textContent='#'+activeTag;
-  if(filtered.length===0){container.innerHTML='';empty.style.display='';return;}
-  empty.style.display='none';
-  const iSVG=`<svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--accent)" opacity="0.18"/><path d="M14 2v6h6M8 13h8M8 17h5" fill="none" stroke="var(--accent2)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
-  if(currentView==='grid'){container.innerHTML='';const g=document.createElement('div');g.className='notes-grid';filtered.forEach(n=>g.appendChild(makeCard(n,iSVG)));container.appendChild(g);}
-  else if(currentView==='list'){container.innerHTML='';const l=document.createElement('div');l.className='notes-list';filtered.forEach(n=>l.appendChild(makeList(n,iSVG)));container.appendChild(l);}
-  else{container.innerHTML='';const by={};filtered.forEach(n=>{const k=n.folder||'__root__';if(!by[k])by[k]=[];by[k].push(n);});Object.entries(by).forEach(([fid,fn])=>{const s=document.createElement('div');s.style.marginBottom='18px';const t=document.createElement('div');t.style.cssText='font-weight:700;font-size:0.82rem;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;';t.textContent=fid==='__root__'?'Root':getFolderPath(fid);s.appendChild(t);const l=document.createElement('div');l.className='notes-list';fn.forEach(n=>l.appendChild(makeList(n,iSVG)));s.appendChild(l);container.appendChild(s);});}
+function handleFilesIntoFolder(files, folderId) {
+  const htmlFiles = [...files].filter(f => f.name.endsWith('.html') || f.name.endsWith('.htm'));
+  if (htmlFiles.length === 0) { showToast('⚠️ Only HTML files are accepted!'); return; }
+  // Queue them all
+  let processed = 0;
+  htmlFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = async e => {
+      const note = {
+        id: 'n_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        name: file.name.replace(/\.html?$/, ''),
+        folder: folderId || null,
+        tags: [],
+        content: e.target.result,
+        created: new Date().toISOString()
+      };
+      notes.push(note);
+      processed++;
+      if (processed === htmlFiles.length) {
+        await saveUserData();
+        const folderName = folderId ? (folders.find(f=>f.id===folderId)?.name || 'folder') : 'root';
+        showToast(`${processed} note${processed>1?'s':''} added to ${folderName}!`);
+        renderAll();
+      }
+    };
+    reader.readAsText(file);
+  });
 }
 
-function makeCard(n,svg){
-  const div=document.createElement('div');div.className='note-card';
-  const tags=(n.tags||[]).map(t=>`<span class="note-tag">#${t}</span>`).join('');
-  const fp=getFolderPath(n.folder);
-  div.innerHTML=`<div class="note-card-icon">${svg}</div><div class="note-card-name">${n.name}</div><div class="note-card-meta">${tags}</div>${fp?`<div class="note-folder-path">${fp}</div>`:''}<div class="note-card-actions"><button class="note-act-btn" onclick="event.stopPropagation();openRenameModal('${n.id}')">Rename</button><button class="note-act-btn" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button><button class="note-act-btn danger" onclick="event.stopPropagation();openDeleteModal('${n.id}')">Delete</button></div>`;
-  div.addEventListener('click',()=>openNote(n.id));return div;
-}
 
-function makeList(n,svg){
-  const div=document.createElement('div');div.className='note-list-item';
-  const tags=(n.tags||[]).map(t=>`<span class="note-tag">#${t}</span>`).join('');
-  const fp=getFolderPath(n.folder);
-  div.innerHTML=`<div class="note-list-icon">${svg}</div><div><div class="note-list-name">${n.name}</div>${fp?`<div class="note-list-path">${fp}</div>`:''}<div class="note-list-tags" style="margin-top:4px">${tags}</div></div><div class="note-list-actions"><button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openRenameModal('${n.id}')">Rename</button><button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button><button class="note-act-btn danger" style="padding:5px 8px" onclick="event.stopPropagation();openDeleteModal('${n.id}')">Delete</button></div>`;
-  div.addEventListener('click',()=>openNote(n.id));return div;
-}
 
-window.setView = (v)=>{currentView=v;['grid','list','tree'].forEach(x=>document.getElementById('view-'+x).classList.toggle('active',x===v));renderNotes();};
-window.clearTagFilter = ()=>{activeTag=null;renderNotes();};
-
-// ─── UPLOAD ──────────────────────────────────────────────────
-function setupUploadZone(){
-  const z=document.getElementById('upload-zone');
-  z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('dragover');});
-  z.addEventListener('dragleave',()=>z.classList.remove('dragover'));
-  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('dragover');handleFiles(e.dataTransfer.files);});
-}
-
-window.handleFiles=(files)=>{
-  const html=[...files].filter(f=>f.name.endsWith('.html')||f.name.endsWith('.htm'));
-  if(!html.length){showToast('Only HTML files are accepted!');return;}
-  pendingFile=html[0]; uploadTags=[];
-  document.getElementById('upload-file-name').textContent=pendingFile.name;
-  document.getElementById('upload-name').value=pendingFile.name.replace(/\.html?$/,'');
+// ============================================================
+// NOTES RENDERING
+// ============================================================
+function renderAll() {
+  renderFolderTree();
   renderFolderOptions('upload-folder');
-  document.getElementById('upload-tags-wrap').innerHTML='<input type="text" id="upload-tag-input" placeholder="Type a tag…" onkeydown="handleTagInput(event)">';
-  document.getElementById('upload-form').style.display='';
-  navigate('upload');
-};
-
-window.handleTagInput=(e)=>{
-  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim().replace(/,/g,'');if(v&&!uploadTags.includes(v)){uploadTags.push(v);renderTagPills();}e.target.value='';}
-  else if(e.key==='Backspace'&&!e.target.value.length&&uploadTags.length){uploadTags.pop();renderTagPills();}
-};
-function renderTagPills(){
-  const w=document.getElementById('upload-tags-wrap');w.innerHTML='';
-  uploadTags.forEach((t,i)=>{const p=document.createElement('span');p.className='tag-pill';p.innerHTML=`${t}<span class="tag-pill-remove" onclick="removeUploadTag(${i})">×</span>`;w.appendChild(p);});
-  const inp=document.createElement('input');inp.type='text';inp.id='upload-tag-input';inp.placeholder='Type a tag…';inp.setAttribute('onkeydown','handleTagInput(event)');w.appendChild(inp);
+  renderNotes();
+  updateNotesCountMeta();
 }
-window.removeUploadTag=(i)=>{uploadTags.splice(i,1);renderTagPills();};
 
-window.saveNote=async()=>{
-  if(!pendingFile)return;
-  const name=document.getElementById('upload-name').value.trim()||pendingFile.name;
-  const folder=document.getElementById('upload-folder').value||null;
-  const btn=document.getElementById('save-note-btn'); btn.disabled=true; btn.textContent='Saving…';
-  const reader=new FileReader();
-  reader.onload=async(e)=>{
-    try{
-      const data={name,folder,tags:[...uploadTags],content:e.target.result,created:new Date().toISOString()};
-      const ref=await addDoc(notesCol(),data);
-      notes.push({id:ref.id,...data});
-      pendingFile=null;uploadTags=[];
-      document.getElementById('upload-form').style.display='none';
-      showToast('Note saved!'); navigate('home'); renderAll();
-    }catch(err){showToast('Error: '+err.message);}
-    finally{btn.disabled=false;btn.textContent='Save Note';}
+function getFolderPath(folderId) {
+  if (!folderId) return '';
+  const parts = [];
+  let current = folderId;
+  while (current) {
+    const f = folders.find(x => x.id === current);
+    if (!f) break;
+    parts.unshift(f.name);
+    current = f.parent;
+  }
+  return parts.join(' / ');
+}
+
+// ============================================================
+// HOME NAVIGATION STATE
+// ============================================================
+let homeFolderId = null; // null = root, string = inside a folder
+
+function navigateHome(folderId) {
+  homeFolderId = folderId;
+  activeTag = null;
+  renderNotes();
+}
+
+function renderNotes() {
+  const container = document.getElementById('notes-container');
+  const emptyState = document.getElementById('empty-state');
+  const breadcrumb = document.getElementById('home-breadcrumb');
+  const pageTitle = document.getElementById('home-page-title');
+
+  container.innerHTML = '';
+
+  // --- Breadcrumb ---
+  const bcPath = [];
+  let cur = homeFolderId;
+  while (cur) {
+    const f = folders.find(x => x.id === cur);
+    if (!f) break;
+    bcPath.unshift(f);
+    cur = f.parent;
+  }
+  if (bcPath.length > 0) {
+    breadcrumb.style.display = 'flex';
+    breadcrumb.innerHTML = '';
+    // Home crumb
+    const home = document.createElement('span');
+    home.className = 'bc-item';
+    home.textContent = '⌂ Home';
+    home.onclick = () => navigateHome(null);
+    breadcrumb.appendChild(home);
+    bcPath.forEach((f, i) => {
+      const sep = document.createElement('span'); sep.className = 'bc-sep'; sep.textContent = '›';
+      breadcrumb.appendChild(sep);
+      const item = document.createElement('span');
+      item.className = 'bc-item' + (i === bcPath.length - 1 ? ' current' : '');
+      item.textContent = f.name;
+      if (i < bcPath.length - 1) item.onclick = () => navigateHome(f.id);
+      breadcrumb.appendChild(item);
+    });
+    pageTitle.textContent = bcPath[bcPath.length - 1].name;
+  } else {
+    breadcrumb.style.display = 'none';
+    pageTitle.textContent = 'All Notes';
+  }
+
+  // --- Tag filter bar (only at root) ---
+  const allTags = [...new Set(notes.flatMap(n => n.tags||[]))];
+  const tagBar = document.getElementById('tag-filter-bar');
+  tagBar.innerHTML = '';
+  if (allTags.length > 0 && !homeFolderId) {
+    const all = document.createElement('div');
+    all.className = 'tag-chip all' + (activeTag ? '' : ' active');
+    all.textContent = 'All';
+    all.onclick = () => clearTagFilter();
+    tagBar.appendChild(all);
+    allTags.forEach(tag => {
+      const chip = document.createElement('div');
+      chip.className = 'tag-chip' + (activeTag===tag?' active':'');
+      chip.textContent = '#'+tag;
+      chip.onclick = () => filterByTag(tag);
+      tagBar.appendChild(chip);
+    });
+  }
+  const ati = document.getElementById('active-tag-indicator');
+  ati.style.display = activeTag ? 'flex' : 'none';
+  if (activeTag) document.getElementById('active-tag-label').textContent = '#'+activeTag;
+
+  // --- If tag filter is active, show flat note list ---
+  if (activeTag) {
+    const filtered = notes.filter(n => n.tags && n.tags.includes(activeTag));
+    if (filtered.length === 0) { emptyState.style.display = ''; return; }
+    emptyState.style.display = 'none';
+    const grid = document.createElement('div'); grid.className = 'notes-grid';
+    filtered.forEach(n => grid.appendChild(makeNoteCard(n)));
+    container.appendChild(grid);
+    return;
+  }
+
+  // --- Subfolders in current level ---
+  const subfolders = folders.filter(f => (f.parent || null) === (homeFolderId || null));
+  // --- Notes directly in current folder ---
+  const localNotes = notes.filter(n => (n.folder || null) === (homeFolderId || null));
+
+  if (subfolders.length === 0 && localNotes.length === 0) {
+    emptyState.style.display = '';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  // --- Render subfolder cards ---
+  if (subfolders.length > 0) {
+    if (localNotes.length > 0) {
+      const sec = document.createElement('div');
+      sec.className = 'home-section-title';
+      sec.textContent = 'Folders';
+      container.appendChild(sec);
+    }
+    const grid = document.createElement('div');
+    grid.className = 'folder-card-grid';
+    subfolders.forEach(f => grid.appendChild(makeFolderCard(f)));
+    container.appendChild(grid);
+  }
+
+  // --- Render notes in this folder ---
+  if (localNotes.length > 0) {
+    if (subfolders.length > 0) {
+      const sec = document.createElement('div');
+      sec.className = 'home-section-title';
+      sec.textContent = 'Notes';
+      container.appendChild(sec);
+    }
+    if (currentView === 'list') {
+      const list = document.createElement('div'); list.className = 'notes-list';
+      localNotes.forEach(n => list.appendChild(makeNoteListItem(n)));
+      container.appendChild(list);
+    } else {
+      const g = document.createElement('div'); g.className = 'notes-grid';
+      localNotes.forEach(n => g.appendChild(makeNoteCard(n)));
+      container.appendChild(g);
+    }
+  }
+}
+
+function makeFolderCard(f) {
+  const card = document.createElement('div');
+  card.className = 'folder-card';
+
+  // Count total notes recursively
+  function countNotes(fid) {
+    let c = notes.filter(n => n.folder === fid).length;
+    folders.filter(sf => sf.parent === fid).forEach(sf => { c += countNotes(sf.id); });
+    return c;
+  }
+  const totalNotes = countNotes(f.id);
+  const directNotes = notes.filter(n => n.folder === f.id).length;
+  const subfolders = folders.filter(sf => sf.parent === f.id);
+
+  const subPills = subfolders.slice(0, 4).map(sf =>
+    `<span class="folder-sub-pill">${sf.name}</span>`
+  ).join('') + (subfolders.length > 4 ? `<span class="folder-sub-pill">+${subfolders.length-4} more</span>` : '');
+
+  card.innerHTML = `
+    <div class="folder-card-icon">
+      <svg viewBox="0 0 24 24" width="22" height="22">
+        <path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" fill="var(--accent)" opacity="0.25"/>
+        <path d="M3 8l3-5h5l2 3h8a1 1 0 011 1" fill="none" stroke="var(--accent2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="folder-card-name">${f.name}</div>
+    <div class="folder-card-meta">
+      <span>${totalNotes} note${totalNotes!==1?'s':''}</span>
+      ${subfolders.length > 0 ? `<span>${subfolders.length} subfolder${subfolders.length!==1?'s':''}</span>` : ''}
+    </div>
+    ${subPills ? `<div class="folder-card-subs">${subPills}</div>` : ''}
+  `;
+  card.addEventListener('click', () => navigateHome(f.id));
+  return card;
+}
+
+function makeNoteCard(n) {
+  const div = document.createElement('div');
+  div.className = 'note-card';
+  const tagHtml = (n.tags||[]).map(t=>`<span class="note-tag">#${t}</span>`).join('');
+  const folderPath = getFolderPath(n.folder);
+  const noteIconSVG = `<svg viewBox="0 0 24 24" width="22" height="22" style="display:block"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--accent)" opacity="0.18"/><path d="M14 2v6h6M8 13h8M8 17h5" fill="none" stroke="var(--accent2)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  div.innerHTML = `
+    <div class="note-card-icon">${noteIconSVG}</div>
+    <div class="note-card-name">${n.name}</div>
+    <div class="note-card-meta">${tagHtml}</div>
+    ${folderPath ? `<div class="note-folder-path">📁 ${folderPath}</div>` : ''}
+    <div class="note-card-actions">
+      <button class="note-act-btn" onclick="event.stopPropagation();openRenameModal('${n.id}')">Rename</button>
+      <button class="note-act-btn" onclick="event.stopPropagation();openReuploadModal('${n.id}')">Update</button>
+      <button class="note-act-btn" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button>
+      <button class="note-act-btn danger" onclick="event.stopPropagation();openDeleteModal('${n.id}')">Delete</button>
+    </div>
+  `;
+  div.addEventListener('click', () => openNote(n.id));
+  return div;
+}
+
+function makeNoteListItem(n) {
+  const div = document.createElement('div');
+  div.className = 'note-list-item';
+  const tagHtml = (n.tags||[]).map(t=>`<span class="note-tag">#${t}</span>`).join('');
+  const folderPath = getFolderPath(n.folder);
+  div.innerHTML = `
+    <div class="note-list-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--accent)" opacity="0.18"/><path d="M14 2v6h6M8 13h8M8 17h5" fill="none" stroke="var(--accent2)" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+    <div>
+      <div class="note-list-name">${n.name}</div>
+      ${folderPath ? `<div class="note-list-path">📁 ${folderPath}</div>` : ''}
+      <div class="note-list-tags" style="margin-top:4px">${tagHtml}</div>
+    </div>
+    <div class="note-list-actions">
+      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openRenameModal('${n.id}')">Rename</button>
+      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openReuploadModal('${n.id}')">Update</button>
+      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button>
+      <button class="note-act-btn danger" style="padding:5px 8px" onclick="event.stopPropagation();openDeleteModal('${n.id}')">Delete</button>
+    </div>
+  `;
+  div.addEventListener('click', () => openNote(n.id));
+  return div;
+}
+
+function updateNotesCountMeta() {
+  const total = notes.length;
+  const meta = document.getElementById('notes-count-meta');
+  if (homeFolderId) {
+    function countAll(fid) {
+      let c = notes.filter(n => n.folder === fid).length;
+      folders.filter(sf => sf.parent === fid).forEach(sf => { c += countAll(sf.id); });
+      return c;
+    }
+    const cnt = countAll(homeFolderId);
+    meta.textContent = cnt + ' note' + (cnt!==1?'s':'') + ' · ' + total + ' total';
+  } else {
+    meta.textContent = total + ' note' + (total!==1?'s':'');
+  }
+}
+
+function setView(v) {
+  currentView = v;
+  ['grid','list','tree'].forEach(x => document.getElementById('view-'+x).classList.toggle('active', x===v));
+  renderNotes();
+}
+
+function filterByTag(tag) {
+  activeTag = tag;
+  renderNotes();
+}
+function clearTagFilter() {
+  activeTag = null;
+  renderNotes();
+}
+
+// ============================================================
+// UPLOAD
+// ============================================================
+function setupUploadZone() {
+  const zone = document.getElementById('upload-zone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+  });
+}
+
+function handleFiles(files) {
+  const htmlFiles = [...files].filter(f => f.name.endsWith('.html') || f.name.endsWith('.htm'));
+  if (htmlFiles.length === 0) { showToast('⚠️ Only HTML files are accepted!'); return; }
+  pendingFile = htmlFiles[0];
+  uploadTags = [];
+  document.getElementById('upload-file-name').textContent = '📄 ' + pendingFile.name;
+  document.getElementById('upload-name').value = pendingFile.name.replace(/\.html?$/, '');
+  renderFolderOptions('upload-folder');
+  document.getElementById('upload-tags-wrap').innerHTML = '<input type="text" id="upload-tag-input" placeholder="Type a tag…" onkeydown="handleTagInput(event)">';
+  document.getElementById('upload-form').style.display = '';
+  navigate('upload');
+}
+
+function handleTagInput(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(/,/g,'');
+    if (val && !uploadTags.includes(val)) {
+      uploadTags.push(val);
+      renderTagPills();
+    }
+    e.target.value = '';
+  } else if (e.key === 'Backspace' && e.target.value === '' && uploadTags.length) {
+    uploadTags.pop();
+    renderTagPills();
+  }
+}
+
+function renderTagPills() {
+  const wrap = document.getElementById('upload-tags-wrap');
+  const input = document.getElementById('upload-tag-input');
+  wrap.innerHTML = '';
+  uploadTags.forEach((tag, i) => {
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill';
+    pill.innerHTML = `${tag}<span class="tag-pill-remove" onclick="removeUploadTag(${i})">×</span>`;
+    wrap.appendChild(pill);
+  });
+  const newInput = document.createElement('input');
+  newInput.type = 'text';
+  newInput.id = 'upload-tag-input';
+  newInput.placeholder = 'Type a tag…';
+  newInput.setAttribute('onkeydown', 'handleTagInput(event)');
+  wrap.appendChild(newInput);
+}
+function removeUploadTag(i) { uploadTags.splice(i,1); renderTagPills(); }
+
+function saveNote() {
+  if (!pendingFile) return;
+  const name = document.getElementById('upload-name').value.trim() || pendingFile.name;
+  const folder = document.getElementById('upload-folder').value;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const note = {
+      id: 'n_' + Date.now(),
+      name,
+      folder: folder || null,
+      tags: [...uploadTags],
+      content: e.target.result,
+      created: new Date().toISOString()
+    };
+    notes.push(note);
+    await saveUserData();
+    pendingFile = null;
+    uploadTags = [];
+    document.getElementById('upload-form').style.display = 'none';
+    showToast('Note saved! ✓');
+    navigate('home');
+    renderAll();
   };
   reader.readAsText(pendingFile);
-};
-window.cancelUpload=()=>{pendingFile=null;document.getElementById('upload-form').style.display='none';navigate('home');};
-
-// ─── NOTE VIEWER ─────────────────────────────────────────────
-window.openNote=(id)=>{
-  const note=notes.find(n=>n.id===id);if(!note)return;
-  currentOpenNoteId = id;
-  document.getElementById('note-win-title').textContent=note.name;
-  document.getElementById('note-iframe').src=URL.createObjectURL(new Blob([note.content],{type:'text/html'}));
-  document.getElementById('note-viewer').classList.add('open');
-  const win=document.getElementById('note-window');
-  if(window.innerWidth<=700){win.style.cssText='width:92vw;height:75vh;left:4vw;top:10vh;transform:none;';}
-  else{win.style.cssText='width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);';}
-  win.classList.remove('fullscreen-win');
-  document.querySelectorAll('.folder-note-item').forEach(el=>el.classList.remove('active'));
-  const sfn=document.getElementById('sfn_'+id);if(sfn)sfn.classList.add('active');
-};
-window.closeNoteViewer=()=>{document.getElementById('note-viewer').classList.remove('open');document.getElementById('note-iframe').src='';document.querySelectorAll('.folder-note-item').forEach(el=>el.classList.remove('active'));};
-window.toggleFullscreenWin=()=>{const w=document.getElementById('note-window');w.classList.toggle('fullscreen-win');if(w.classList.contains('fullscreen-win'))w.style.cssText='';};
-document.getElementById('note-viewer').addEventListener('click',function(e){if(e.target===this)closeNoteViewer();});
-
-function setupDragResize(){
-  const win=document.getElementById('note-window');
-  const bar=document.getElementById('note-win-titlebar');
-  const rh=document.getElementById('resize-handle');
-  let drag=false,resize=false,sx,sy,sw,sh,sl,st;
-  bar.addEventListener('mousedown',e=>{if(win.classList.contains('fullscreen-win'))return;drag=true;sx=e.clientX;sy=e.clientY;const r=win.getBoundingClientRect();sl=r.left;st=r.top;win.style.transform='none';win.style.left=sl+'px';win.style.top=st+'px';});
-  rh.addEventListener('mousedown',e=>{e.stopPropagation();resize=true;sx=e.clientX;sy=e.clientY;const r=win.getBoundingClientRect();sw=r.width;sh=r.height;sl=r.left;st=r.top;win.style.transform='none';win.style.left=sl+'px';win.style.top=st+'px';});
-  document.addEventListener('mousemove',e=>{if(drag){win.style.left=(sl+e.clientX-sx)+'px';win.style.top=(st+e.clientY-sy)+'px';}else if(resize){win.style.width=Math.max(320,sw+e.clientX-sx)+'px';win.style.height=Math.max(200,sh+e.clientY-sy)+'px';}});
-  document.addEventListener('mouseup',()=>{drag=false;resize=false;});
-  bar.addEventListener('touchstart',e=>{if(win.classList.contains('fullscreen-win'))return;const t=e.touches[0];drag=true;sx=t.clientX;sy=t.clientY;const r=win.getBoundingClientRect();sl=r.left;st=r.top;win.style.transform='none';win.style.left=sl+'px';win.style.top=st+'px';},{passive:true});
-  document.addEventListener('touchmove',e=>{if(!drag)return;const t=e.touches[0];win.style.left=(sl+t.clientX-sx)+'px';win.style.top=(st+t.clientY-sy)+'px';},{passive:true});
-  document.addEventListener('touchend',()=>{drag=false;resize=false;});
+}
+function cancelUpload() {
+  pendingFile = null;
+  document.getElementById('upload-form').style.display = 'none';
+  navigate('home');
 }
 
-// ─── RENAME / DELETE / DOWNLOAD ──────────────────────────────
-window.openRenameModal=(id)=>{renameTarget=id;document.getElementById('rename-input').value=notes.find(n=>n.id===id).name;document.getElementById('rename-modal').classList.add('open');setTimeout(()=>document.getElementById('rename-input').focus(),50);};
-window.closeRenameModal=()=>document.getElementById('rename-modal').classList.remove('open');
-window.confirmRename=async()=>{
-  const v=document.getElementById('rename-input').value.trim();if(!v)return;
-  await updateDoc(doc(db,'users',currentUser.uid,'notes',renameTarget),{name:v});
-  notes.find(n=>n.id===renameTarget).name=v;
-  closeRenameModal();renderAll();showToast('Note renamed!');
-};
+// ============================================================
+// NOTE VIEWER
+// ============================================================
+function openNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  document.getElementById('note-win-title').textContent = note.name;
+  const iframe = document.getElementById('note-iframe');
+  const blob = new Blob([note.content], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  iframe.src = url;
+  document.getElementById('note-viewer').classList.add('open');
 
-window.openDeleteModal=(id)=>{deleteTarget=id;document.getElementById('delete-note-name').textContent=notes.find(n=>n.id===id).name;document.getElementById('delete-modal').classList.add('open');};
-window.closeDeleteModal=()=>document.getElementById('delete-modal').classList.remove('open');
-window.confirmDelete=async()=>{
-  await deleteDoc(doc(db,'users',currentUser.uid,'notes',deleteTarget));
-  notes=notes.filter(n=>n.id!==deleteTarget);
-  closeDeleteModal();renderAll();showToast('Note deleted!');
-};
+  // Reset window size/position
+  const win = document.getElementById('note-window');
+  const isMobile = window.innerWidth <= 700;
+  if (isMobile) {
+    win.style.cssText = 'width:92vw;height:75vh;left:4vw;top:12vh;transform:none;';
+  } else {
+    win.style.cssText = 'width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);';
+  }
+  win.classList.remove('fullscreen-win');
 
-window.downloadNote=(id)=>{const n=notes.find(x=>x.id===id);if(!n)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([n.content],{type:'text/html'}));a.download=n.name+'.html';a.click();showToast('Downloading…');};
+  // Highlight in sidebar
+  document.querySelectorAll('.folder-note-item').forEach(el => el.classList.remove('active'));
+  const sfn = document.getElementById('sfn_'+id);
+  if (sfn) sfn.classList.add('active');
+}
 
-// ─── TOAST ───────────────────────────────────────────────────
+function closeNoteViewer() {
+  document.getElementById('note-viewer').classList.remove('open');
+  document.getElementById('note-iframe').src = '';
+  document.querySelectorAll('.folder-note-item').forEach(el => el.classList.remove('active'));
+}
+
+function toggleFullscreenWin() {
+  const win = document.getElementById('note-window');
+  const viewer = document.getElementById('note-viewer');
+  const isFullscreen = win.classList.contains('fullscreen-win');
+  
+  if (!isFullscreen) {
+    win.classList.add('fullscreen-win');
+    win.style.cssText = '';
+    // Try browser fullscreen
+    if (viewer.requestFullscreen) viewer.requestFullscreen();
+    else if (viewer.webkitRequestFullscreen) viewer.webkitRequestFullscreen();
+  } else {
+    win.classList.remove('fullscreen-win');
+    // Exit browser fullscreen
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    // Restore default size
+    const isMobile = window.innerWidth <= 700;
+    if (isMobile) {
+      win.style.cssText = 'width:92vw;height:75vh;left:4vw;top:10vh;transform:none;';
+    } else {
+      win.style.cssText = 'width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);';
+    }
+  }
+}
+
+// Handle fullscreen change from browser (e.g. Escape key)
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    const win = document.getElementById('note-window');
+    if (win && win.classList.contains('fullscreen-win')) {
+      win.classList.remove('fullscreen-win');
+      const isMobile = window.innerWidth <= 700;
+      if (isMobile) {
+        win.style.cssText = 'width:92vw;height:75vh;left:4vw;top:10vh;transform:none;';
+      } else {
+        win.style.cssText = 'width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);';
+      }
+    }
+  }
+});
+
+// Click overlay to close
+document.getElementById('note-viewer').addEventListener('click', function(e) {
+  if (e.target === this) closeNoteViewer();
+});
+
+// Drag & Resize
+function setupDragResize() {
+  const win = document.getElementById('note-window');
+  const titlebar = document.getElementById('note-win-titlebar');
+  const resizeHandle = document.getElementById('resize-handle');
+  let dragging = false, resizing = false;
+  let startX, startY, startW, startH, startLeft, startTop;
+
+  titlebar.addEventListener('mousedown', e => {
+    if (win.classList.contains('fullscreen-win')) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    const rect = win.getBoundingClientRect();
+    startLeft = rect.left; startTop = rect.top;
+    win.style.transform = 'none';
+    win.style.left = startLeft + 'px';
+    win.style.top = startTop + 'px';
+  });
+  resizeHandle.addEventListener('mousedown', e => {
+    e.stopPropagation();
+    resizing = true;
+    startX = e.clientX; startY = e.clientY;
+    const rect = win.getBoundingClientRect();
+    startW = rect.width; startH = rect.height;
+    startLeft = rect.left; startTop = rect.top;
+    win.style.transform = 'none';
+    win.style.left = startLeft + 'px';
+    win.style.top = startTop + 'px';
+  });
+  document.addEventListener('mousemove', e => {
+    if (dragging) {
+      win.style.left = (startLeft + e.clientX - startX) + 'px';
+      win.style.top = (startTop + e.clientY - startY) + 'px';
+    } else if (resizing) {
+      const newW = Math.max(320, startW + e.clientX - startX);
+      const newH = Math.max(200, startH + e.clientY - startY);
+      win.style.width = newW + 'px';
+      win.style.height = newH + 'px';
+    }
+  });
+  document.addEventListener('mouseup', () => { dragging = false; resizing = false; });
+
+  // Touch drag for mobile
+  titlebar.addEventListener('touchstart', e => {
+    if (win.classList.contains('fullscreen-win')) return;
+    const t = e.touches[0];
+    dragging = true;
+    startX = t.clientX; startY = t.clientY;
+    const rect = win.getBoundingClientRect();
+    startLeft = rect.left; startTop = rect.top;
+    win.style.transform = 'none';
+    win.style.left = startLeft + 'px';
+    win.style.top = startTop + 'px';
+  }, {passive:true});
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const t = e.touches[0];
+    win.style.left = (startLeft + t.clientX - startX) + 'px';
+    win.style.top = (startTop + t.clientY - startY) + 'px';
+  }, {passive:true});
+  document.addEventListener('touchend', () => { dragging = false; resizing = false; });
+}
+
+// ============================================================
+// RENAME / DELETE / DOWNLOAD
+// ============================================================
+function openRenameModal(id) {
+  renameTarget = id;
+  const note = notes.find(n => n.id===id);
+  document.getElementById('rename-input').value = note.name;
+  document.getElementById('rename-modal').classList.add('open');
+  setTimeout(() => document.getElementById('rename-input').focus(), 50);
+}
+function closeRenameModal() { document.getElementById('rename-modal').classList.remove('open'); }
+async function confirmRename() {
+  const val = document.getElementById('rename-input').value.trim();
+  if (!val) return;
+  const note = notes.find(n => n.id===renameTarget);
+  note.name = val;
+  await saveUserData();
+  closeRenameModal();
+  renderAll();
+  showToast('Note renamed!');
+}
+
+function openDeleteModal(id) {
+  deleteTarget = id;
+  const note = notes.find(n => n.id===id);
+  document.getElementById('delete-note-name').textContent = note.name;
+  document.getElementById('delete-modal').classList.add('open');
+}
+function closeDeleteModal() { document.getElementById('delete-modal').classList.remove('open'); }
+async function confirmDelete() {
+  notes = notes.filter(n => n.id !== deleteTarget);
+  await saveUserData();
+  closeDeleteModal();
+  renderAll();
+  showToast('Note deleted!');
+}
+
+// ============================================================
+// REUPLOAD / UPDATE NOTE
+// ============================================================
+let reuploadTarget = null;
+let reuploadPendingFile = null;
+
+function openReuploadModal(id) {
+  reuploadTarget = id;
+  reuploadPendingFile = null;
+  const note = notes.find(n => n.id === id);
+  document.getElementById('reupload-note-name').textContent = note.name;
+  document.getElementById('reupload-selected-name').textContent = 'No file selected';
+  document.getElementById('reupload-confirm-btn').disabled = true;
+  document.getElementById('reupload-confirm-btn').style.opacity = '0.5';
+  document.getElementById('reupload-file-input').value = '';
+  document.getElementById('reupload-modal').classList.add('open');
+  // Setup drag/drop on the zone
+  const zone = document.getElementById('reupload-zone');
+  zone.ondragover = e => { e.preventDefault(); zone.classList.add('dragover'); };
+  zone.ondragleave = () => zone.classList.remove('dragover');
+  zone.ondrop = e => { e.preventDefault(); zone.classList.remove('dragover'); handleReuploadFile(e.dataTransfer.files); };
+}
+
+function closeReuploadModal() {
+  document.getElementById('reupload-modal').classList.remove('open');
+  reuploadTarget = null;
+  reuploadPendingFile = null;
+}
+
+async function deleteFromReuploadModal() {
+  if (!reuploadTarget) return;
+  notes = notes.filter(n => n.id !== reuploadTarget);
+  await saveUserData();
+  closeReuploadModal();
+  renderAll();
+  showToast('Note deleted!');
+}
+
+function handleReuploadFile(files) {
+  const f = [...files].find(f => f.name.endsWith('.html') || f.name.endsWith('.htm'));
+  if (!f) { showToast('⚠️ Only HTML files accepted!'); return; }
+  reuploadPendingFile = f;
+  document.getElementById('reupload-selected-name').textContent = '📄 ' + f.name;
+  document.getElementById('reupload-confirm-btn').disabled = false;
+  document.getElementById('reupload-confirm-btn').style.opacity = '1';
+}
+
+async function confirmReupload() {
+  if (!reuploadPendingFile || !reuploadTarget) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const note = notes.find(n => n.id === reuploadTarget);
+    if (!note) return;
+    note.content = e.target.result;
+    note.updated = new Date().toISOString();
+    await saveUserData();
+    closeReuploadModal();
+    showToast('Note updated!');
+    renderAll();
+  };
+  reader.readAsText(reuploadPendingFile);
+}
+
+function downloadNote(id) {
+  const note = notes.find(n => n.id===id);
+  if (!note) return;
+  const blob = new Blob([note.content], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = note.name + '.html';
+  a.click();
+  showToast('Downloading…');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
 let toastTimer;
-window.showToast=(msg)=>{const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400);};
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
 
-// ─── PWA INSTALL PROMPT ───────────────────────────────────────
-let deferredInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  // Show install button in tray if available
-  const installBtn = document.getElementById('tray-install-btn');
-  if (installBtn) installBtn.style.display = 'flex';
-});
-window.installPWA = async () => {
-  if (!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  const result = await deferredInstallPrompt.userChoice;
-  if (result.outcome === 'accepted') showToast('NoteZ added to home screen!');
-  deferredInstallPrompt = null;
-  const installBtn = document.getElementById('tray-install-btn');
-  if (installBtn) installBtn.style.display = 'none';
-};
+// Enter key on modals
+document.getElementById('rename-input').addEventListener('keydown', e => { if(e.key==='Enter') confirmRename(); });
+document.getElementById('folder-name-input').addEventListener('keydown', e => { if(e.key==='Enter') createFolder(); });
+document.getElementById('rename-folder-input').addEventListener('keydown', e => { if(e.key==='Enter') confirmRenameFolder(); });
 
-document.addEventListener('DOMContentLoaded',()=>{
-  setupDragResize(); setupUploadZone();
-  document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-  document.getElementById('login-email').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-  document.getElementById('rename-input').addEventListener('keydown',e=>{if(e.key==='Enter')confirmRename();});
-  document.getElementById('folder-name-input').addEventListener('keydown',e=>{if(e.key==='Enter')createFolder();});
-  ['folder-modal','rename-modal','delete-modal'].forEach(id=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});});
+// Also wire the sidebar scroll area as a drop target for root (no folder)
+function setupSidebarDrop() {
+  const scroll = document.querySelector('.sidebar-scroll');
+  if (!scroll) return;
+  scroll.addEventListener('dragenter', e => {
+    if (!e.dataTransfer.types.includes('Files')) return;
+    e.preventDefault();
+    const rdz = document.getElementById('root-drop-zone');
+    if (rdz) rdz.style.display = 'flex';
+  });
+  scroll.addEventListener('dragover', e => {
+    if (!e.dataTransfer.types.includes('Files')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+  scroll.addEventListener('dragleave', e => {
+    // Only hide if we've left the entire sidebar scroll
+    if (!scroll.contains(e.relatedTarget)) {
+      const rdz = document.getElementById('root-drop-zone');
+      if (rdz) rdz.style.display = 'none';
+    }
+  });
+  scroll.addEventListener('drop', e => {
+    e.preventDefault();
+    const rdz = document.getElementById('root-drop-zone');
+    if (rdz) rdz.style.display = 'none';
+    // Only handle if not already handled by a folder header
+    handleFilesIntoFolder(e.dataTransfer.files, null);
+  });
+}
+
+// Close modals clicking overlay
+['folder-modal','rename-modal','delete-modal','reupload-modal','delete-folder-modal','rename-folder-modal'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
 });
+</script>
+
+<!-- Firebase via REST API - no SDK needed, works without CDN -->
+<script>
+// ============================================================
+// FIREBASE REST API WRAPPER (no SDK - pure fetch)
+// ============================================================
+const FB_API_KEY = "AIzaSyBKK7lSt7_S9zhibXEkpAl75gBUWxKcwmA";
+const FB_DB_URL  = "https://notez-e2e36-default-rtdb.firebaseio.com";
+const FB_AUTH_URL = "https://identitytoolkit.googleapis.com/v1/accounts";
+
+let _fbIdToken = null;
+let _fbRefreshToken = null;
+let _fbUid = null;
+let _fbDisplayName = null;
+let _tokenExpiry = 0;
+
+// Persist session in localStorage
+function _saveSession(idToken, refreshToken, uid, displayName, expiresIn) {
+  _fbIdToken = idToken;
+  _fbRefreshToken = refreshToken;
+  _fbUid = uid;
+  _fbDisplayName = displayName;
+  _tokenExpiry = Date.now() + (parseInt(expiresIn) - 60) * 1000;
+  localStorage.setItem('notez_fb_session', JSON.stringify({ idToken, refreshToken, uid, displayName, expiresIn: _tokenExpiry }));
+}
+
+function _clearSession() {
+  _fbIdToken = null; _fbRefreshToken = null; _fbUid = null; _fbDisplayName = null; _tokenExpiry = 0;
+  localStorage.removeItem('notez_fb_session');
+}
+
+async function _getToken() {
+  if (_fbIdToken && Date.now() < _tokenExpiry) return _fbIdToken;
+  // Refresh token
+  if (!_fbRefreshToken) return null;
+  try {
+    const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB_API_KEY}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ grant_type:'refresh_token', refresh_token: _fbRefreshToken })
+    });
+    const d = await r.json();
+    if (d.id_token) {
+      _fbIdToken = d.id_token;
+      _fbRefreshToken = d.refresh_token;
+      _tokenExpiry = Date.now() + (parseInt(d.expires_in) - 60) * 1000;
+      const sess = JSON.parse(localStorage.getItem('notez_fb_session') || '{}');
+      sess.idToken = _fbIdToken; sess.refreshToken = _fbRefreshToken; sess.expiresIn = _tokenExpiry;
+      localStorage.setItem('notez_fb_session', JSON.stringify(sess));
+      return _fbIdToken;
+    }
+  } catch(e) {}
+  _clearSession();
+  return null;
+}
+
+async function fbSignIn(email, password) {
+  const r = await fetch(`${FB_AUTH_URL}:signInWithPassword?key=${FB_API_KEY}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  _saveSession(d.idToken, d.refreshToken, d.localId, d.displayName || email.split('@')[0], d.expiresIn);
+  return { uid: d.localId, displayName: d.displayName || email.split('@')[0], email: d.email };
+}
+
+async function fbSignUp(email, password, displayName) {
+  const r = await fetch(`${FB_AUTH_URL}:signUp?key=${FB_API_KEY}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  // Set display name
+  await fetch(`${FB_AUTH_URL}:update?key=${FB_API_KEY}`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ idToken: d.idToken, displayName, returnSecureToken: false })
+  });
+  _saveSession(d.idToken, d.refreshToken, d.localId, displayName, d.expiresIn);
+  return { uid: d.localId, displayName, email: d.email };
+}
+
+function fbSignOut() {
+  _clearSession();
+}
+
+// ============================================================
+// INIT - check for saved session and boot app
+// ============================================================
+async function initApp() {
+  setupDragResize();
+  setupUploadZone();
+  setupSidebarDrop();
+
+  document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+  // Try to restore session
+  try {
+    const sess = JSON.parse(localStorage.getItem('notez_fb_session') || 'null');
+    if (sess && sess.refreshToken) {
+      _fbIdToken = sess.idToken;
+      _fbRefreshToken = sess.refreshToken;
+      _fbUid = sess.uid;
+      _fbDisplayName = sess.displayName;
+      _tokenExpiry = sess.expiresIn || 0;
+      // Validate by getting a fresh token
+      const token = await _getToken();
+      if (token) {
+        currentUser = _fbUid;
+        await loadUserDataFromFirebase();
+        const displayName = _fbDisplayName || 'User';
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        document.getElementById('user-avatar-text').textContent = displayName[0].toUpperCase();
+        document.getElementById('user-avatar-text').title = displayName;
+        applySettings();
+        renderAll();
+        document.getElementById('app-loading').style.display = 'none';
+        return;
+      }
+    }
+  } catch(e) { _clearSession(); }
+
+  // No valid session
+  document.getElementById('app-loading').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+initApp();
 </script>
 </body>
 </html>
