@@ -2,12 +2,13 @@
   "name": "NoteZ - Your Notes, Perfectly Organized",
   "short_name": "NoteZ",
   "description": "Your notes, perfectly organized with NoteZ",
-  "start_url": "/NoteZ/",
+  "start_url": "/NoteZ/?source=pwa",
   "scope": "/NoteZ/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#7c6dfa",
   "background_color": "#0f0f11",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/NoteZ/icon-1.png",
@@ -17,9 +18,21 @@
     },
     {
       "src": "/NoteZ/icon-1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/NoteZ/icon-1.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/NoteZ/icon-1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["productivity"],
