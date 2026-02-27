@@ -1,5 +1,10 @@
 const CACHE_NAME = 'notez-v1';
-const ASSETS = ['/'];
+const ASSETS = [
+  'https://shanbruh.github.io/NoteZ/',
+  'https://shanbruh.github.io/NoteZ/index.html',
+  'https://shanbruh.github.io/NoteZ/manifest.json',
+  'https://shanbruh.github.io/NoteZ/icon-1.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(
