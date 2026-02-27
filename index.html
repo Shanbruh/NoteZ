@@ -1652,7 +1652,7 @@ function closeFolderCtxMenu() {
 document.addEventListener('click', () => closeFolderCtxMenu());
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeFolderCtxMenu(); });
 
-function ctxRenameFolder() {
+function ctxRenameFolder() {\n  const fid = ctxFolderId;
   const f = folders.find(x => x.id === ctxFolderId);
   if (!f) return;
   document.getElementById('rename-folder-input').value = f.name;
@@ -1702,11 +1702,13 @@ async function confirmDeleteFolder() {
 }
 
 function ctxChangeParent() {
+  const fid = ctxFolderId;
+  if (!fid) return;
   if (!ctxFolderId) return;
-  const folder = folders.find(f => f.id === ctxFolderId);
+  const folder = folders.find(f => f.id === fid);
   if (!folder) return;
   
-  const allFolders = folders.filter(f => f.id !== ctxFolderId);
+  const allFolders = folders.filter(f => f.id !== fid);
   
   const modal = document.createElement('div');
   modal.id = 'parent-select-modal';
@@ -1725,7 +1727,7 @@ function ctxChangeParent() {
   const rootBtn = document.createElement('div');
   rootBtn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
   rootBtn.textContent = '📁 Root (No parent)';
-  rootBtn.onclick = (e) => { e.stopPropagation(); setFolderParent(null); modal.remove(); };
+  rootBtn.onclick = (e) => { e.stopPropagation(); setFolderParentFromId(fid, null); modal.remove(); };
   rootBtn.onmouseover = () => { rootBtn.style.background = 'var(--bg4)'; };
   rootBtn.onmouseout = () => { rootBtn.style.background = 'var(--bg3)'; };
   content.appendChild(rootBtn);
@@ -1735,7 +1737,7 @@ function ctxChangeParent() {
     const btn = document.createElement('div');
     btn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
     btn.textContent = '📁 ' + f.name;
-    btn.onclick = (e) => { e.stopPropagation(); setFolderParent(f.id); modal.remove(); };
+    btn.onclick = (e) => { e.stopPropagation(); setFolderParentFromId(fid, f.id); modal.remove(); };
     btn.onmouseover = () => { btn.style.background = 'var(--bg4)'; };
     btn.onmouseout = () => { btn.style.background = 'var(--bg3)'; };
     content.appendChild(btn);
@@ -1754,9 +1756,19 @@ function ctxChangeParent() {
   closeFolderCtxMenu();
 }
 
+
+function setFolderParentFromId(folderId, parentId) {
+  const folder = folders.find(f => f.id === folderId);
+  if (!folder) return;
+  folder.parent = parentId || null;
+  saveUserData();
+  renderAll();
+  showToast('Parent folder changed!');
+}
+
 function setFolderParent(parentId) {
   if (!ctxFolderId) return;
-  const folder = folders.find(f => f.id === ctxFolderId);
+  const folder = folders.find(f => f.id === fid);
   if (!folder) return;
   folder.parent = parentId || null;
   saveUserData();
@@ -1937,7 +1949,7 @@ function closeNoteCtxMenu() {
   document.removeEventListener('click', closeNoteCtxMenu);
 }
 
-function ctxChangeNoteParent() {
+function ctxChangeNoteParent() {\n  const nid = ctxNoteId;
   if (!ctxNoteId) return;
   const note = notes.find(n => n.id === ctxNoteId);
   if (!note) return;
