@@ -1,49 +1,22 @@
 {
-  "name": "NoteZ - Your Notes, Perfectly Organized",
+  "name": "NoteZ",
   "short_name": "NoteZ",
-  "description": "Your notes, perfectly organized with NoteZ",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
   "theme_color": "#7c6dfa",
-  "background_color": "#0f0f11",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%237c6dfa;stop-opacity:1' /><stop offset='100%' style='stop-color:%23a594ff;stop-opacity:1' /></linearGradient></defs><rect width='192' height='192' fill='url(%23grad)' rx='45'/><g stroke='white' stroke-width='9' stroke-linecap='round' fill='none'><path d='M 50 50 L 50 150'/><path d='M 75 50 L 75 150'/><path d='M 100 50 L 100 150'/><path d='M 125 50 L 125 150'/></g><circle cx='155' cy='85' r='28' fill='none' stroke='white' stroke-width='9'/></svg>",
+      "src": "/icon-1.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%237c6dfa;stop-opacity:1' /><stop offset='100%' style='stop-color:%23a594ff;stop-opacity:1' /></linearGradient></defs><rect width='512' height='512' fill='url(%23grad)' rx='120'/><g stroke='white' stroke-width='24' stroke-linecap='round' fill='none'><path d='M 130 130 L 130 400'/><path d='M 200 130 L 200 400'/><path d='M 270 130 L 270 400'/><path d='M 340 130 L 340 400'/></g><circle cx='420' cy='230' r='75' fill='none' stroke='white' stroke-width='24'/></svg>",
+      "src": "/icon-2.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "categories": ["productivity"],
-  "screenshots": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect width='540' height='720' fill='%230f0f11'/><rect width='540' height='60' fill='%2316161a'/><text x='270' y='40' font-family='sans-serif' font-size='24' fill='%237c6dfa' text-anchor='middle' font-weight='bold'>NoteZ</text></svg>",
-      "sizes": "540x720",
-      "type": "image/svg+xml",
-      "form_factor": "narrow"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Create Note",
-      "short_name": "New Note",
-      "description": "Create a new note",
-      "url": "/?action=new",
-      "icons": [
-        {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%237c6dfa' rx='22'/><text x='48' y='56' font-size='48' fill='white' text-anchor='middle' dominant-baseline='middle'>+</text></svg>",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
-        }
-      ]
     }
   ]
 }
