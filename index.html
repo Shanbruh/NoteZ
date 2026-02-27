@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="NoteZ">
 <meta name="theme-color" content="#7c6dfa" id="theme-color-meta">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='accentGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%237c6dfa;stop-opacity:1' /><stop offset='33%' style='stop-color:%234d9fff;stop-opacity:1' /><stop offset='66%' style='stop-color:%233ddc97;stop-opacity:1' /><stop offset='100%' style='stop-color:%23f4a24b;stop-opacity:1' /></linearGradient></defs><rect width='192' height='192' fill='url(%23accentGrad)' rx='45'/><path d='M 60 40 L 60 152 M 80 40 L 80 152 M 100 40 L 100 152 M 130 40 L 130 152' stroke='white' stroke-width='8' stroke-linecap='round'/><circle cx='150' cy='80' r='25' fill='none' stroke='white' stroke-width='8'/></svg>">
+<link rel="manifest" href="data:application/json,{%22name%22:%22NoteZ%22,%22short_name%22:%22NoteZ%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f0f11%22,%22theme_color%22:%22%237c6dfa%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Cdefs%3E%3ClinearGradient id=%27grad%27%3E%3Cstop offset=%270%25%27 style=%27stop-color:%237c6dfa%27/%3E%3Cstop offset=%2733%25%27 style=%27stop-color:%234d9fff%27/%3E%3Cstop offset=%2766%25%27 style=%27stop-color:%233ddc97%27/%3E%3Cstop offset=%27100%25%27 style=%27stop-color:%23f4a24b%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%27192%27 height=%27192%27 fill=%27url(%23grad)%27 rx=%2745%27/%3E%3Cpath d=%27M 60 40 L 60 152 M 80 40 L 80 152 M 100 40 L 100 152 M 130 40 L 130 152%27 stroke=%27white%27 stroke-width=%278%27/%3E%3Ccircle cx=%27150%27 cy=%2780%27 r=%2725%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27/%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22}]}">
 <title>NoteZ</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 
@@ -217,9 +219,13 @@
     transition: all var(--transition);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     display: flex; align-items: center; gap: 6px;
+    user-select: none;
+    -webkit-user-drag: auto;
   }
   .folder-note-item:hover { background: var(--bg3); color: var(--text2); }
   .folder-note-item.active { color: var(--accent2); background: var(--accent-glow); }
+  .folder-note-item.dragging { opacity: 0.5; }
+  .folder-header.drag-over { background: var(--accent-glow); border-color: var(--accent); }
 
   /* MAIN */
   .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
@@ -249,6 +255,7 @@
   /* VIEW TOGGLE */
   .view-toggle { display: flex; background: var(--bg3); border-radius: 7px; padding: 2px; gap: 1px; }
   .view-btn { width: 28px; height: 28px; border-radius: 5px; border: none; background: transparent; color: var(--text2); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
+  .view-btn:hover { background: var(--bg4); color: var(--text); }
   .view-btn.active { background: var(--bg2); color: var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
 
   /* CONTENT AREA */
@@ -284,6 +291,7 @@
     gap: 14px;
   }
   .notes-list { display: flex; flex-direction: column; gap: 8px; }
+  .notes-tree { display: flex; flex-direction: column; gap: 8px; }
 
   .note-card {
     background: var(--bg2);
@@ -318,6 +326,34 @@
   }
   .note-act-btn:hover { background: var(--bg4); color: var(--text); }
   .note-act-btn.danger:hover { background: rgba(255,91,107,0.15); color: var(--danger); border-color: var(--danger); }
+
+  /* UPDATE WINDOW */
+  .update-window {
+    position: absolute;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column;
+    overflow: visible;
+    min-width: 300px; min-height: auto;
+    padding: 16px;
+    z-index: 46;
+  }
+  .update-window-title {
+    font-weight: 700; font-size: 0.95rem; margin-bottom: 12px; color: var(--text);
+  }
+  .update-window-btn {
+    width: 100%; padding: 10px; margin-bottom: 8px;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer; color: var(--text2);
+    font-family: var(--font); font-weight: 600; font-size: 0.9rem;
+    transition: all var(--transition);
+  }
+  .update-window-btn:hover {
+    background: var(--bg4); color: var(--text);
+  }
+  .update-window-btn:last-child { margin-bottom: 0; }
 
   /* LIST VIEW */
   .note-list-item {
@@ -393,6 +429,14 @@
     backdrop-filter: blur(4px);
   }
   #note-viewer.open { display: flex; }
+  
+  /* FLOATING NOTE WINDOWS CONTAINER */
+  #floating-windows {
+    position: fixed; inset: 0; z-index: 45; pointer-events: none;
+  }
+  #floating-windows .note-window { pointer-events: all; }
+  #floating-windows .update-window { pointer-events: all; }
+  
   .note-window {
     position: absolute;
     background: var(--bg2);
@@ -402,7 +446,9 @@
     display: flex; flex-direction: column;
     overflow: hidden;
     min-width: 320px; min-height: 200px;
+    transition: box-shadow 0.2s ease;
   }
+  .note-window.active { box-shadow: 0 20px 100px rgba(124,109,250,0.4); }
   .note-window-titlebar {
     height: 42px;
     background: var(--bg3);
@@ -414,7 +460,8 @@
   }
   .note-window-titlebar:active { cursor: grabbing; }
   .win-title { flex: 1; font-size: 0.88rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .win-btn { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; }
+  .win-btn { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition); flex-shrink: 0; background: var(--bg4); color: var(--text2); }
+  .win-btn:hover { background: var(--border); color: var(--text); }
   .win-btn.close { background: var(--danger); color: #fff; }
   .win-btn.fullscreen { background: var(--success); color: #fff; }
   .win-btn.close:hover, .win-btn.fullscreen:hover { opacity: 0.8; transform: scale(1.1); }
@@ -531,16 +578,13 @@
 
   /* TOAST */
   #toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-80px);
     background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
     padding: 10px 18px; font-size: 0.88rem; font-weight: 600;
     z-index: 200; transition: transform 0.3s ease; pointer-events: none;
     white-space: nowrap;
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
-  @media (max-width: 700px) {
-    #toast { bottom: 68px; }
-  }
 
   /* SIDEBAR BOTTOM NAV */
   .sidebar-bottom-nav {
@@ -983,16 +1027,16 @@
       <div class="topbar-actions">
         <div class="view-toggle" id="view-toggle">
           <!-- Grid -->
-          <button class="view-btn active" id="view-grid" onclick="setView('grid')" title="Grid">
+          <button class="view-btn active" id="view-grid" onclick="setView('grid')" title="Grid View">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           </button>
-          <!-- List -->
-          <button class="view-btn" id="view-list" onclick="setView('list')" title="List">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1" fill="currentColor"/><circle cx="3.5" cy="12" r="1" fill="currentColor"/><circle cx="3.5" cy="18" r="1" fill="currentColor"/></svg>
-          </button>
           <!-- Tree -->
-          <button class="view-btn" id="view-tree" onclick="setView('tree')" title="Folder Tree">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h7v4H3zM14 4h7v4h-7zM14 16h7v4h-7z"/><path d="M6 8v4M6 12h8M17.5 12v4"/></svg>
+          <button class="view-btn" id="view-tree" onclick="setView('tree')" title="Tree View">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 5h3M3 12h3M3 19h3M8 5h10M8 12h10M8 19h10"/><path d="M5 3v2M5 10v2M5 17v2"/></svg>
+          </button>
+          <!-- List -->
+          <button class="view-btn" id="view-list" onclick="setView('list')" title="List View">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1" fill="currentColor"/><circle cx="3.5" cy="12" r="1" fill="currentColor"/><circle cx="3.5" cy="18" r="1" fill="currentColor"/></svg>
           </button>
         </div>
         <button class="btn-primary" onclick="navigate('upload')" style="padding:7px 13px;font-size:0.82rem">+ Upload</button>
@@ -1043,15 +1087,15 @@
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px">
           <div id="upload-file-name" style="font-weight:700;font-size:1rem;margin-bottom:16px"></div>
 
-          <label>Note Name</label>
-          <input type="text" id="upload-name" placeholder="Name your note">
+          <label style="font-size:0.8rem;color:var(--text2);display:block;margin-bottom:4px;font-weight:600;letter-spacing:0.3px;">Note Name</label>
+          <input type="text" id="upload-name" placeholder="Name your note" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font);font-size:0.9rem;margin-bottom:10px;outline:none;transition:border var(--transition);">
 
-          <label>Folder</label>
-          <select id="upload-folder">
-            <option value="">— No folder —</option>
+          <label style="font-size:0.8rem;color:var(--text2);display:block;margin-bottom:4px;font-weight:600;letter-spacing:0.3px;">Folder</label>
+          <select id="upload-folder" required style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font);font-size:0.9rem;margin-bottom:10px;outline:none;transition:border var(--transition);">
+            <option value="" disabled selected>— Select a folder —</option>
           </select>
 
-          <label>Tags (press Enter to add)</label>
+          <label style="font-size:0.8rem;color:var(--text2);display:block;margin-bottom:4px;font-weight:600;letter-spacing:0.3px;">Tags (press Enter to add)</label>
           <div class="tags-input-wrap" id="upload-tags-wrap" onclick="document.getElementById('upload-tag-input').focus()">
             <input type="text" id="upload-tag-input" placeholder="Type a tag…" onkeydown="handleTagInput(event)">
           </div>
@@ -1087,6 +1131,9 @@
     </div>
   </div>
 </div>
+
+<!-- FLOATING NOTE WINDOWS -->
+<div id="floating-windows"></div>
 
 <!-- NOTE VIEWER OVERLAY -->
 <div id="note-viewer">
@@ -1133,6 +1180,10 @@
   <div class="ctx-item" id="ctx-rename-folder" onclick="ctxRenameFolder()">
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
     Rename
+  </div>
+  <div class="ctx-item" id="ctx-change-parent" onclick="ctxChangeParent()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M3 8l2-4h14l2 4M9 12v6M15 12v6"/></svg>
+    Change Parent Folder
   </div>
   <div class="ctx-item danger" id="ctx-delete-folder" onclick="ctxDeleteFolder()">
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
@@ -1649,6 +1700,303 @@ async function confirmDeleteFolder() {
   renderAll();
   showToast('Folder deleted!');
 }
+
+function ctxChangeParent() {
+  if (!ctxFolderId) return;
+  const folder = folders.find(f => f.id === ctxFolderId);
+  if (!folder) return;
+  
+  const allFolders = folders.filter(f => f.id !== ctxFolderId);
+  
+  const modal = document.createElement('div');
+  modal.id = 'parent-select-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;pointer-events:auto;';
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  
+  const content = document.createElement('div');
+  content.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:400px;width:90%;max-height:70vh;overflow-y:auto;pointer-events:auto;';
+  
+  const title = document.createElement('div');
+  title.style.cssText = 'font-weight:700;margin-bottom:16px;font-size:1rem;color:var(--text);';
+  title.textContent = `Select Parent Folder for "${folder.name}"`;
+  content.appendChild(title);
+  
+  // Root option
+  const rootBtn = document.createElement('div');
+  rootBtn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
+  rootBtn.textContent = '📁 Root (No parent)';
+  rootBtn.onclick = (e) => { e.stopPropagation(); setFolderParent(null); modal.remove(); };
+  rootBtn.onmouseover = () => { rootBtn.style.background = 'var(--bg4)'; };
+  rootBtn.onmouseout = () => { rootBtn.style.background = 'var(--bg3)'; };
+  content.appendChild(rootBtn);
+  
+  // Folder options
+  allFolders.forEach(f => {
+    const btn = document.createElement('div');
+    btn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
+    btn.textContent = '📁 ' + f.name;
+    btn.onclick = (e) => { e.stopPropagation(); setFolderParent(f.id); modal.remove(); };
+    btn.onmouseover = () => { btn.style.background = 'var(--bg4)'; };
+    btn.onmouseout = () => { btn.style.background = 'var(--bg3)'; };
+    content.appendChild(btn);
+  });
+  
+  const cancelBtn = document.createElement('div');
+  cancelBtn.style.cssText = 'width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text);font-family:var(--font);font-weight:600;transition:all 0.18s;text-align:center;user-select:none;pointer-events:auto;';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = () => modal.remove();
+  cancelBtn.onmouseover = () => { cancelBtn.style.background = 'var(--bg4)'; };
+  cancelBtn.onmouseout = () => { cancelBtn.style.background = 'var(--bg3)'; };
+  content.appendChild(cancelBtn);
+  
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+  closeFolderCtxMenu();
+}
+
+function setFolderParent(parentId) {
+  if (!ctxFolderId) return;
+  const folder = folders.find(f => f.id === ctxFolderId);
+  if (!folder) return;
+  folder.parent = parentId || null;
+  saveUserData();
+  renderAll();
+  showToast('Parent folder changed!');
+  const modal = document.getElementById('parent-select-modal');
+  if (modal) modal.remove();
+}
+
+// Note context menu
+function openUpdateWindow(noteId) {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  // Create floating window
+  const windowId = 'update-window-' + noteId;
+  const existingWindow = document.getElementById(windowId);
+  if (existingWindow) {
+    existingWindow.remove();
+    return;
+  }
+  
+  const container = document.querySelector('#floating-windows') || document.body;
+  const updateWindow = document.createElement('div');
+  updateWindow.id = windowId;
+  updateWindow.className = 'update-window';
+  updateWindow.style.left = (100 + Math.random() * 200) + 'px';
+  updateWindow.style.top = (100 + Math.random() * 200) + 'px';
+  
+  const renameBtn = document.createElement('button');
+  renameBtn.className = 'update-window-btn';
+  renameBtn.textContent = '📝 Rename Note';
+  renameBtn.onclick = () => {
+    openRenameModal(noteId);
+    updateWindow.remove();
+  };
+  
+  const replaceBtn = document.createElement('button');
+  replaceBtn.className = 'update-window-btn';
+  replaceBtn.textContent = '📤 Replace File';
+  replaceBtn.onclick = () => {
+    openReuploadModal(noteId);
+    updateWindow.remove();
+  };
+  
+  const changeParentBtn = document.createElement('button');
+  changeParentBtn.className = 'update-window-btn';
+  changeParentBtn.textContent = '📁 Change Parent Folder';
+  changeParentBtn.onclick = () => {
+    openNoteParentModal(noteId);
+    updateWindow.remove();
+  };
+  
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'update-window-btn';
+  closeBtn.style.background = 'var(--bg3)';
+  closeBtn.style.color = 'var(--text3)';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.textContent = '✕ Close';
+  closeBtn.onclick = () => updateWindow.remove();
+  
+  const title = document.createElement('div');
+  title.className = 'update-window-title';
+  title.textContent = 'Update: ' + note.name;
+  
+  updateWindow.appendChild(title);
+  updateWindow.appendChild(renameBtn);
+  updateWindow.appendChild(replaceBtn);
+  updateWindow.appendChild(changeParentBtn);
+  updateWindow.appendChild(closeBtn);
+  
+  container.appendChild(updateWindow);
+  makeDraggable(windowId);
+}
+
+let ctxNoteIdForParent = null;
+
+function openNoteParentModal(noteId) {
+  ctxNoteIdForParent = noteId;
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  const allFolders = folders;
+  
+  const modal = document.createElement('div');
+  modal.id = 'note-parent-select-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;pointer-events:auto;';
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  
+  const content = document.createElement('div');
+  content.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:400px;width:90%;max-height:70vh;overflow-y:auto;pointer-events:auto;';
+  
+  const title = document.createElement('div');
+  title.style.cssText = 'font-weight:700;margin-bottom:16px;font-size:1rem;color:var(--text);';
+  title.textContent = `Select Folder for "${note.name}"`;
+  content.appendChild(title);
+  
+  // Root option
+  const rootBtn = document.createElement('div');
+  rootBtn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
+  rootBtn.textContent = '📁 Root (No folder)';
+  rootBtn.onclick = (e) => { e.stopPropagation(); setNoteParent(null); modal.remove(); };
+  rootBtn.onmouseover = () => { rootBtn.style.background = 'var(--bg4)'; };
+  rootBtn.onmouseout = () => { rootBtn.style.background = 'var(--bg3)'; };
+  content.appendChild(rootBtn);
+  
+  // Folder options
+  allFolders.forEach(f => {
+    const btn = document.createElement('div');
+    btn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
+    btn.textContent = '📁 ' + f.name;
+    btn.onclick = (e) => { e.stopPropagation(); setNoteParent(f.id); modal.remove(); };
+    btn.onmouseover = () => { btn.style.background = 'var(--bg4)'; };
+    btn.onmouseout = () => { btn.style.background = 'var(--bg3)'; };
+    content.appendChild(btn);
+  });
+  
+  const cancelBtn = document.createElement('div');
+  cancelBtn.style.cssText = 'width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text);font-family:var(--font);font-weight:600;transition:all 0.18s;text-align:center;user-select:none;pointer-events:auto;';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = () => modal.remove();
+  cancelBtn.onmouseover = () => { cancelBtn.style.background = 'var(--bg4)'; };
+  cancelBtn.onmouseout = () => { cancelBtn.style.background = 'var(--bg3)'; };
+  content.appendChild(cancelBtn);
+  
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+}
+
+function setNoteParent(folderId) {
+  if (!ctxNoteIdForParent) return;
+  const note = notes.find(n => n.id === ctxNoteIdForParent);
+  if (!note) return;
+  note.folder = folderId || null;
+  saveUserData();
+  renderAll();
+  showToast('Note folder changed!');
+  const modal = document.getElementById('note-parent-select-modal');
+  if (modal) modal.remove();
+}
+function openNoteCtxMenu(e, noteId) {
+  e.preventDefault(); e.stopPropagation();
+  ctxNoteId = noteId;
+  
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  // Create context menu for note
+  const menu = document.createElement('div');
+  menu.className = 'folder-ctx-menu open';
+  menu.id = 'note-ctx-menu';
+  menu.style.zIndex = '300';
+  
+  let html = `
+    <div class="ctx-item" onclick="ctxChangeNoteParent()">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1M9 12v6M15 12v6"/></svg>
+      Change Folder
+    </div>
+  `;
+  
+  menu.innerHTML = html;
+  document.body.appendChild(menu);
+  
+  const x = Math.min(e.clientX, window.innerWidth - 160);
+  const y = Math.min(e.clientY, window.innerHeight - 90);
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  
+  setTimeout(() => {
+    document.addEventListener('click', closeNoteCtxMenu);
+  }, 0);
+}
+
+function closeNoteCtxMenu() {
+  const menu = document.getElementById('note-ctx-menu');
+  if (menu) menu.remove();
+  ctxNoteId = null;
+  document.removeEventListener('click', closeNoteCtxMenu);
+}
+
+function ctxChangeNoteParent() {
+  if (!ctxNoteId) return;
+  const note = notes.find(n => n.id === ctxNoteId);
+  if (!note) return;
+  
+  const modal = document.createElement('div');
+  modal.id = 'note-parent-select-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;';
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  
+  const content = document.createElement('div');
+  content.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:400px;width:90%;';
+  
+  const title = document.createElement('div');
+  title.style.cssText = 'font-weight:700;margin-bottom:16px;font-size:1rem;color:var(--text);';
+  title.textContent = `Select Folder for "${note.name}"`;
+  
+  const optionsDiv = document.createElement('div');
+  optionsDiv.style.cssText = 'max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
+  
+  // Folder options
+  folders.forEach(f => {
+    const isSelected = f.id === note.folder;
+    const btn = document.createElement('button');
+    btn.style.cssText = `padding:12px;background:${isSelected ? 'var(--accent-glow)' : 'var(--bg3)'};border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;`;
+    btn.textContent = f.name;
+    btn.dataset.folderId = f.id;
+    btn.dataset.isSelected = isSelected;
+    btn.onclick = (e) => { e.stopPropagation(); setNoteParent(f.id); modal.remove(); };
+    btn.onmouseover = () => { btn.style.background = 'var(--bg4)'; };
+    btn.onmouseout = () => { btn.style.background = btn.dataset.isSelected === 'true' ? 'var(--accent-glow)' : 'var(--bg3)'; };
+    optionsDiv.appendChild(btn);
+  });
+  
+  const cancelBtn = document.createElement('button');
+  cancelBtn.style.cssText = 'width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text);font-family:var(--font);font-weight:600;transition:all 0.18s;';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = () => modal.remove();
+  cancelBtn.onmouseover = () => { cancelBtn.style.background = 'var(--bg4)'; };
+  cancelBtn.onmouseout = () => { cancelBtn.style.background = 'var(--bg3)'; };
+  
+  content.appendChild(title);
+  content.appendChild(optionsDiv);
+  content.appendChild(cancelBtn);
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+  closeNoteCtxMenu();
+}
+
+function setNoteParent(folderId) {
+  if (!ctxNoteId) return;
+  const note = notes.find(n => n.id === ctxNoteId);
+  if (!note) return;
+  note.folder = folderId;
+  saveUserData();
+  renderAll();
+  showToast('Folder changed!');
+  const modal = document.getElementById('note-parent-select-modal');
+  if (modal) modal.remove();
+}
 function navigate(page) {
   currentPage = page;
   if (page === 'home') homeFolderId = null;
@@ -1710,7 +2058,14 @@ async function createFolder() {
 function renderFolderOptions(selectId, withRoot=false) {
   const sel = document.getElementById(selectId);
   if (!sel) return;
-  sel.innerHTML = withRoot ? '<option value="">— Root —</option>' : '<option value="">— No folder —</option>';
+  
+  // For upload-folder, show "Select a folder" as disabled
+  if (selectId === 'upload-folder') {
+    sel.innerHTML = '<option value="" disabled selected>— Select a folder —</option>';
+  } else {
+    sel.innerHTML = withRoot ? '<option value="">— Root —</option>' : '<option value="">— No folder —</option>';
+  }
+  
   function addOpts(parentId, depth) {
     folders.filter(f => f.parent===(parentId||null)).forEach(f => {
       const opt = document.createElement('option');
@@ -1778,9 +2133,26 @@ function renderFolderTree() {
         const noteEl = document.createElement('div');
         noteEl.className = 'folder-note-item';
         noteEl.id = 'sfn_' + n.id;
+        noteEl.draggable = true;
+        noteEl.dataset.noteId = n.id;
         noteEl.style.paddingLeft = (14 + indent + 12) + 'px';
         noteEl.innerHTML = `${noteSVG} ${n.name}`;
         noteEl.onclick = () => { openNote(n.id); if(window.innerWidth<=700) closeMobileSidebar(); };
+        
+        // Right-click context menu for notes
+        noteEl.addEventListener('contextmenu', e => openNoteCtxMenu(e, n.id));
+        
+        // Drag events
+        noteEl.ondragstart = (e) => {
+          noteEl.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/note-id', n.id);
+        };
+        noteEl.ondragend = (e) => {
+          noteEl.classList.remove('dragging');
+          document.querySelectorAll('.folder-header.drag-over').forEach(el => el.classList.remove('drag-over'));
+        };
+        
         childrenEl.appendChild(noteEl);
       });
 
@@ -1798,6 +2170,32 @@ function renderFolderTree() {
         const isOpen = arrow.classList.toggle('open');
         childrenEl.classList.toggle('open', isOpen);
       });
+      
+      // Drop handler for moving notes to this folder
+      header.ondragover = (e) => {
+        if (e.dataTransfer.types.includes('text/note-id')) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          header.classList.add('drag-over');
+        }
+      };
+      header.ondragleave = () => {
+        header.classList.remove('drag-over');
+      };
+      header.ondrop = (e) => {
+        if (e.dataTransfer.types.includes('text/note-id')) {
+          e.preventDefault();
+          const noteId = e.dataTransfer.getData('text/note-id');
+          const note = notes.find(n => n.id === noteId);
+          if (note) {
+            note.folder = f.id;
+            saveUserData();
+            renderAll();
+            showToast('Note moved to folder');
+          }
+        }
+        header.classList.remove('drag-over');
+      };
 
       div.appendChild(header);
       div.appendChild(childrenEl);
@@ -2016,6 +2414,17 @@ function renderNotes() {
       const list = document.createElement('div'); list.className = 'notes-list';
       localNotes.forEach(n => list.appendChild(makeNoteListItem(n)));
       container.appendChild(list);
+    } else if (currentView === 'tree') {
+      const tree = document.createElement('div'); tree.className = 'notes-tree';
+      localNotes.forEach(n => {
+        const item = document.createElement('div');
+        item.className = 'tree-item';
+        item.style.paddingLeft = '8px';
+        const noteCard = makeNoteCard(n);
+        item.appendChild(noteCard);
+        tree.appendChild(item);
+      });
+      container.appendChild(tree);
     } else {
       const g = document.createElement('div'); g.className = 'notes-grid';
       localNotes.forEach(n => g.appendChild(makeNoteCard(n)));
@@ -2072,10 +2481,9 @@ function makeNoteCard(n) {
     <div class="note-card-meta">${tagHtml}</div>
     ${folderPath ? `<div class="note-folder-path">📁 ${folderPath}</div>` : ''}
     <div class="note-card-actions">
-      <button class="note-act-btn" onclick="event.stopPropagation();openRenameModal('${n.id}')">Rename</button>
-      <button class="note-act-btn" onclick="event.stopPropagation();openReuploadModal('${n.id}')">Update</button>
+      <button class="note-act-btn" onclick="event.stopPropagation();openUpdateWindow('${n.id}')">⬆ Update</button>
       <button class="note-act-btn" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button>
-      <button class="note-act-btn danger" onclick="event.stopPropagation();openDeleteModal('${n.id}')">Delete</button>
+      <button class="note-act-btn" onclick="event.stopPropagation();openNoteParentModal('${n.id}')">Change Folder</button>
     </div>
   `;
   div.addEventListener('click', () => openNote(n.id));
@@ -2095,10 +2503,9 @@ function makeNoteListItem(n) {
       <div class="note-list-tags" style="margin-top:4px">${tagHtml}</div>
     </div>
     <div class="note-list-actions">
-      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openRenameModal('${n.id}')">Rename</button>
-      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openReuploadModal('${n.id}')">Update</button>
+      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openUpdateWindow('${n.id}')">⬆ Update</button>
       <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button>
-      <button class="note-act-btn danger" style="padding:5px 8px" onclick="event.stopPropagation();openDeleteModal('${n.id}')">Delete</button>
+      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openNoteParentModal('${n.id}')">Change Folder</button>
     </div>
   `;
   div.addEventListener('click', () => openNote(n.id));
@@ -2201,12 +2608,18 @@ function saveNote() {
   if (!pendingFile) return;
   const name = document.getElementById('upload-name').value.trim() || pendingFile.name;
   const folder = document.getElementById('upload-folder').value;
+  
+  if (!folder) {
+    showToast('Please select a folder for this note');
+    return;
+  }
+  
   const reader = new FileReader();
   reader.onload = async e => {
     const note = {
       id: 'n_' + Date.now(),
       name,
-      folder: folder || null,
+      folder: folder,
       tags: [...uploadTags],
       content: e.target.result,
       created: new Date().toISOString()
@@ -2231,26 +2644,62 @@ function cancelUpload() {
 // ============================================================
 // NOTE VIEWER
 // ============================================================
+let floatingWindowCount = 0;
+
 function openNote(id) {
   const note = notes.find(n => n.id === id);
   if (!note) return;
-  document.getElementById('note-win-title').textContent = note.name;
-  const iframe = document.getElementById('note-iframe');
+  
+  const windowId = 'floating-note-' + (floatingWindowCount++);
+  const container = document.getElementById('floating-windows');
+  
+  const noteWindow = document.createElement('div');
+  noteWindow.id = windowId;
+  noteWindow.className = 'note-window active';
+  noteWindow.style.width = '780px';
+  noteWindow.style.height = '560px';
+  noteWindow.style.left = (50 + floatingWindowCount * 20) + 'px';
+  noteWindow.style.top = (50 + floatingWindowCount * 20) + 'px';
+  
+  const titlebar = document.createElement('div');
+  titlebar.className = 'note-window-titlebar';
+  titlebar.innerHTML = `
+    <span class="win-title" data-note-id="${id}">${note.name}</span>
+    <button class="win-btn" onclick="changeNoteParentFromWindow('${id}')" title="Change folder">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1M9 12v6M15 12v6"/></svg>
+    </button>
+    <button class="win-btn" onclick="openNoteInNewWindow('${id}')" title="Open another window">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </button>
+    <button class="win-btn fullscreen" onclick="toggleFullscreenWindow('${windowId}')" title="Fullscreen">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M21 16v3a2 2 0 01-2 2h-3M8 21H5a2 2 0 01-2-2v-3"/></svg>
+    </button>
+    <button class="win-btn close" onclick="closeFloatingWindow('${windowId}')" title="Close">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  `;
+  
+  const body = document.createElement('div');
+  body.className = 'note-window-body';
+  const iframe = document.createElement('iframe');
+  iframe.sandbox = 'allow-scripts allow-same-origin';
   const blob = new Blob([note.content], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   iframe.src = url;
-  document.getElementById('note-viewer').classList.add('open');
-
-  // Reset window size/position
-  const win = document.getElementById('note-window');
-  const isMobile = window.innerWidth <= 700;
-  if (isMobile) {
-    win.style.cssText = 'width:92vw;height:75vh;left:4vw;top:12vh;transform:none;';
-  } else {
-    win.style.cssText = 'width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);';
-  }
-  win.classList.remove('fullscreen-win');
-
+  body.appendChild(iframe);
+  
+  const resizeHandle = document.createElement('div');
+  resizeHandle.className = 'resize-handle';
+  resizeHandle.innerHTML = '<svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="var(--text3)" stroke-width="1.2" stroke-linecap="round"><line x1="9" y1="1" x2="1" y2="9"/><line x1="9" y1="5" x2="5" y2="9"/></svg>';
+  
+  noteWindow.appendChild(titlebar);
+  noteWindow.appendChild(body);
+  noteWindow.appendChild(resizeHandle);
+  container.appendChild(noteWindow);
+  
+  makeDraggable(windowId);
+  makeResizable(windowId);
+  
   // Highlight in sidebar
   document.querySelectorAll('.folder-note-item').forEach(el => el.classList.remove('active'));
   const sfn = document.getElementById('sfn_'+id);
@@ -2261,6 +2710,192 @@ function closeNoteViewer() {
   document.getElementById('note-viewer').classList.remove('open');
   document.getElementById('note-iframe').src = '';
   document.querySelectorAll('.folder-note-item').forEach(el => el.classList.remove('active'));
+}
+
+function setNoteViewerParent(folderId) {
+  const titleEl = document.getElementById('note-win-title');
+  const noteId = titleEl.getAttribute('data-note-id');
+  if (!noteId) return;
+  
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  note.folder = folderId;
+  saveUserData();
+  renderAll();
+  showToast('Folder changed!');
+  const modal = document.getElementById('note-viewer-parent-modal');
+  if (modal) modal.remove();
+}
+
+function changeNoteParentFromWindow(noteId) {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  let html = '<div style="max-height:300px;overflow-y:auto">';
+  folders.forEach(f => {
+    const isSelected = f.id === note.folder ? 'style="background:var(--accent-glow);"' : '';
+    html += `<div class="ctx-item" ${isSelected} style="padding:12px;cursor:pointer;margin-bottom:8px;" onclick="setNoteWindowParent('${noteId}', '${f.id}')">${f.name}</div>`;
+  });
+  html += '</div>';
+  
+  const modal = document.createElement('div');
+  modal.id = 'note-window-parent-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:400px;width:90%;">
+      <div style="font-weight:700;margin-bottom:12px;font-size:1rem;">Select Folder for "${note.name}"</div>
+      ${html}
+      <button style="margin-top:12px;width:100%;padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text);font-family:var(--font);" onclick="document.getElementById('note-window-parent-modal').remove()">Cancel</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function setNoteWindowParent(noteId, folderId) {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  note.folder = folderId;
+  saveUserData();
+  renderAll();
+  showToast('Folder changed!');
+  const modal = document.getElementById('note-window-parent-modal');
+  if (modal) modal.remove();
+}
+
+function makeDraggable(windowId) {
+  const el = document.getElementById(windowId);
+  const titlebar = el.querySelector('.note-window-titlebar');
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  
+  titlebar.onmousedown = dragMouseDown;
+  
+  function dragMouseDown(e) {
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+    el.classList.add('active');
+  }
+  
+  function elementDrag(e) {
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    el.style.top = (el.offsetTop - pos2) + 'px';
+    el.style.left = (el.offsetLeft - pos1) + 'px';
+  }
+  
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+function makeResizable(windowId) {
+  const el = document.getElementById(windowId);
+  const resizeHandle = el.querySelector('.resize-handle');
+  let isResizing = false;
+  let startX, startY, startWidth, startHeight;
+  
+  resizeHandle.onmousedown = (e) => {
+    isResizing = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    startWidth = el.offsetWidth;
+    startHeight = el.offsetHeight;
+    document.onmousemove = resize;
+    document.onmouseup = stopResize;
+  };
+  
+  function resize(e) {
+    if (!isResizing) return;
+    el.style.width = (startWidth + e.clientX - startX) + 'px';
+    el.style.height = (startHeight + e.clientY - startY) + 'px';
+  }
+  
+  function stopResize() {
+    isResizing = false;
+    document.onmousemove = null;
+    document.onmouseup = null;
+  }
+}
+
+function closeFloatingWindow(windowId) {
+  const el = document.getElementById(windowId);
+  if (el) el.remove();
+}
+
+function openNoteInNewWindow(id) {
+  openNote(id);
+}
+
+function toggleFullscreenWindow(windowId) {
+  const el = document.getElementById(windowId);
+  if (!el) return;
+  el.classList.toggle('fullscreen-win');
+}
+
+function changeNoteParentFromWindow(noteId) {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  const modal = document.createElement('div');
+  modal.id = 'window-parent-select-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;';
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  
+  const content = document.createElement('div');
+  content.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:400px;width:90%;';
+  
+  const title = document.createElement('div');
+  title.style.cssText = 'font-weight:700;margin-bottom:16px;font-size:1rem;color:var(--text);';
+  title.textContent = `Change Folder for "${note.name}"`;
+  
+  const optionsDiv = document.createElement('div');
+  optionsDiv.style.cssText = 'max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:16px;';
+  
+  // Folder options
+  folders.forEach(f => {
+    const isSelected = f.id === note.folder;
+    const btn = document.createElement('button');
+    btn.style.cssText = `padding:12px;background:${isSelected ? 'var(--accent-glow)' : 'var(--bg3)'};border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;`;
+    btn.textContent = f.name;
+    btn.dataset.folderId = f.id;
+    btn.dataset.isSelected = isSelected;
+    btn.onclick = (e) => { e.stopPropagation(); setNoteParentFromWindow(noteId, f.id); modal.remove(); };
+    btn.onmouseover = () => { btn.style.background = 'var(--bg4)'; };
+    btn.onmouseout = () => { btn.style.background = btn.dataset.isSelected === 'true' ? 'var(--accent-glow)' : 'var(--bg3)'; };
+    optionsDiv.appendChild(btn);
+  });
+  
+  const cancelBtn = document.createElement('button');
+  cancelBtn.style.cssText = 'width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text);font-family:var(--font);font-weight:600;transition:all 0.18s;';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = () => modal.remove();
+  cancelBtn.onmouseover = () => { cancelBtn.style.background = 'var(--bg4)'; };
+  cancelBtn.onmouseout = () => { cancelBtn.style.background = 'var(--bg3)'; };
+  
+  content.appendChild(title);
+  content.appendChild(optionsDiv);
+  content.appendChild(cancelBtn);
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+}
+
+function setNoteParentFromWindow(noteId, folderId) {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  note.folder = folderId;
+  saveUserData();
+  renderAll();
+  showToast('Folder changed!');
+  const modal = document.getElementById('window-parent-select-modal');
+  if (modal) modal.remove();
 }
 
 function toggleFullscreenWin() {
