@@ -670,7 +670,7 @@
   /* LOADING OVERLAY */
   #app-loading {
     position: fixed; inset: 0; z-index: 999;
-    background: var(--bg);
+    background: #ffffff;
     display: flex; align-items: center; justify-content: center;
     flex-direction: column; gap: 16px;
   }
@@ -1434,6 +1434,15 @@
           Save for Offline
         </button>
       </div>
+      <div class="profile-section-title">Offline Access</div>
+      <div id="offline-status-profile" style="font-size:0.75rem;font-family:var(--mono);color:var(--text3);margin-bottom:10px;min-height:14px;"></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="btn-primary" onclick="downloadOffline()" style="flex:1;justify-content:center;font-size:0.82rem;padding:9px 10px;gap:6px;">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Save Offline
+        </button>
+        <button class="btn-secondary" onclick="clearOffline()" style="flex:1;font-size:0.82rem;padding:9px 10px;">Clear Cache</button>
+      </div>
       <div class="profile-section-title">Account</div>
       <button onclick="doLogout();closeProfilePanel();" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--danger);background:transparent;color:var(--danger);font-family:var(--font);font-weight:700;font-size:0.88rem;cursor:pointer;transition:all var(--transition)" onmouseover="this.style.background='rgba(255,91,107,0.12)'" onmouseout="this.style.background='transparent'">
         Sign Out
@@ -1784,13 +1793,10 @@ function applySettings() {
 
   document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
   const acc = ACCENTS[settings.accent] || ACCENTS.purple;
-  // Swap sidebar logo to match accent
   const sidebarLogo = document.getElementById('sidebar-logo-img');
   if (sidebarLogo) {
-    const logoSrc = SIDEBAR_LOGOS[settings.accent] || SIDEBAR_LOGOS.purple;
-    const img = sidebarLogo.querySelector('img') || sidebarLogo;
-    if (img.tagName === 'IMG') img.src = logoSrc;
-    else { const i = sidebarLogo.querySelector('img'); if(i) i.src = logoSrc; }
+    const i = sidebarLogo.querySelector('img');
+    if (i) i.src = SIDEBAR_LOGOS[settings.accent] || SIDEBAR_LOGOS.purple;
   }
   document.documentElement.style.setProperty('--accent', acc[0]);
   document.documentElement.style.setProperty('--accent2', acc[1]);
@@ -1847,6 +1853,7 @@ async function saveSettings() {
 // PROFILE PANEL
 // ============================================================
 function openProfilePanel() {
+  if (typeof checkOfflineStatus === 'function') checkOfflineStatus();
   checkOfflineStatus();
   _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
   updateAutosaveToggleUI(_offlineAutosaveEnabled);
@@ -3796,8 +3803,10 @@ async function clearIDB() {
 }
 
 function setOfflineStatus(msg, color) {
-  const el = document.getElementById('offline-status');
-  if (el) { el.textContent = msg; el.style.color = color || 'var(--text3)'; }
+  ['offline-status','offline-status-profile'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = msg; el.style.color = color || 'var(--text3)'; }
+  });
 }
 
 async function downloadOffline() {
