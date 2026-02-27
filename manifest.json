@@ -2,25 +2,34 @@
   "name": "NoteZ - Your Notes, Perfectly Organized",
   "short_name": "NoteZ",
   "description": "Your notes, perfectly organized with NoteZ",
-  "start_url": "https://shanbruh.github.io/NoteZ/",
-  "scope": "https://shanbruh.github.io/NoteZ/",
+  "start_url": "/NoteZ/",
+  "scope": "/NoteZ/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#7c6dfa",
   "background_color": "#0f0f11",
   "icons": [
     {
-      "src": "https://shanbruh.github.io/NoteZ/icon-1.png",
+      "src": "/NoteZ/icon-1.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "https://shanbruh.github.io/NoteZ/icon-1.png",
+      "src": "/NoteZ/icon-1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity"]
+  "categories": ["productivity"],
+  "shortcuts": [
+    {
+      "name": "Create Note",
+      "short_name": "New Note",
+      "description": "Create a new note",
+      "url": "/NoteZ/?action=new",
+      "icons": [{ "src": "/NoteZ/icon-1.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
 }
