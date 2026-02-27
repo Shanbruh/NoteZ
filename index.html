@@ -3678,7 +3678,7 @@ initApp();
 <script>
 if ('serviceWorker' in navigator && location.hostname !== 'localhost' && !location.hostname.includes('claudeusercontent.com')) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
       .catch(err => console.warn('SW registration failed:', err));
   });
 }
