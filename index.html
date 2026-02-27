@@ -234,13 +234,15 @@
   #profile-tray-overlay{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,0.45);backdrop-filter:blur(3px);}
   #profile-tray-overlay.open{display:block;}
   #profile-tray{
+    display:none;
     position:fixed;bottom:0;left:0;right:0;z-index:51;
     background:var(--bg2);border-top:1px solid var(--border);
     border-radius:20px 20px 0 0;
     padding:0 0 calc(env(safe-area-inset-bottom, 0px) + 16px);
     transform:translateY(100%);transition:transform 0.3s cubic-bezier(.4,0,.2,1);
   }
-  #profile-tray.open{transform:translateY(0);}
+  #profile-tray.open{display:block;transform:translateY(0);}
+  #profile-tray.closing{display:block;transform:translateY(100%);}
   .tray-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0;}
   .tray-user{display:flex;align-items:center;gap:12px;padding:18px 20px 14px;}
   .tray-avatar{width:44px;height:44px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;flex-shrink:0;}
@@ -573,6 +575,18 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
+// Immediately detect file:// and warn — Firebase won't work there
+if (location.protocol === 'file:' || location.protocol === 'content:') {
+  setTimeout(() => {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('mobile-bottom-nav').classList.add('app-ready');
+    document.getElementById('login-screen').classList.add('visible');
+    document.getElementById('login-err').style.cssText = 'color:#f4a24b;font-size:0.82rem;margin-top:10px;line-height:1.5;';
+    document.getElementById('login-err').innerHTML =
+      '⚠️ <strong>NoteZ needs to be hosted online.</strong><br>You\'re opening it as a local file. Please upload it to GitHub Pages and open from there.';
+  }, 100);
+}
+
 // ─── STATE ───────────────────────────────────────────────────
 let currentUser = null;
 let notes = [], folders = [];
@@ -598,7 +612,17 @@ async function loadUserData() {
 }
 
 // ─── AUTH STATE ──────────────────────────────────────────────
+// Fallback: if Firebase doesn't respond in 5s (e.g. file:// URL), show error
+const authTimeout = setTimeout(() => {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('mobile-bottom-nav').classList.add('app-ready');
+  document.getElementById('login-screen').classList.add('visible');
+  document.getElementById('login-err').textContent =
+    '⚠️ NoteZ must be opened from a hosted URL (not a local file). Please visit shanbruh.github.io/NoteZ to use it.';
+}, 5000);
+
 onAuthStateChanged(auth, async (user) => {
+  clearTimeout(authTimeout);
   document.getElementById('loading-screen').style.display = 'none';
   // Now safe to show mobile nav
   document.getElementById('mobile-bottom-nav').classList.add('app-ready');
@@ -726,12 +750,20 @@ window.closeMobileSidebar = () => {
 // ─── PROFILE TRAY ─────────────────────────────────────────────
 window.openProfileTray = () => {
   document.getElementById('profile-tray-overlay').classList.add('open');
-  document.getElementById('profile-tray').classList.add('open');
+  const tray = document.getElementById('profile-tray');
+  tray.classList.remove('closing');
+  tray.classList.add('open');
   syncTrayTheme(); syncTrayAccent();
 };
 window.closeProfileTray = () => {
   document.getElementById('profile-tray-overlay').classList.remove('open');
-  document.getElementById('profile-tray').classList.remove('open');
+  const tray = document.getElementById('profile-tray');
+  tray.classList.add('closing');
+  tray.classList.remove('open');
+  // After animation ends, truly hide it
+  setTimeout(() => {
+    tray.classList.remove('closing');
+  }, 320);
 };
 window.syncTrayTheme = () => {
   document.querySelectorAll('.tray-theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === settings.theme));
