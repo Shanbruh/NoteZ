@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NoteZ">
 <meta name="theme-color" content="#7c6dfa" id="theme-color-meta">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='accentGrad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%237c6dfa;stop-opacity:1' /><stop offset='33%' style='stop-color:%234d9fff;stop-opacity:1' /><stop offset='66%' style='stop-color:%233ddc97;stop-opacity:1' /><stop offset='100%' style='stop-color:%23f4a24b;stop-opacity:1' /></linearGradient></defs><rect width='192' height='192' fill='url(%23accentGrad)' rx='45'/><path d='M 60 40 L 60 152 M 80 40 L 80 152 M 100 40 L 100 152 M 130 40 L 130 152' stroke='white' stroke-width='8' stroke-linecap='round'/><circle cx='150' cy='80' r='25' fill='none' stroke='white' stroke-width='8'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz4KICA8cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzI4JyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00zMyAzMCBWNzAgTTY3IDMwIFY3MCBNMzMgNzAgTDY3IDMwJyBzdHJva2U9J3VybCgjZyknIHN0cm9rZS13aWR0aD0nMTInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcgZmlsbD0nbm9uZScvPgogIDxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0nZycgeDE9JzAlJyB5MT0nMCUnIHgyPScxMDAlJyB5Mj0nMTAwJSc+CiAgICA8c3RvcCBvZmZzZXQ9JzAlJyBzdHlsZT0nc3RvcC1jb2xvcjojN2M2ZGZhJy8+PHN0b3Agb2Zmc2V0PSczMyUnIHN0eWxlPSdzdG9wLWNvbG9yOiM0ZDlmZmYnLz4KICAgIDxzdG9wIG9mZnNldD0nNjYlJyBzdHlsZT0nc3RvcC1jb2xvcjojM2RkYzk3Jy8+PHN0b3Agb2Zmc2V0PScxMDAlJyBzdHlsZT0nc3RvcC1jb2xvcjojZjRhMjRiJy8+CiAgPC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+">
 <link rel="manifest" href="data:application/json,{%22name%22:%22NoteZ%22,%22short_name%22:%22NoteZ%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f0f11%22,%22theme_color%22:%22%237c6dfa%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Cdefs%3E%3ClinearGradient id=%27grad%27%3E%3Cstop offset=%270%25%27 style=%27stop-color:%237c6dfa%27/%3E%3Cstop offset=%2733%25%27 style=%27stop-color:%234d9fff%27/%3E%3Cstop offset=%2766%25%27 style=%27stop-color:%233ddc97%27/%3E%3Cstop offset=%27100%25%27 style=%27stop-color:%23f4a24b%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%27192%27 height=%27192%27 fill=%27url(%23grad)%27 rx=%2745%27/%3E%3Cpath d=%27M 60 40 L 60 152 M 80 40 L 80 152 M 100 40 L 100 152 M 130 40 L 130 152%27 stroke=%27white%27 stroke-width=%278%27/%3E%3Ccircle cx=%27150%27 cy=%2780%27 r=%2725%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27/%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22}]}">
 <title>NoteZ</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -919,13 +919,124 @@
 
   select option { background: var(--bg2); color: var(--text); }
   .modal select option { background: var(--bg2); color: var(--text); }
+
+  
+/* EXACT LOGO DESIGN FOR 'Z' */
+  .load-logo span, 
+  .login-logo span.z, 
+  .sidebar-logo span.z {
+    color: var(--accent);
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: var(--accent);
+    background-clip: unset;
+    display: inline-block;
+    filter: drop-shadow(0 0 5px var(--accent-glow));
+    transition: color var(--transition);
+  }
+
+
+/* UNIFIED SIDEBAR & PROFILE */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s ease;
+}
+
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
+.profile-trigger:hover {
+  background: var(--bg4);
+  border-color: var(--accent);
+}
+
+.profile-trigger .avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: white;
+  font-size: 1.1rem;
+  overflow: hidden;
+  border: 2px solid var(--border);
+}
+
+.profile-trigger .user-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.profile-trigger .user-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-trigger .user-sub {
+  font-size: 0.65rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* MOBILE FIXES */
+@media (max-width: 850px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+  }
+  .sidebar.mobile-active {
+    transform: translateX(0);
+  }
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+  }
+  .mobile-overlay.active {
+    display: block;
+  }
+}
+
+  .n-logo-svg { width: 32px; height: 32px; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+  .logo-dot { display: none !important; } /* Hide the old dot */
+  .sidebar-logo { gap: 10px; padding: 18px 20px; }
+  .load-logo-wrap { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; }
+  .load-logo-wrap .n-logo-svg { width: 64px; height: 64px; }
 </style>
 </head>
 <body>
 
 <!-- LOADING OVERLAY -->
 <div id="app-loading">
-  <div class="load-logo">Note<span>Z</span></div>
+  <div class="load-logo-wrap"><svg viewBox="0 0 100 100" class="n-logo-svg">
+  <rect width="100" height="100" rx="28" fill="var(--bg2)"/>
+  <path d="M32 30 V70 M68 30 V70 M32 30 L68 70" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg><div class="load-logo">Note<span>Z</span></div></div>
   <div class="spin"></div>
 </div>
 
@@ -961,29 +1072,51 @@
 <!-- MAIN APP -->
 <div id="app" style="display:none">
   <!-- Mobile overlay -->
-  <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileSidebar()"></div>
+  <div class="mobile-overlay" id="mobile-overlay" style="z-index:998" onclick="closeMobileSidebar()"></div>
 
   <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
+    
     <div class="sidebar-logo">
-      <span class="logo-dot"></span>
+      <svg viewBox="0 0 100 100" class="n-logo-svg">
+  <rect width="100" height="100" rx="28" fill="var(--bg2)"/>
+  <path d="M32 30 V70 M68 30 V70 M32 30 L68 70" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
       Note<span class="z">Z</span>
     </div>
-    <div class="sidebar-scroll">
-      <div style="height:8px"></div>
-      <div class="sidebar-section">Folders</div>
-      <div id="folder-tree"></div>
-      <button class="new-folder-btn" onclick="openNewFolderModal()">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New Folder
-      </button>
+    <div class="profile-trigger" onclick="openProfilePanel()">
+        <div class="avatar-circle" id="sb-avatar">U</div>
+        <div class="user-info">
+            <div class="user-name" id="sb-username">User</div>
+            <div class="user-sub">Settings & Profile</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--text3)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
     </div>
+    <div class="sidebar-scroll">
+
+      <div style="height:8px"></div>
+      <div class="sidebar-section" onclick="toggleSidebarSection('folder-tree', this)" style="cursor:pointer; display:flex; align-items:center; gap:8px;"><span class="sec-arrow" style="transition:0.2s">▼</span> Folders</div>
+      <div id="folder-tree"></div>
+      
+    
+    </div> <!-- Close sidebar-scroll -->
+    
+    <div style="padding: 10px; display: flex; gap: 8px; border-top: 1px solid var(--border);">
+        <button class="new-folder-btn" onclick="openNewFolderModal()" style="margin:0; flex: 1; padding: 10px; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Folder
+        </button>
+        <button class="sb-nav-btn" onclick="navigate('home'); navigateHome(null);" title="Go Home" style="width:42px; height:42px; background: var(--bg3); border: 1px solid var(--border); margin:0;">
+            <svg viewBox="0 0 24 24" class="dt-icon"><path class="dt-bg" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path class="dt-stroke" d="M3 10.5L12 3l9 7.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="dt-stroke" d="M9 21v-6h6v6" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+    </div>
+
 
     <!-- BOTTOM NAV -->
     <div class="sidebar-bottom-nav">
       <div class="user-avatar" id="user-avatar-text" title="Profile & Settings" style="cursor:pointer" onclick="openProfilePanel()">U</div>
       <!-- Home -->
-      <button class="sb-nav-btn active" id="nav-home" onclick="navigate('home')" title="All Notes">
+      <button class="sb-nav-btn active" id="nav-home" onclick="navigate('home'); navigateHome(null);" title="All Notes">
         <svg viewBox="0 0 24 24" class="dt-icon"><path class="dt-bg" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path class="dt-stroke" d="M3 10.5L12 3l9 7.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="dt-stroke" d="M9 21v-6h6v6" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
       </button>
       <!-- Upload -->
@@ -1139,7 +1272,7 @@
 
 <!-- MOBILE BOTTOM NAV -->
 <div class="mobile-bottom-nav" id="mobile-bottom-nav">
-  <button class="mob-nav-btn active" id="mob-nav-home" onclick="navigate('home')" title="All Notes">
+  <button class="mob-nav-btn active" id="mob-nav-home" onclick="navigate('home'); navigateHome(null);" title="All Notes">
     <svg viewBox="0 0 24 24" class="dt-icon" width="22" height="22"><path class="dt-bg" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path class="dt-stroke" d="M3 10.5L12 3l9 7.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="dt-stroke" d="M9 21v-6h6v6" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
     <span>Home</span>
   </button>
@@ -1186,7 +1319,10 @@
     </div>
 
     <!-- Theme -->
-    <div class="profile-section">
+    
+    
+    <div class="profile-divider"></div>
+<div class="profile-section">
       <div class="profile-section-title">Theme</div>
       <div class="profile-theme-grid">
         <div class="profile-theme-opt dark" data-ptheme="dark" onclick="setTheme('dark')">Dark</div>
@@ -1249,7 +1385,15 @@
     <div class="profile-divider"></div>
 
     <!-- Danger zone -->
-    <div class="profile-section" style="padding-bottom:16px">
+    <!-- Change Picture -->
+    <div class="profile-section">
+      <div class="profile-section-title">Photo</div>
+      <input type="file" id="profile-pic-input" accept="image/*" style="display:none" onchange="handleProfilePic(this.files)">
+      <button class="btn-secondary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="document.getElementById('profile-pic-input').click()">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Change Profile Picture
+      </button>
+    </div><div class="profile-section" style="padding-bottom:16px">
       <div class="profile-section-title">Account</div>
       <button onclick="doLogout();closeProfilePanel();" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--danger);background:transparent;color:var(--danger);font-family:var(--font);font-weight:700;font-size:0.88rem;cursor:pointer;transition:all var(--transition)" onmouseover="this.style.background='rgba(255,91,107,0.12)'" onmouseout="this.style.background='transparent'">
         Sign Out
@@ -1345,6 +1489,23 @@
 </div>
 
 <script>
+
+function handleProfilePic(files) {
+  if (!files || !files[0]) return;
+  const file = files[0];
+  if (!file.type.startsWith('image/')) { showToast('Please select an image file'); return; }
+  
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64 = e.target.result;
+    settings.profilePic = base64;
+    applySettings();
+    await saveUserData();
+    showToast('Profile picture updated!');
+  };
+  reader.readAsDataURL(file);
+}
+
 // ============================================================
 // STATE & STORAGE
 // ============================================================
@@ -1543,6 +1704,33 @@ const TEXT_STYLES = {
 };
 
 function applySettings() {
+  // Update Names and Avatars
+  const displayName = _fbDisplayName || 'User';
+  const initial = displayName[0].toUpperCase();
+  
+  const nameEls = ['sb-username', 'profile-name-display'];
+  nameEls.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = displayName;
+  });
+  
+  const avatarText = document.getElementById('user-avatar-text');
+  if(avatarText) avatarText.textContent = initial;
+
+  const avatars = ['sb-avatar', 'profile-avatar-big'];
+  avatars.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) {
+      if(settings.profilePic) {
+        el.innerHTML = `<img src="${settings.profilePic}" style="width:100%;height:100%;object-fit:cover;">`;
+        el.style.background = 'transparent';
+      } else {
+        el.textContent = initial;
+        el.style.background = 'var(--accent)';
+      }
+    }
+  });
+
   document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
   const acc = ACCENTS[settings.accent] || ACCENTS.purple;
   document.documentElement.style.setProperty('--accent', acc[0]);
@@ -1594,6 +1782,7 @@ async function saveSettings() {
 // PROFILE PANEL
 // ============================================================
 function openProfilePanel() {
+  pushState();
   const displayName = _fbDisplayName || 'User';
   const email = _fbDisplayName ? (_fbDisplayName + '@notez.app') : '';
   document.getElementById('profile-avatar-big').textContent = displayName[0].toUpperCase();
@@ -2013,7 +2202,7 @@ function navigate(page) {
 // SIDEBAR
 // ============================================================
 let sidebarCollapsed = false;
-function toggleSidebar() {
+function old_toggleSidebar() {
   if (window.innerWidth <= 700) {
     document.getElementById('sidebar').classList.toggle('mobile-open');
     document.getElementById('mobile-overlay').classList.toggle('open');
@@ -2022,7 +2211,7 @@ function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
   }
 }
-function closeMobileSidebar() {
+function old_closeMobileSidebar() {
   document.getElementById('sidebar').classList.remove('mobile-open');
   document.getElementById('mobile-overlay').classList.remove('open');
 }
@@ -2343,6 +2532,33 @@ function renderNotes() {
   const pageTitle = document.getElementById('home-page-title');
 
   container.innerHTML = '';
+  // --- Recent Notes Section ---
+  if (!homeFolderId && !activeTag && notes.length > 0) {
+    const recentNotes = [...notes]
+      .sort((a, b) => new Date(b.updated || b.created) - new Date(a.updated || a.created))
+      .slice(0, 4);
+
+    if (recentNotes.length > 0) {
+      const recentSec = document.createElement('div');
+      recentSec.className = 'home-section-title';
+      recentSec.style.cursor = 'pointer';
+      recentSec.innerHTML = `<span class="sec-arrow" style="transition:0.2s">▼</span> <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Recently Modified`;
+      container.appendChild(recentSec);
+      
+      const recentGrid = document.createElement('div');
+      recentGrid.id = 'recent-grid-container';
+      recentGrid.className = 'notes-grid';
+      recentSec.onclick = () => toggleSidebarSection('recent-grid-container', recentSec);
+      recentGrid.style.marginBottom = '24px';
+      recentNotes.forEach(n => {
+        const card = makeNoteCard(n);
+        card.style.borderStyle = 'dashed'; // Distinct look for recents
+        recentGrid.appendChild(card);
+      });
+      container.appendChild(recentGrid);
+    }
+  }
+
 
   // --- Breadcrumb ---
   const bcPath = [];
@@ -2426,11 +2642,13 @@ function renderNotes() {
     if (localNotes.length > 0) {
       const sec = document.createElement('div');
       sec.className = 'home-section-title';
-      sec.textContent = 'Folders';
+      sec.style.cursor = 'pointer';
+      sec.innerHTML = `<span class="sec-arrow" style="transition:0.2s">▼</span> Folders`;
       container.appendChild(sec);
+      sec.onclick = () => toggleSidebarSection('folders-grid-container', sec);
     }
     const grid = document.createElement('div');
-    grid.className = 'folder-card-grid';
+    grid.id = 'folders-grid-container'; grid.className = 'folder-card-grid';
     subfolders.forEach(f => grid.appendChild(makeFolderCard(f)));
     container.appendChild(grid);
   }
@@ -2440,15 +2658,17 @@ function renderNotes() {
     if (subfolders.length > 0) {
       const sec = document.createElement('div');
       sec.className = 'home-section-title';
-      sec.textContent = 'Notes';
+      sec.style.cursor = 'pointer';
+      sec.innerHTML = `<span class="sec-arrow" style="transition:0.2s">▼</span> Notes`;
       container.appendChild(sec);
+      sec.onclick = () => toggleSidebarSection('notes-list-container', sec);
     }
     if (currentView === 'list') {
-      const list = document.createElement('div'); list.className = 'notes-list';
+      const list = document.createElement('div'); list.id = 'notes-list-container'; list.className = 'notes-list';
       localNotes.forEach(n => list.appendChild(makeNoteListItem(n)));
       container.appendChild(list);
     } else if (currentView === 'tree') {
-      const tree = document.createElement('div'); tree.className = 'notes-tree';
+      const tree = document.createElement('div'); tree.id = 'notes-list-container'; tree.className = 'notes-tree';
       // Structured Tree view for the main area
       function renderStructuredTree(pid, depth) {
         folders.filter(f => (f.parent || null) === pid).forEach(folder => {
@@ -2476,7 +2696,7 @@ function renderNotes() {
       
       container.appendChild(tree);
     } else {
-      const g = document.createElement('div'); g.className = 'notes-grid';
+      const g = document.createElement('div'); g.id = 'notes-list-container'; g.className = 'notes-grid';
       localNotes.forEach(n => g.appendChild(makeNoteCard(n)));
       container.appendChild(g);
     }
@@ -2751,11 +2971,17 @@ function openNote(id) {
   if (sfn) sfn.classList.add('active');
 }
 
+
 function closeNoteViewer() {
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
   document.getElementById('note-viewer').classList.remove('open');
   document.getElementById('note-iframe').src = '';
   document.querySelectorAll('.folder-note-item').forEach(el => el.classList.remove('active'));
 }
+
 
 function setNoteViewerParent(folderId) {
   const titleEl = document.getElementById('note-win-title');
@@ -3347,6 +3573,105 @@ async function initApp() {
   // No valid session
   document.getElementById('app-loading').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
+}
+
+
+function toggleSidebar() {
+  if (window.innerWidth <= 850) pushState();
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('mobile-overlay');
+  if (window.innerWidth <= 850) {
+    sb.classList.toggle('mobile-active');
+    ov.classList.toggle('active');
+  } else {
+    sb.classList.toggle('collapsed');
+  }
+}
+
+function closeMobileSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('mobile-overlay');
+  if (sb) sb.classList.remove('mobile-active');
+  if (ov) ov.classList.remove('active');
+}
+
+// Redirect all navigation clicks to close sidebar
+const originalOpenNote = openNote;
+openNote = function(id) {
+    closeMobileSidebar();
+    pushState(); originalOpenNote(id);
+};
+
+const originalNavigateHome = navigateHome;
+navigateHome = function(id) {
+    closeMobileSidebar();
+    originalNavigateHome(id);
+};
+
+
+// --- History API / Back Button Handling ---
+function pushState() {
+    history.pushState({ open: true }, "");
+}
+
+// Global handler for back button
+window.addEventListener('popstate', function(event) {
+    // Collect all elements that might be "open"
+    const noteViewer = document.getElementById('note-viewer');
+    const profilePanel = document.getElementById('profile-panel');
+    const sidebar = document.getElementById('sidebar');
+    const modals = document.querySelectorAll('.modal-overlay.open');
+    
+    let handled = false;
+
+    // 1. Close Modals
+    if (modals.length > 0) {
+        modals.forEach(m => m.classList.remove('open'));
+        handled = true;
+    }
+    
+    // 2. Close Note Viewer (and full screen)
+    if (noteViewer && noteViewer.classList.contains('open')) {
+        closeNoteViewer();
+        handled = true;
+    }
+    
+    // 3. Close Profile Panel
+    if (profilePanel && profilePanel.classList.contains('open')) {
+        closeProfilePanel();
+        handled = true;
+    }
+
+    // 4. Close Mobile Sidebar
+    if (sidebar && sidebar.classList.contains('mobile-active')) {
+        closeMobileSidebar();
+        handled = true;
+    }
+
+    // If something was open, we handled it. 
+    // If not, the browser will proceed with its default back behavior.
+});
+
+// Update existing functions to push state when opening things
+const wrapPush = (fnName) => {
+    const original = window[fnName];
+    window[fnName] = function(...args) {
+        pushState();
+        return original.apply(this, args);
+    };
+};
+
+
+function toggleSidebarSection(id, el) {
+  const target = document.getElementById(id);
+  const arrow = el.querySelector('.sec-arrow');
+  if (target.style.display === 'none') {
+    target.style.display = '';
+    if(arrow) arrow.style.transform = 'rotate(0deg)';
+  } else {
+    target.style.display = 'none';
+    if(arrow) arrow.style.transform = 'rotate(-90deg)';
+  }
 }
 
 initApp();
