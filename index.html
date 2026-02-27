@@ -63,7 +63,7 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; background: #ffffff; }
+  html, body { height: 100%; overflow: hidden; background: var(--accent); }
 
   body {
     font-family: var(--font);
@@ -670,14 +670,14 @@
   /* LOADING OVERLAY */
   #app-loading {
     position: fixed; inset: 0; z-index: 999;
-    background: #ffffff;
+    background: var(--bg);
     display: flex; align-items: center; justify-content: center;
     flex-direction: column; gap: 16px;
   }
   #app-loading .spin {
     width: 36px; height: 36px;
-    border: 3px solid #e0e0e0;
-    border-top-color: #7c6dfa;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }
@@ -1434,15 +1434,6 @@
           Save for Offline
         </button>
       </div>
-      <div class="profile-section-title">Offline Access</div>
-      <div id="offline-status-profile" style="font-size:0.75rem;font-family:var(--mono);color:var(--text3);margin-bottom:10px;min-height:14px;"></div>
-      <div style="display:flex;gap:8px;margin-bottom:14px;">
-        <button class="btn-primary" onclick="downloadOffline()" style="flex:1;justify-content:center;font-size:0.82rem;padding:9px 10px;gap:6px;">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Save Offline
-        </button>
-        <button class="btn-secondary" onclick="clearOffline()" style="flex:1;font-size:0.82rem;padding:9px 10px;">Clear Cache</button>
-      </div>
       <div class="profile-section-title">Account</div>
       <button onclick="doLogout();closeProfilePanel();" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--danger);background:transparent;color:var(--danger);font-family:var(--font);font-weight:700;font-size:0.88rem;cursor:pointer;transition:all var(--transition)" onmouseover="this.style.background='rgba(255,91,107,0.12)'" onmouseout="this.style.background='transparent'">
         Sign Out
@@ -1793,10 +1784,11 @@ function applySettings() {
 
   document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
   const acc = ACCENTS[settings.accent] || ACCENTS.purple;
-  const sidebarLogo = document.getElementById('sidebar-logo-img');
-  if (sidebarLogo) {
-    const i = sidebarLogo.querySelector('img');
-    if (i) i.src = SIDEBAR_LOGOS[settings.accent] || SIDEBAR_LOGOS.purple;
+  // Swap sidebar logo to match accent
+  const sidebarLogoEl = document.getElementById('sidebar-logo-img');
+  if (sidebarLogoEl) {
+    const img = sidebarLogoEl.querySelector('img');
+    if (img) img.src = SIDEBAR_LOGOS[settings.accent] || SIDEBAR_LOGOS.purple;
   }
   document.documentElement.style.setProperty('--accent', acc[0]);
   document.documentElement.style.setProperty('--accent2', acc[1]);
@@ -1853,7 +1845,6 @@ async function saveSettings() {
 // PROFILE PANEL
 // ============================================================
 function openProfilePanel() {
-  if (typeof checkOfflineStatus === 'function') checkOfflineStatus();
   checkOfflineStatus();
   _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
   updateAutosaveToggleUI(_offlineAutosaveEnabled);
@@ -3001,21 +2992,25 @@ function openNote(id) {
   const noteWindow = document.createElement('div');
   noteWindow.id = windowId;
   noteWindow.className = 'note-window active';
-  noteWindow.style.width = '780px';
-  noteWindow.style.height = '560px';
-  noteWindow.style.left = (50 + floatingWindowCount * 20) + 'px';
-  noteWindow.style.top = (50 + floatingWindowCount * 20) + 'px';
+  if (window.innerWidth <= 850) {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    noteWindow.style.width = (vw - 24) + 'px';
+    noteWindow.style.height = (vh - 80) + 'px';
+    noteWindow.style.left = '12px';
+    noteWindow.style.top = '40px';
+  } else {
+    noteWindow.style.width = '780px';
+    noteWindow.style.height = '560px';
+    noteWindow.style.left = (50 + floatingWindowCount * 20) + 'px';
+    noteWindow.style.top = (50 + floatingWindowCount * 20) + 'px';
+  }
   
   const titlebar = document.createElement('div');
   titlebar.className = 'note-window-titlebar';
   titlebar.innerHTML = `
     <span class="win-title" data-note-id="${id}">${note.name}</span>
-    <button class="win-btn" onclick="changeNoteParentFromWindow('${id}')" title="Change folder">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1M9 12v6M15 12v6"/></svg>
-    </button>
-    <button class="win-btn" onclick="openNoteInNewWindow('${id}')" title="Open another window">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-    </button>
+
     <button class="win-btn fullscreen" onclick="toggleFullscreenWindow('${windowId}')" title="Fullscreen">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M21 16v3a2 2 0 01-2 2h-3M8 21H5a2 2 0 01-2-2v-3"/></svg>
     </button>
@@ -3188,7 +3183,34 @@ function openNoteInNewWindow(id) {
 function toggleFullscreenWindow(windowId) {
   const el = document.getElementById(windowId);
   if (!el) return;
-  el.classList.toggle('fullscreen-win');
+  const isFullscreen = el.classList.contains('fullscreen-win');
+  if (!isFullscreen) {
+    // Store original size/position to restore later
+    el.dataset.origWidth = el.style.width;
+    el.dataset.origHeight = el.style.height;
+    el.dataset.origLeft = el.style.left;
+    el.dataset.origTop = el.style.top;
+    el.classList.add('fullscreen-win');
+    el.style.cssText = 'position:fixed;inset:0;width:100%!important;height:100%!important;left:0!important;top:0!important;border-radius:0;z-index:200;';
+    el.classList.add('fullscreen-win');
+    // Push state so Android back button can minimize
+    history.pushState({ fullscreenWindow: windowId }, '');
+  } else {
+    minimizeFullscreenWindow(windowId);
+  }
+}
+
+function minimizeFullscreenWindow(windowId) {
+  const el = document.getElementById(windowId);
+  if (!el) return;
+  el.classList.remove('fullscreen-win');
+  el.style.cssText = '';
+  el.style.width = el.dataset.origWidth || '780px';
+  el.style.height = el.dataset.origHeight || '560px';
+  el.style.left = el.dataset.origLeft || '50px';
+  el.style.top = el.dataset.origTop || '50px';
+  el.style.position = 'absolute';
+  el.style.borderRadius = '14px';
 }
 
 function changeNoteParentFromWindow(noteId) {
@@ -3696,40 +3718,53 @@ function pushState() {
 
 // Global handler for back button
 window.addEventListener('popstate', function(event) {
-    // Collect all elements that might be "open"
     const noteViewer = document.getElementById('note-viewer');
     const profilePanel = document.getElementById('profile-panel');
     const sidebar = document.getElementById('sidebar');
     const modals = document.querySelectorAll('.modal-overlay.open');
-    
+
     let handled = false;
 
+    // 0. Minimize any fullscreen floating window first
+    if (event.state && event.state.fullscreenWindow) {
+        const fwEl = document.getElementById(event.state.fullscreenWindow);
+        if (fwEl && fwEl.classList.contains('fullscreen-win')) {
+            minimizeFullscreenWindow(event.state.fullscreenWindow);
+            handled = true;
+        }
+    }
+    // Also check for any fullscreen-win without state
+    if (!handled) {
+        const fsWin = document.querySelector('.note-window.fullscreen-win');
+        if (fsWin) {
+            minimizeFullscreenWindow(fsWin.id);
+            handled = true;
+        }
+    }
+
     // 1. Close Modals
-    if (modals.length > 0) {
+    if (!handled && modals.length > 0) {
         modals.forEach(m => m.classList.remove('open'));
         handled = true;
     }
-    
-    // 2. Close Note Viewer (and full screen)
-    if (noteViewer && noteViewer.classList.contains('open')) {
+
+    // 2. Close Note Viewer
+    if (!handled && noteViewer && noteViewer.classList.contains('open')) {
         closeNoteViewer();
         handled = true;
     }
-    
+
     // 3. Close Profile Panel
-    if (profilePanel && profilePanel.classList.contains('open')) {
+    if (!handled && profilePanel && profilePanel.classList.contains('open')) {
         closeProfilePanel();
         handled = true;
     }
 
     // 4. Close Mobile Sidebar
-    if (sidebar && sidebar.classList.contains('mobile-active')) {
+    if (!handled && sidebar && sidebar.classList.contains('mobile-active')) {
         closeMobileSidebar();
         handled = true;
     }
-
-    // If something was open, we handled it. 
-    // If not, the browser will proceed with its default back behavior.
 });
 
 // Update existing functions to push state when opening things
@@ -3803,10 +3838,8 @@ async function clearIDB() {
 }
 
 function setOfflineStatus(msg, color) {
-  ['offline-status','offline-status-profile'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.textContent = msg; el.style.color = color || 'var(--text3)'; }
-  });
+  const el = document.getElementById('offline-status');
+  if (el) { el.textContent = msg; el.style.color = color || 'var(--text3)'; }
 }
 
 async function downloadOffline() {
