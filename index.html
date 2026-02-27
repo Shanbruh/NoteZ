@@ -143,8 +143,8 @@
 
   /* SIDEBAR */
   .sidebar {
-    width: var(--sidebar-w);
-    min-width: var(--sidebar-w);
+    width: var(--sidebar-w); min-width: var(--sidebar-w);
+    min-width: var(--sidebar-w); min-width: var(--sidebar-w);
     background: var(--bg2);
     border-right: 1px solid var(--border);
     display: flex;
@@ -626,29 +626,7 @@
   .clear-tag { cursor: pointer; font-size: 0.9rem; margin-left: auto; }
 
   /* MOBILE */
-  @media (max-width: 700px) {
-    .sidebar {
-      position: fixed; left: 0; top: 0; bottom: 0;
-      z-index: 20;
-      transform: translateX(-100%);
-      transition: transform 0.25s cubic-bezier(.4,0,.2,1);
-    }
-    .sidebar.mobile-open { transform: translateX(0); }
-    .mobile-overlay {
-      display: none; position: fixed; inset: 0; z-index: 15;
-      background: rgba(0,0,0,0.4);
-    }
-    .mobile-overlay.open { display: block; }
-    .notes-grid { grid-template-columns: 1fr 1fr; }
-    .content-area { padding: 16px; }
-    .note-window { width: 92vw !important; height: 75vh !important; left: 4vw !important; top: 10vh !important; }
-
-    /* Mobile bottom tab bar */
-    .mobile-bottom-nav {
-      display: flex !important;
-    }
-    .topbar { display: none; }
-    .main { padding-bottom: 60px; }
+  
     .sidebar-bottom-nav { display: none !important; }
   }
 
@@ -938,6 +916,9 @@
   #reupload-modal .reupload-zone strong { color: var(--accent); }
 
   .page-hidden { display: none !important; }
+
+  select option { background: var(--bg2); color: var(--text); }
+  .modal select option { background: var(--bg2); color: var(--text); }
 </style>
 </head>
 <body>
@@ -1652,7 +1633,7 @@ function closeFolderCtxMenu() {
 document.addEventListener('click', () => closeFolderCtxMenu());
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeFolderCtxMenu(); });
 
-function ctxRenameFolder() {\n  const fid = ctxFolderId;
+function ctxRenameFolder() {
   const f = folders.find(x => x.id === ctxFolderId);
   if (!f) return;
   document.getElementById('rename-folder-input').value = f.name;
@@ -1704,7 +1685,6 @@ async function confirmDeleteFolder() {
 function ctxChangeParent() {
   const fid = ctxFolderId;
   if (!fid) return;
-  if (!ctxFolderId) return;
   const folder = folders.find(f => f.id === fid);
   if (!folder) return;
   
@@ -1756,16 +1736,10 @@ function ctxChangeParent() {
   closeFolderCtxMenu();
 }
 
-
-function setFolderParentFromId(folderId, parentId) {
-  const folder = folders.find(f => f.id === folderId);
-  if (!folder) return;
-  folder.parent = parentId || null;
-  saveUserData();
-  renderAll();
-  showToast('Parent folder changed!');
+function setFolderParentFromId(id, parentId) {
+  const f = folders.find(f => f.id === id);
+  if (f) { f.parent = parentId; saveUserData(); renderAll(); showToast("Parent updated!"); }
 }
-
 function setFolderParent(parentId) {
   if (!ctxFolderId) return;
   const folder = folders.find(f => f.id === fid);
@@ -1847,7 +1821,7 @@ function openUpdateWindow(noteId) {
 let ctxNoteIdForParent = null;
 
 function openNoteParentModal(noteId) {
-  ctxNoteIdForParent = noteId;
+  const nid = noteId; ctxNoteIdForParent = noteId;
   const note = notes.find(n => n.id === noteId);
   if (!note) return;
   
@@ -1870,7 +1844,7 @@ function openNoteParentModal(noteId) {
   const rootBtn = document.createElement('div');
   rootBtn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
   rootBtn.textContent = '📁 Root (No folder)';
-  rootBtn.onclick = (e) => { e.stopPropagation(); setNoteParent(null); modal.remove(); };
+  rootBtn.onclick = (e) => { e.stopPropagation(); setNoteParentFromId(nid, null); modal.remove(); };
   rootBtn.onmouseover = () => { rootBtn.style.background = 'var(--bg4)'; };
   rootBtn.onmouseout = () => { rootBtn.style.background = 'var(--bg3)'; };
   content.appendChild(rootBtn);
@@ -1880,7 +1854,7 @@ function openNoteParentModal(noteId) {
     const btn = document.createElement('div');
     btn.style.cssText = 'padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;color:var(--text);font-family:var(--font);transition:all 0.18s;margin-bottom:8px;user-select:none;pointer-events:auto;';
     btn.textContent = '📁 ' + f.name;
-    btn.onclick = (e) => { e.stopPropagation(); setNoteParent(f.id); modal.remove(); };
+    btn.onclick = (e) => { e.stopPropagation(); setNoteParentFromId(nid, f.id); modal.remove(); };
     btn.onmouseover = () => { btn.style.background = 'var(--bg4)'; };
     btn.onmouseout = () => { btn.style.background = 'var(--bg3)'; };
     content.appendChild(btn);
@@ -1898,6 +1872,10 @@ function openNoteParentModal(noteId) {
   document.body.appendChild(modal);
 }
 
+function setNoteParentFromId(id, folderId) {
+  const node = notes.find(n => n.id === id);
+  if (node) { node.folder = folderId; saveUserData(); renderAll(); showToast("Folder updated!"); }
+}
 function setNoteParent(folderId) {
   if (!ctxNoteIdForParent) return;
   const note = notes.find(n => n.id === ctxNoteIdForParent);
@@ -1949,14 +1927,15 @@ function closeNoteCtxMenu() {
   document.removeEventListener('click', closeNoteCtxMenu);
 }
 
-function ctxChangeNoteParent() {\n  const nid = ctxNoteId;
-  if (!ctxNoteId) return;
+function ctxChangeNoteParent() {
+  const nid = ctxNoteId;
+  if (!nid) return;
   const note = notes.find(n => n.id === ctxNoteId);
   if (!note) return;
   
   const modal = document.createElement('div');
   modal.id = 'note-parent-select-modal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;pointer-events:auto;';
   modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
   
   const content = document.createElement('div');
@@ -1977,7 +1956,7 @@ function ctxChangeNoteParent() {\n  const nid = ctxNoteId;
     btn.textContent = f.name;
     btn.dataset.folderId = f.id;
     btn.dataset.isSelected = isSelected;
-    btn.onclick = (e) => { e.stopPropagation(); setNoteParent(f.id); modal.remove(); };
+    btn.onclick = (e) => { e.stopPropagation(); setNoteParentFromId(nid, f.id); modal.remove(); };
     btn.onmouseover = () => { btn.style.background = 'var(--bg4)'; };
     btn.onmouseout = () => { btn.style.background = btn.dataset.isSelected === 'true' ? 'var(--accent-glow)' : 'var(--bg3)'; };
     optionsDiv.appendChild(btn);
@@ -1998,6 +1977,10 @@ function ctxChangeNoteParent() {\n  const nid = ctxNoteId;
   closeNoteCtxMenu();
 }
 
+function setNoteParentFromId(id, folderId) {
+  const node = notes.find(n => n.id === id);
+  if (node) { node.folder = folderId; saveUserData(); renderAll(); showToast("Folder updated!"); }
+}
 function setNoteParent(folderId) {
   if (!ctxNoteId) return;
   const note = notes.find(n => n.id === ctxNoteId);
@@ -2071,20 +2054,33 @@ function renderFolderOptions(selectId, withRoot=false) {
   const sel = document.getElementById(selectId);
   if (!sel) return;
   
-  // For upload-folder, show "Select a folder" as disabled
+  // Clear any existing options
+  sel.innerHTML = '';
+  
+  // For uploads, the default choice is Root
+  const defaultOpt = document.createElement('option');
+  defaultOpt.value = "";
   if (selectId === 'upload-folder') {
-    sel.innerHTML = '<option value="" disabled selected>— Select a folder —</option>';
+      defaultOpt.textContent = "📁 Root (No folder)";
+      sel.appendChild(defaultOpt);
   } else {
-    sel.innerHTML = withRoot ? '<option value="">— Root —</option>' : '<option value="">— No folder —</option>';
+      defaultOpt.textContent = withRoot ? "— Root —" : "— No folder —";
+      sel.appendChild(defaultOpt);
   }
   
   function addOpts(parentId, depth) {
-    folders.filter(f => f.parent===(parentId||null)).forEach(f => {
+    // Filter folders where parent matches parentId (handling null/undefined/empty string as Root)
+    folders.filter(f => {
+        const p = f.parent || null;
+        const target = parentId || null;
+        return p === target;
+    }).forEach(f => {
       const opt = document.createElement('option');
       opt.value = f.id;
-      opt.textContent = '  '.repeat(depth) + (depth>0?'└ ':'') + f.name;
+      // Use non-breaking spaces for visual hierarchy in standard select
+      opt.textContent = "\u00A0\u00A0".repeat(depth) + (depth > 0 ? "└ " : "📁 ") + f.name;
       sel.appendChild(opt);
-      addOpts(f.id, depth+1);
+      addOpts(f.id, depth + 1);
     });
   }
   addOpts(null, 0);
@@ -2216,6 +2212,31 @@ function renderFolderTree() {
   }
 
   buildTree(null, container, 0);
+
+  // Add Root Notes section at the bottom of the tree
+  const rootNotes = notes.filter(n => !n.folder);
+  if (rootNotes.length > 0) {
+    const rootHeader = document.createElement('div');
+    rootHeader.className = 'sidebar-section';
+    rootHeader.style.marginTop = '15px';
+    rootHeader.textContent = 'Root Notes';
+    container.appendChild(rootHeader);
+
+    const noteSVG = `<svg viewBox="0 0 24 24" width="13" height="13" style="flex-shrink:0;opacity:0.6"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--text3)" opacity="0.5"/><path d="M14 2v6h6" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+
+    rootNotes.forEach(n => {
+      const noteEl = document.createElement('div');
+      noteEl.className = 'folder-note-item';
+      noteEl.id = 'sfn_' + n.id;
+      noteEl.draggable = true;
+      noteEl.dataset.noteId = n.id;
+      noteEl.style.paddingLeft = '14px';
+      noteEl.innerHTML = `${noteSVG} ${n.name}`;
+      noteEl.onclick = () => openNote(n.id);
+      noteEl.addEventListener('contextmenu', e => openNoteCtxMenu(e, n.id));
+      container.appendChild(noteEl);
+    });
+  }
 }
 
 function setupFolderDropTarget(el, folderId) {
@@ -2428,14 +2449,31 @@ function renderNotes() {
       container.appendChild(list);
     } else if (currentView === 'tree') {
       const tree = document.createElement('div'); tree.className = 'notes-tree';
-      localNotes.forEach(n => {
-        const item = document.createElement('div');
-        item.className = 'tree-item';
-        item.style.paddingLeft = '8px';
-        const noteCard = makeNoteCard(n);
-        item.appendChild(noteCard);
-        tree.appendChild(item);
-      });
+      // Structured Tree view for the main area
+      function renderStructuredTree(pid, depth) {
+        folders.filter(f => (f.parent || null) === pid).forEach(folder => {
+          const fDiv = document.createElement('div');
+          fDiv.style.paddingLeft = (depth * 20) + 'px';
+          fDiv.style.marginBottom = '10px';
+          fDiv.innerHTML = `<div class="home-section-title" style="margin-bottom:8px">📁 ${folder.name}</div>`;
+          tree.appendChild(fDiv);
+          
+          const grid = document.createElement('div');
+          grid.className = 'notes-grid';
+          grid.style.paddingLeft = (depth * 20 + 20) + 'px';
+          notes.filter(n => n.folder === folder.id).forEach(n => grid.appendChild(makeNoteCard(n)));
+          if (grid.children.length > 0) tree.appendChild(grid);
+          
+          renderStructuredTree(folder.id, depth + 1);
+        });
+      }
+      renderStructuredTree(homeFolderId, 0);
+      
+      const orphanedGrid = document.createElement('div');
+      orphanedGrid.className = 'notes-grid';
+      localNotes.forEach(n => orphanedGrid.appendChild(makeNoteCard(n)));
+      if (orphanedGrid.children.length > 0) tree.appendChild(orphanedGrid);
+      
       container.appendChild(tree);
     } else {
       const g = document.createElement('div'); g.className = 'notes-grid';
@@ -2619,12 +2657,7 @@ function removeUploadTag(i) { uploadTags.splice(i,1); renderTagPills(); }
 function saveNote() {
   if (!pendingFile) return;
   const name = document.getElementById('upload-name').value.trim() || pendingFile.name;
-  const folder = document.getElementById('upload-folder').value;
-  
-  if (!folder) {
-    showToast('Please select a folder for this note');
-    return;
-  }
+  const folder = document.getElementById('upload-folder').value || null;
   
   const reader = new FileReader();
   reader.onload = async e => {
@@ -2753,7 +2786,7 @@ function changeNoteParentFromWindow(noteId) {
   
   const modal = document.createElement('div');
   modal.id = 'note-window-parent-modal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;pointer-events:auto;';
   modal.innerHTML = `
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:400px;width:90%;">
       <div style="font-weight:700;margin-bottom:12px;font-size:1rem;">Select Folder for "${note.name}"</div>
@@ -2858,7 +2891,7 @@ function changeNoteParentFromWindow(noteId) {
   
   const modal = document.createElement('div');
   modal.id = 'window-parent-select-modal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;pointer-events:auto;';
   modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
   
   const content = document.createElement('div');
