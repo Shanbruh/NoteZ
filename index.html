@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NoteZ">
 <meta name="theme-color" content="#7c6dfa" id="theme-color-meta">
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz4KICA8cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzI4JyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00zMyAzMCBWNzAgTTY3IDMwIFY3MCBNMzMgNzAgTDY3IDMwJyBzdHJva2U9J3VybCgjZyknIHN0cm9rZS13aWR0aD0nMTInIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcgZmlsbD0nbm9uZScvPgogIDxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0nZycgeDE9JzAlJyB5MT0nMCUnIHgyPScxMDAlJyB5Mj0nMTAwJSc+CiAgICA8c3RvcCBvZmZzZXQ9JzAlJyBzdHlsZT0nc3RvcC1jb2xvcjojN2M2ZGZhJy8+PHN0b3Agb2Zmc2V0PSczMyUnIHN0eWxlPSdzdG9wLWNvbG9yOiM0ZDlmZmYnLz4KICAgIDxzdG9wIG9mZnNldD0nNjYlJyBzdHlsZT0nc3RvcC1jb2xvcjojM2RkYzk3Jy8+PHN0b3Agb2Zmc2V0PScxMDAlJyBzdHlsZT0nc3RvcC1jb2xvcjojZjRhMjRiJy8+CiAgPC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+">
-<link rel="manifest" href="data:application/json,{%22name%22:%22NoteZ%22,%22short_name%22:%22NoteZ%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f0f11%22,%22theme_color%22:%22%237c6dfa%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Cdefs%3E%3ClinearGradient id=%27grad%27%3E%3Cstop offset=%270%25%27 style=%27stop-color:%237c6dfa%27/%3E%3Cstop offset=%2733%25%27 style=%27stop-color:%234d9fff%27/%3E%3Cstop offset=%2766%25%27 style=%27stop-color:%233ddc97%27/%3E%3Cstop offset=%27100%25%27 style=%27stop-color:%23f4a24b%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%27192%27 height=%27192%27 fill=%27url(%23grad)%27 rx=%2745%27/%3E%3Cpath d=%27M 60 40 L 60 152 M 80 40 L 80 152 M 100 40 L 100 152 M 130 40 L 130 152%27 stroke=%27white%27 stroke-width=%278%27/%3E%3Ccircle cx=%27150%27 cy=%2780%27 r=%2725%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27/%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22}]}">
+<link rel="apple-touch-icon" href="/NoteZ/logoz.png">
+<link rel="manifest" href="/NoteZ/manifest.json">
 <title>NoteZ</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 
@@ -112,14 +112,6 @@
     font-weight: 800;
     letter-spacing: -1px;
     margin-bottom: 6px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .login-logo > div {
-    display: flex;
-    align-items: center;
   }
   .login-logo span { color: var(--accent); }
   .login-sub { color: var(--text2); font-size: 0.9rem; margin-bottom: 32px; }
@@ -175,42 +167,33 @@
   .sidebar-logo span.z { color: var(--accent); }
   .sidebar-logo .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
+  .sidebar-section { padding: 10px 12px 4px; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px; color: var(--text3); text-transform: uppercase; }
+
   .sidebar-search {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .sidebar-search input {
-    width: 100%;
+    padding: 10px 12px;
+    margin: 8px 8px 4px;
     background: var(--bg3);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 12px 8px 34px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .sidebar-search input {
+    flex: 1;
+    background: transparent;
+    border: none;
     color: var(--text);
     font-family: var(--font);
     font-size: 0.85rem;
     outline: none;
-    transition: border var(--transition), box-shadow var(--transition);
+    padding: 0;
   }
-  .sidebar-search input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--accent-glow);
-  }
+  
   .sidebar-search input::placeholder {
     color: var(--text3);
   }
-  .sidebar-search-wrap {
-    position: relative;
-  }
-  .sidebar-search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--text3);
-  }
-
-  .sidebar-section { padding: 10px 12px 4px; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px; color: var(--text3); text-transform: uppercase; }
 
   .sidebar-btn {
     display: flex; align-items: center; gap: 9px;
@@ -359,6 +342,45 @@
   .note-card-meta { display: flex; flex-wrap: wrap; gap: 5px; }
   .note-tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; background: var(--accent-glow); color: var(--accent2); }
   .note-folder-path { font-size: 0.72rem; color: var(--text3); font-family: var(--mono); margin-top: 4px; }
+  
+  .note-card-menu-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text2);
+    transition: all var(--transition);
+    opacity: 0;
+  }
+  .note-card:hover .note-card-menu-btn { opacity: 1; }
+  .note-card-menu-btn:hover { background: var(--bg4); color: var(--text); }
+  
+  .note-list-menu-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text2);
+    transition: all var(--transition);
+    flex-shrink: 0;
+  }
+  .note-list-menu-btn:hover { background: var(--bg4); color: var(--text); }
+  
   .note-card-actions { display: flex; gap: 5px; margin-top: 12px; opacity: 0; transition: opacity var(--transition); }
   .note-card:hover .note-card-actions { opacity: 1; }
   .note-act-btn {
@@ -527,6 +549,8 @@
     top: 0 !important;
     left: 0 !important;
     transform: none !important;
+    position: fixed !important;
+    z-index: 9999 !important;
   }
   .note-window.fullscreen-win .resize-handle { display: none; }
   .note-window.fullscreen-win .note-window-titlebar { display: none; }
@@ -632,6 +656,7 @@
   .sidebar-bottom-nav {
     display: flex; align-items: center; gap: 2px;
     padding: 8px 10px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--border);
     flex-shrink: 0;
     background: var(--bg2);
@@ -653,6 +678,9 @@
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 0.85rem; color: #fff;
     flex-shrink: 0;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
   }
 
   /* SEARCH TAG INDICATOR */
@@ -724,6 +752,10 @@
     animation: spin 0.7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
   #app-loading .load-logo { font-size: 1.8rem; font-weight: 800; }
   #app-loading .load-logo span { color: var(--accent); }
 
@@ -1046,10 +1078,12 @@
     bottom: 0;
     z-index: 1000;
     transform: translateX(-100%);
-    box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+    box-shadow: none;
+    padding-bottom: env(safe-area-inset-bottom);
   }
   .sidebar.mobile-active {
     transform: translateX(0);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.5);
   }
   .mobile-overlay {
     display: none;
@@ -1075,19 +1109,7 @@
 
 <!-- LOADING OVERLAY -->
 <div id="app-loading">
-  <div class="load-logo-wrap"><svg viewBox="0 0 100 100" class="n-logo-svg">
-  <defs>
-    <linearGradient id="logo-grad-loading" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#7c6dfa"/>
-      <stop offset="33%" style="stop-color:#4d9fff"/>
-      <stop offset="66%" style="stop-color:#3ddc97"/>
-      <stop offset="100%" style="stop-color:#f4a24b"/>
-    </linearGradient>
-  </defs>
-  <rect width="100" height="100" rx="28" fill="url(#logo-grad-loading)"/>
-  <path d="M32 30 V70 M68 30 V70 M32 30 L68 70" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-</svg><div class="load-logo">Note<span>Z</span></div></div>
-  <div class="spin"></div>
+  <div style="font-size: 3.5rem; font-weight: 800; color: var(--accent); animation: pulse 2s ease-in-out infinite;">Z</div>
 </div>
 
 <!-- TOAST -->
@@ -1096,21 +1118,7 @@
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo">
-      <svg viewBox="0 0 100 100" style="width: 48px; height: 48px; margin-bottom: 12px;">
-        <defs>
-          <linearGradient id="logo-grad-login" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#7c6dfa"/>
-            <stop offset="33%" style="stop-color:#4d9fff"/>
-            <stop offset="66%" style="stop-color:#3ddc97"/>
-            <stop offset="100%" style="stop-color:#f4a24b"/>
-          </linearGradient>
-        </defs>
-        <rect width="100" height="100" rx="28" fill="url(#logo-grad-login)"/>
-        <path d="M32 30 V70 M68 30 V70 M32 30 L68 70" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>
-      <div>Note<span class="z">Z</span></div>
-    </div>
+    <div class="login-logo">Note<span class="z">Z</span></div>
     <div class="login-sub">Your personal HTML notes workspace</div>
     <div class="login-tabs">
       <button class="login-tab active" id="tab-login" onclick="switchLoginTab('login')">Sign In</button>
@@ -1142,6 +1150,7 @@
   <div class="sidebar" id="sidebar">
     
     <div class="sidebar-logo">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfQAAAH0CAYAAADL1t+KAABt00lEQVR4nO3955Mk23nneX6f4+4RkZklrgBwAYIEQBBoaBCEIkgoEtRkC1rP9CizGbN5Nbbv9j9aWxtr293Zabk9lACaJEhoDQoQJAASIOQVdUtkhnD3c/bFOe7h4eEhUlRVVuXvc62uZ0S49gh//GgQEREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREZHTc+nf0PsdNvCZ8XCmF+Vhb/9hu6rX77Ls/7nkgIv71O6XS+/nD2un5CHRFb/isgLqCgjLwJ1lBqEmeCO0Ad1jzZ8GIWQQMoIttt/4mn9h+9SAYGAhvhX/B+Y6r3vLmUEIAwfVfW/o5ru2zNCDzOVgti16eEIIO89r93XwndfNZ+e5fj7N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AAX0x5sC+pXmMAocOb7z43Y48tyRFxkn0xOUChe5nAI5TcTOc4dzsFh06kVYO2OigP44U6W4K83hLGbZheBTOj0wmuRMZ8fMq84Pvfvo10m1ZNn2Slm7yrDvRwp+U7n2EL9jtLfzsh3PzOdtZ33eItrzpiDPufWHuXGAWAt9i13fD2fbL8D9/n6NR2OqekFd+/UKlkquXTm65FeaAwqcOUKoCSklPh4XzBdzigI2VtJdeeJXjdmzupiAf9b20vfffsd3/4Le7gfG+3sL3HX8u+y+/vE32+9d0GW9h7WNKfSH/1AlF0cB/arrfwNs4O/+PWXttQL6Q7WjnfPG6cO2YwyAB+IynIezMr/+W4SNuWlR/3gvwTWQC6OAftVtC+h93ZvDWtt0EXng+gG7//tVQL9SFNBlD022urGaxe6Jfa/rpiDncdYig/NOH3X63ckqBXTZohvIu6+bvyugRDcWEZGHTwH9qtuZRQerqZlu6tzrGyTyMA1mqQ/lQOih+ypQszXZoRvAu1MUzEUuhX7wfhyKE+QsFNCvuPWuvPvZ7LDaQ9zA27qBPET9a3Ua97fJ2H4e9nfnYR//+SxHTdvk0T4+OR0FdElcb3qa5R72Tfmq6tZtOAsPbB9t7P572Nk8j8N3d1vlP7lKFNCvuOWtfNePf9Pnumk8fNtHdJPHXb84TF26ioiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIjI3v7/4eaoRXtYfDUAAAAASUVORK5CYII=" alt="NoteZ" id="sidebar-logo-icon" style="width:30px;height:30px;object-fit:contain;flex-shrink:0;">
       Note<span class="z">Z</span>
     </div>
     <div class="profile-trigger" onclick="openProfilePanel()">
@@ -1152,15 +1161,7 @@
         </div>
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--text3)" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
     </div>
-    <div class="sidebar-search">
-      <div class="sidebar-search-wrap">
-        <svg class="sidebar-search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="M21 21l-4.35-4.35"/>
-        </svg>
-        <input type="text" id="sidebar-search-input" placeholder="Search notes..." oninput="filterNotesBySearch(this.value)">
-      </div>
-    </div>
+
     <div class="sidebar-scroll">
 
       <div style="height:8px"></div>
@@ -1195,6 +1196,10 @@
       <!-- Settings -->
       <button class="sb-nav-btn" id="nav-settings" onclick="navigate('settings')" title="Settings">
         <svg viewBox="0 0 24 24" class="dt-icon"><circle class="dt-bg" cx="12" cy="12" r="9"/><circle class="dt-stroke-only" cx="12" cy="12" r="3" fill="none" stroke-width="1.8"/><path class="dt-stroke" d="M12 5v2M12 17v2M5 12H3M21 12h-2M7.05 7.05L5.64 5.64M18.36 18.36l-1.41-1.41M7.05 16.95l-1.41 1.41M18.36 5.64l-1.41 1.41" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <!-- Fullscreen -->
+      <button class="sb-nav-btn" id="fullscreen-btn" onclick="toggleBrowserFullscreen()" title="Fullscreen">
+        <svg viewBox="0 0 24 24" class="dt-icon"><rect class="dt-bg" x="3" y="3" width="18" height="18" rx="1"/><path class="dt-stroke" d="M7 7v4h4M17 17v-4h-4M7 7h4v4M17 17h-4v-4" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
   </div>
@@ -1310,6 +1315,34 @@
         <div class="accent-opt" data-accent="blue" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)" onclick="setAccent('blue','#3b82f6','#60a5fa','rgba(59,130,246,0.15)')"></div>
         <div class="accent-opt" data-accent="green" style="background:linear-gradient(135deg,#10b981,#34d399)" onclick="setAccent('green','#10b981','#34d399','rgba(16,185,129,0.15)')"></div>
         <div class="accent-opt" data-accent="orange" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)" onclick="setAccent('orange','#f59e0b','#fbbf24','rgba(245,158,11,0.15)')"></div>
+      </div>
+
+      <div class="settings-section-title" style="margin-top:24px">Offline Access</div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:0.85rem;color:var(--text2);line-height:1.5;">
+          Save all your notes, folders and settings to this device so you can access them without internet.
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;color:var(--text);">Auto-save Offline</div>
+            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px;">Automatically sync to offline storage when notes change</div>
+          </div>
+          <label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;">
+            <input type="checkbox" id="offline-autosave-toggle" onchange="toggleOfflineAutosave(this.checked)" style="opacity:0;width:0;height:0;position:absolute;">
+            <span id="offline-autosave-track" style="position:absolute;cursor:pointer;inset:0;background:var(--bg4);border-radius:24px;transition:0.2s;border:1px solid var(--border);"></span>
+            <span id="offline-autosave-thumb" style="position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--text3);border-radius:50%;transition:0.2s;"></span>
+          </label>
+        </div>
+        <div id="offline-status" style="font-size:0.78rem;font-family:var(--mono);color:var(--text3);min-height:16px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-primary" onclick="downloadOffline()" id="offline-save-btn" style="flex:1;justify-content:center;gap:8px;">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Save for Offline
+          </button>
+          <button class="btn-secondary" onclick="clearOffline()" style="flex:1;justify-content:center;">
+            Clear Offline Data
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1463,6 +1496,32 @@
         Change Profile Picture
       </button>
     </div><div class="profile-section" style="padding-bottom:16px">
+      <div class="profile-divider"></div>
+      <div class="profile-section">
+        <div class="profile-section-title">Offline Access</div>
+        <div id="profile-offline-status" style="font-size:0.75rem;color:var(--text3);font-family:var(--mono);margin-bottom:10px;min-height:14px;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:0.83rem;font-weight:600;color:var(--text);">Auto-save</div>
+          <label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;">
+            <input type="checkbox" id="profile-autosave-toggle" onchange="toggleOfflineAutosave(this.checked)" style="opacity:0;width:0;height:0;position:absolute;">
+            <span id="profile-autosave-track" style="position:absolute;cursor:pointer;inset:0;background:var(--bg4);border-radius:22px;transition:0.2s;border:1px solid var(--border);"></span>
+            <span id="profile-autosave-thumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;background:var(--text3);border-radius:50%;transition:0.2s;"></span>
+          </label>
+        </div>
+        <button onclick="downloadOffline()" style="width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:var(--font);font-weight:600;font-size:0.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all var(--transition);" onmouseover="this.style.background='var(--accent-glow)';this.style.color='var(--accent2)';this.style.borderColor='var(--accent)'" onmouseout="this.style.background='var(--bg3)';this.style.color='var(--text2)';this.style.borderColor='var(--border)'">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Save for Offline
+        </button>
+      </div>
+      <div class="profile-section-title">Offline Access</div>
+      <div id="offline-status-profile" style="font-size:0.75rem;font-family:var(--mono);color:var(--text3);margin-bottom:10px;min-height:14px;"></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="btn-primary" onclick="downloadOffline()" style="flex:1;justify-content:center;font-size:0.82rem;padding:9px 10px;gap:6px;">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Save Offline
+        </button>
+        <button class="btn-secondary" onclick="clearOffline()" style="flex:1;font-size:0.82rem;padding:9px 10px;">Clear Cache</button>
+      </div>
       <div class="profile-section-title">Account</div>
       <button onclick="doLogout();closeProfilePanel();" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--danger);background:transparent;color:var(--danger);font-family:var(--font);font-weight:700;font-size:0.88rem;cursor:pointer;transition:all var(--transition)" onmouseover="this.style.background='rgba(255,91,107,0.12)'" onmouseout="this.style.background='transparent'">
         Sign Out
@@ -1599,24 +1658,11 @@ const LS_KEY = () => `notez_data_${_fbUid}`;
 function saveLocal() {
   try {
     localStorage.setItem(LS_KEY(), JSON.stringify({ notes, folders, settings }));
-    // Also save offline backup for offline mode
-    localStorage.setItem('notez_offline_data', JSON.stringify({ 
-      notes: allNotes, 
-      folders: allFolders, 
-      tags: allTags, 
-      settings: userSettings 
-    }));
   } catch(e) {
     // localStorage full? try without content
     try {
       const slim = { notes: notes.map(({content,...r})=>r), folders, settings };
       localStorage.setItem(LS_KEY(), JSON.stringify(slim));
-      localStorage.setItem('notez_offline_data', JSON.stringify({ 
-        notes: allNotes.map(({content,...r})=>r), 
-        folders: allFolders, 
-        tags: allTags, 
-        settings: userSettings 
-      }));
     } catch(e2) { console.warn('localStorage full', e2); }
   }
 }
@@ -1684,6 +1730,7 @@ async function loadFromFirebase() {
 async function saveUserData() {
   saveLocal();
   syncToFirebase(); // fire-and-forget
+  scheduleOfflineAutosave(); // autosave offline if enabled
 }
 
 async function loadUserDataFromFirebase() {
@@ -1768,6 +1815,16 @@ function getUserData() { return { notes, folders, settings }; }
 // ============================================================
 // SETTINGS / THEMES
 // ============================================================
+const LOGO_FILTERS = {
+  purple: 'invert(48%) sepia(60%) saturate(500%) hue-rotate(220deg) brightness(110%)',
+  blue:   'invert(42%) sepia(90%) saturate(400%) hue-rotate(195deg) brightness(100%)',
+  green:  'invert(55%) sepia(70%) saturate(400%) hue-rotate(120deg) brightness(95%)',
+  orange: 'invert(65%) sepia(80%) saturate(600%) hue-rotate(10deg) brightness(105%)',
+  pink:   'invert(45%) sepia(80%) saturate(500%) hue-rotate(290deg) brightness(110%)',
+  red:    'invert(35%) sepia(90%) saturate(600%) hue-rotate(340deg) brightness(110%)',
+  teal:   'invert(60%) sepia(60%) saturate(400%) hue-rotate(150deg) brightness(95%)',
+  yellow: 'invert(75%) sepia(80%) saturate(500%) hue-rotate(20deg) brightness(110%)',
+};
 const ACCENTS = {
   purple: ['#7c6dfa','#a594ff','rgba(124,109,250,0.18)'],
   blue:   ['#3b82f6','#60a5fa','rgba(59,130,246,0.15)'],
@@ -1815,6 +1872,8 @@ function applySettings() {
 
   document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
   const acc = ACCENTS[settings.accent] || ACCENTS.purple;
+  // Tint sidebar logo to match accent
+  const logoFilter = LOGO_FILTERS[settings.accent] || LOGO_FILTERS.purple;
   document.documentElement.style.setProperty('--accent', acc[0]);
   document.documentElement.style.setProperty('--accent2', acc[1]);
   document.documentElement.style.setProperty('--accent-glow', acc[2]);
@@ -1864,6 +1923,10 @@ async function saveSettings() {
 // PROFILE PANEL
 // ============================================================
 function openProfilePanel() {
+  if (typeof checkOfflineStatus === 'function') checkOfflineStatus();
+  checkOfflineStatus();
+  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
+  updateAutosaveToggleUI(_offlineAutosaveEnabled);
   pushState();
   const displayName = _fbDisplayName || 'User';
   const email = _fbDisplayName ? (_fbDisplayName + '@notez.app') : '';
@@ -2075,6 +2138,16 @@ function openUpdateWindow(noteId) {
   closeBtn.textContent = '✕ Close';
   closeBtn.onclick = () => updateWindow.remove();
   
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'update-window-btn';
+  deleteBtn.style.color = 'var(--danger)';
+  deleteBtn.style.borderColor = 'var(--danger)';
+  deleteBtn.textContent = '🗑 Delete Note';
+  deleteBtn.onclick = () => {
+    updateWindow.remove();
+    deleteNoteById(noteId);
+  };
+  
   const title = document.createElement('div');
   title.className = 'update-window-title';
   title.textContent = 'Update: ' + note.name;
@@ -2083,6 +2156,7 @@ function openUpdateWindow(noteId) {
   updateWindow.appendChild(renameBtn);
   updateWindow.appendChild(replaceBtn);
   updateWindow.appendChild(changeParentBtn);
+  updateWindow.appendChild(deleteBtn);
   updateWindow.appendChild(closeBtn);
   
   container.appendChild(updateWindow);
@@ -2158,6 +2232,65 @@ function setNoteParent(folderId) {
   const modal = document.getElementById('note-parent-select-modal');
   if (modal) modal.remove();
 }
+
+function showNoteMenu(e, noteId) {
+  e.stopPropagation();
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+  
+  // Create menu
+  const menu = document.createElement('div');
+  menu.className = 'folder-ctx-menu open';
+  menu.id = 'note-action-menu';
+  menu.style.zIndex = '300';
+  menu.style.minWidth = '160px';
+  
+  let html = `
+    <div class="ctx-item" onclick="openUpdateWindow('${noteId}'); document.getElementById('note-action-menu').remove();">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Update
+    </div>
+    <div class="ctx-item" onclick="downloadNote('${noteId}'); document.getElementById('note-action-menu').remove();">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download
+    </div>
+    <div class="ctx-item" onclick="openNoteParentModal('${noteId}'); document.getElementById('note-action-menu').remove();">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1M9 12v6M15 12v6"/></svg>
+      Change Folder
+    </div>
+    <div class="ctx-item danger" onclick="deleteNoteById('${noteId}'); document.getElementById('note-action-menu').remove();">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      Delete
+    </div>
+  `;
+  
+  menu.innerHTML = html;
+  document.body.appendChild(menu);
+  
+  // Position menu near cursor
+  const rect = e.target.getBoundingClientRect();
+  let x = rect.right - 150;
+  let y = rect.bottom + 5;
+  
+  // Adjust for screen edges
+  if (x + 160 > window.innerWidth) x = window.innerWidth - 170;
+  if (y + 120 > window.innerHeight) y = window.innerHeight - 130;
+  
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  
+  // Close when clicking elsewhere
+  const closeHandler = (e) => {
+    if (!menu.contains(e.target)) {
+      menu.remove();
+      document.removeEventListener('click', closeHandler);
+    }
+  };
+  setTimeout(() => {
+    document.addEventListener('click', closeHandler);
+  }, 0);
+}
+
 function openNoteCtxMenu(e, noteId) {
   e.preventDefault(); e.stopPropagation();
   ctxNoteId = noteId;
@@ -2175,6 +2308,10 @@ function openNoteCtxMenu(e, noteId) {
     <div class="ctx-item" onclick="ctxChangeNoteParent()">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1M9 12v6M15 12v6"/></svg>
       Change Folder
+    </div>
+    <div class="ctx-item danger" onclick="deleteNoteById('${noteId}'); document.getElementById('note-ctx-menu').remove();">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      Delete
     </div>
   `;
   
@@ -2266,6 +2403,11 @@ function setNoteParent(folderId) {
 function navigate(page) {
   currentPage = page;
   if (page === 'home') homeFolderId = null;
+  if (page === 'settings') {
+    checkOfflineStatus();
+    _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
+    updateAutosaveToggleUI(_offlineAutosaveEnabled);
+  }
   ['home','upload','settings'].forEach(p => {
     document.getElementById('page-'+p).classList.toggle('page-hidden', p!==page);
     const nb = document.getElementById('nav-'+p);
@@ -2357,13 +2499,6 @@ function renderFolderOptions(selectId, withRoot=false) {
   addOpts(null, 0);
 }
 
-let sidebarSearchQuery = '';
-
-function filterNotesBySearch(query) {
-  sidebarSearchQuery = query.toLowerCase().trim();
-  renderFolderTree();
-}
-
 function renderFolderTree() {
   const container = document.getElementById('folder-tree');
   container.innerHTML = '';
@@ -2381,15 +2516,7 @@ function renderFolderTree() {
   function buildTree(parentId, targetEl, depth) {
     const children = folders.filter(f => (f.parent || null) === (parentId || null));
     children.forEach(f => {
-      let notesInFolder = notes.filter(n => n.folder === f.id);
-      
-      // Filter by search query if present
-      if (sidebarSearchQuery) {
-        notesInFolder = notesInFolder.filter(n => 
-          n.name.toLowerCase().includes(sidebarSearchQuery)
-        );
-      }
-      
+      const notesInFolder = notes.filter(n => n.folder === f.id);
       const hasSubfolders = folders.some(sf => sf.parent === f.id);
       const hasChildren = notesInFolder.length > 0 || hasSubfolders;
       const indent = depth * 12;
@@ -2587,6 +2714,65 @@ function handleFilesIntoFolder(files, folderId) {
 }
 
 
+// ============================================================
+// SIDEBAR SEARCH FUNCTIONALITY
+// ============================================================
+function setupSidebarSearch() {
+  const searchInput = document.getElementById('sidebar-search-input');
+  if (!searchInput) return;
+  
+  searchInput.addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase().trim();
+    filterSidebarItems(query);
+  });
+}
+
+function filterSidebarItems(query) {
+  // Get all note items and folder items
+  const folderItems = document.querySelectorAll('.folder-item');
+  const noteItems = document.querySelectorAll('.folder-note-item');
+  
+  if (!query) {
+    // Show all items when search is empty
+    folderItems.forEach(item => item.style.display = '');
+    noteItems.forEach(item => item.style.display = '');
+    return;
+  }
+  
+  let matchedFolders = new Set();
+  
+  // First pass: find all matching notes and mark their parent folders
+  noteItems.forEach(noteItem => {
+    const noteText = noteItem.textContent.toLowerCase();
+    if (noteText.includes(query)) {
+      noteItem.style.display = '';
+      // Mark parent folder
+      let parent = noteItem.closest('.folder-item');
+      if (parent) {
+        matchedFolders.add(parent);
+      }
+    } else {
+      noteItem.style.display = 'none';
+    }
+  });
+  
+  // Second pass: show matched folders and their parent hierarchy
+  folderItems.forEach(folderItem => {
+    if (matchedFolders.has(folderItem)) {
+      folderItem.style.display = '';
+      // Expand this folder
+      const folderHeader = folderItem.querySelector('.folder-header');
+      const folderChildren = folderItem.querySelector('.folder-children');
+      if (folderHeader && folderChildren && !folderChildren.classList.contains('open')) {
+        folderChildren.classList.add('open');
+        const arrow = folderHeader.querySelector('.folder-arrow');
+        if (arrow) arrow.classList.add('open');
+      }
+    } else {
+      folderItem.style.display = 'none';
+    }
+  });
+}
 
 // ============================================================
 // NOTES RENDERING
@@ -2847,11 +3033,7 @@ function makeNoteCard(n) {
     <div class="note-card-name">${n.name}</div>
     <div class="note-card-meta">${tagHtml}</div>
     ${folderPath ? `<div class="note-folder-path">📁 ${folderPath}</div>` : ''}
-    <div class="note-card-actions">
-      <button class="note-act-btn" onclick="event.stopPropagation();openUpdateWindow('${n.id}')">⬆ Update</button>
-      <button class="note-act-btn" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button>
-      <button class="note-act-btn" onclick="event.stopPropagation();openNoteParentModal('${n.id}')">Change Folder</button>
-    </div>
+    <div class="note-card-menu-btn" onclick="event.stopPropagation();showNoteMenu(event, '${n.id}')">⋯</div>
   `;
   div.addEventListener('click', () => openNote(n.id));
   return div;
@@ -2869,11 +3051,7 @@ function makeNoteListItem(n) {
       ${folderPath ? `<div class="note-list-path">📁 ${folderPath}</div>` : ''}
       <div class="note-list-tags" style="margin-top:4px">${tagHtml}</div>
     </div>
-    <div class="note-list-actions">
-      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openUpdateWindow('${n.id}')">⬆ Update</button>
-      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();downloadNote('${n.id}')">Download</button>
-      <button class="note-act-btn" style="padding:5px 8px" onclick="event.stopPropagation();openNoteParentModal('${n.id}')">Change Folder</button>
-    </div>
+    <div class="note-list-menu-btn" onclick="event.stopPropagation();showNoteMenu(event, '${n.id}')">⋯</div>
   `;
   div.addEventListener('click', () => openNote(n.id));
   return div;
@@ -3018,10 +3196,16 @@ function openNote(id) {
   const noteWindow = document.createElement('div');
   noteWindow.id = windowId;
   noteWindow.className = 'note-window active';
-  noteWindow.style.width = '780px';
-  noteWindow.style.height = '560px';
-  noteWindow.style.left = (50 + floatingWindowCount * 20) + 'px';
-  noteWindow.style.top = (50 + floatingWindowCount * 20) + 'px';
+  const isMobileOpen = window.innerWidth <= 700;
+  if (isMobileOpen) {
+    noteWindow.style.cssText = 'width:100%;height:100%;left:0;top:0;border-radius:0;position:fixed;';
+    noteWindow.classList.add('fullscreen-win');
+  } else {
+    noteWindow.style.width = '780px';
+    noteWindow.style.height = '560px';
+    noteWindow.style.left = (50 + floatingWindowCount * 20) + 'px';
+    noteWindow.style.top = (50 + floatingWindowCount * 20) + 'px';
+  }
   
   const titlebar = document.createElement('div');
   titlebar.className = 'note-window-titlebar';
@@ -3059,6 +3243,7 @@ function openNote(id) {
   noteWindow.appendChild(resizeHandle);
   container.appendChild(noteWindow);
   
+  // Don't auto-fullscreen - user can click fullscreen button if they want
   makeDraggable(windowId);
   makeResizable(windowId);
   
@@ -3068,6 +3253,20 @@ function openNote(id) {
   if (sfn) sfn.classList.add('active');
 }
 
+// Wrap openNote to close mobile sidebar on note open
+const _originalOpenNote = openNote;
+openNote = function(id) {
+  closeMobileSidebar();
+  pushState();
+  _originalOpenNote(id);
+};
+
+// Wrap navigateHome to close mobile sidebar
+const _originalNavigateHome = navigateHome;
+navigateHome = function(id) {
+  closeMobileSidebar();
+  _originalNavigateHome(id);
+};
 
 function closeNoteViewer() {
   if (document.fullscreenElement || document.webkitFullscreenElement) {
@@ -3205,7 +3404,17 @@ function openNoteInNewWindow(id) {
 function toggleFullscreenWindow(windowId) {
   const el = document.getElementById(windowId);
   if (!el) return;
+  const isNowFullscreen = !el.classList.contains('fullscreen-win');
   el.classList.toggle('fullscreen-win');
+  if (isNowFullscreen) {
+    // Enter true browser fullscreen to hide URL bar
+    const target = el.querySelector('iframe') || el;
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+    else if (document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
 }
 
 function changeNoteParentFromWindow(noteId) {
@@ -3293,20 +3502,25 @@ function toggleFullscreenWin() {
 }
 
 // Handle fullscreen change from browser (e.g. Escape key)
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) {
-    const win = document.getElementById('note-window');
-    if (win && win.classList.contains('fullscreen-win')) {
+document.addEventListener('webkitfullscreenchange', handleFSChange);
+document.addEventListener('fullscreenchange', handleFSChange);
+function handleFSChange() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    // Remove fullscreen-win from all floating windows too
+    document.querySelectorAll('.note-window.fullscreen-win').forEach(win => {
       win.classList.remove('fullscreen-win');
       const isMobile = window.innerWidth <= 700;
-      if (isMobile) {
-        win.style.cssText = 'width:92vw;height:75vh;left:4vw;top:10vh;transform:none;';
-      } else {
-        win.style.cssText = 'width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);';
+      if (!win.closest('#floating-windows')) {
+        // The primary note-window
+        if (isMobile) {
+          win.style.cssText = 'width:92vw;height:75vh;left:4vw;top:10vh;transform:none;';
+        } else {
+          win.style.cssText = 'width:780px;height:560px;left:50%;top:50%;transform:translate(-50%,-50%);';
+        }
       }
-    }
+    });
   }
-});
+}
 
 // Click overlay to close
 document.getElementById('note-viewer').addEventListener('click', function(e) {
@@ -3451,6 +3665,14 @@ async function deleteFromReuploadModal() {
   showToast('Note deleted!');
 }
 
+async function deleteNoteById(noteId) {
+  if (!confirm('Delete this note? This cannot be undone.')) return;
+  notes = notes.filter(n => n.id !== noteId);
+  await saveUserData();
+  renderAll();
+  showToast('Note deleted!');
+}
+
 function handleReuploadFile(files) {
   const f = [...files].find(f => f.name.endsWith('.html') || f.name.endsWith('.htm'));
   if (!f) { showToast('⚠️ Only HTML files accepted!'); return; }
@@ -3579,14 +3801,10 @@ async function _getToken() {
   // Refresh token
   if (!_fbRefreshToken) return null;
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000); // 5 second timeout
     const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB_API_KEY}`, {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ grant_type:'refresh_token', refresh_token: _fbRefreshToken }),
-      signal: controller.signal
+      body: JSON.stringify({ grant_type:'refresh_token', refresh_token: _fbRefreshToken })
     });
-    clearTimeout(timeout);
     const d = await r.json();
     if (d.id_token) {
       _fbIdToken = d.id_token;
@@ -3597,13 +3815,7 @@ async function _getToken() {
       localStorage.setItem('notez_fb_session', JSON.stringify(sess));
       return _fbIdToken;
     }
-  } catch(e) {
-    // If offline or network error, keep session for offline mode
-    if (e.name === 'AbortError' || !navigator.onLine) {
-      console.log('Offline mode - using cached session');
-      return _fbIdToken; // Return cached token for offline use
-    }
-  }
+  } catch(e) {}
   _clearSession();
   return null;
 }
@@ -3646,6 +3858,7 @@ async function initApp() {
   setupDragResize();
   setupUploadZone();
   setupSidebarDrop();
+  setupSidebarSearch();
 
   document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
   document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
@@ -3659,43 +3872,11 @@ async function initApp() {
       _fbUid = sess.uid;
       _fbDisplayName = sess.displayName;
       _tokenExpiry = sess.expiresIn || 0;
-      
-      // Try to validate token with timeout for offline mode
-      const tokenPromise = _getToken();
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('timeout')), 6000)
-      );
-      
-      try {
-        const token = await Promise.race([tokenPromise, timeoutPromise]);
-        if (token) {
-          currentUser = _fbUid;
-          // Try to load from Firebase, but don't fail if offline
-          try {
-            await Promise.race([
-              loadUserDataFromFirebase(),
-              new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
-            ]);
-          } catch(e) {
-            console.log('Loading offline data from localStorage');
-            // Load from localStorage if available
-            loadOfflineData();
-          }
-          const displayName = _fbDisplayName || 'User';
-          document.getElementById('login-screen').style.display = 'none';
-          document.getElementById('app').style.display = 'flex';
-          document.getElementById('user-avatar-text').textContent = displayName[0].toUpperCase();
-          document.getElementById('user-avatar-text').title = displayName;
-          applySettings();
-          renderAll();
-          document.getElementById('app-loading').style.display = 'none';
-          return;
-        }
-      } catch(timeoutErr) {
-        // Timeout or offline - use offline mode
-        console.log('Network timeout - using offline mode');
+      // Validate by getting a fresh token
+      const token = await _getToken();
+      if (token) {
         currentUser = _fbUid;
-        loadOfflineData();
+        await loadUserDataFromFirebase();
         const displayName = _fbDisplayName || 'User';
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
@@ -3707,44 +3888,11 @@ async function initApp() {
         return;
       }
     }
-  } catch(e) { 
-    console.log('Session restore error:', e);
-    // Don't clear session on network errors
-    if (!navigator.onLine) {
-      console.log('Offline detected - keeping session');
-      currentUser = _fbUid;
-      loadOfflineData();
-      const displayName = _fbDisplayName || 'User';
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      document.getElementById('user-avatar-text').textContent = displayName[0].toUpperCase();
-      document.getElementById('user-avatar-text').title = displayName;
-      applySettings();
-      renderAll();
-      document.getElementById('app-loading').style.display = 'none';
-      return;
-    }
-  }
+  } catch(e) { _clearSession(); }
 
   // No valid session
   document.getElementById('app-loading').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
-}
-
-// Load data from localStorage for offline mode
-function loadOfflineData() {
-  try {
-    const offlineData = localStorage.getItem('notez_offline_data');
-    if (offlineData) {
-      const data = JSON.parse(offlineData);
-      allNotes = data.notes || [];
-      allFolders = data.folders || [];
-      allTags = data.tags || [];
-      userSettings = data.settings || userSettings;
-    }
-  } catch(e) {
-    console.log('No offline data available');
-  }
 }
 
 
@@ -3767,18 +3915,27 @@ function closeMobileSidebar() {
   if (ov) ov.classList.remove('active');
 }
 
-// Redirect all navigation clicks to close sidebar
-const originalOpenNote = openNote;
-openNote = function(id) {
-    closeMobileSidebar();
-    pushState(); originalOpenNote(id);
-};
+function toggleBrowserFullscreen() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    // Enter fullscreen
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.log('Fullscreen failed:', err);
+      });
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen();
+    }
+  } else {
+    // Exit fullscreen
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
 
-const originalNavigateHome = navigateHome;
-navigateHome = function(id) {
-    closeMobileSidebar();
-    originalNavigateHome(id);
-};
+// Redirect all navigation clicks to close sidebar (done in initApp now)
 
 
 // --- History API / Back Button Handling ---
@@ -3824,15 +3981,6 @@ window.addEventListener('popstate', function(event) {
     // If not, the browser will proceed with its default back behavior.
 });
 
-// Update existing functions to push state when opening things
-const wrapPush = (fnName) => {
-    const original = window[fnName];
-    window[fnName] = function(...args) {
-        pushState();
-        return original.apply(this, args);
-    };
-};
-
 
 function toggleSidebarSection(id, el) {
   const target = document.getElementById(id);
@@ -3846,7 +3994,226 @@ function toggleSidebarSection(id, el) {
   }
 }
 
-initApp();
+
+// ============================================================
+// OFFLINE STORAGE — IndexedDB (much larger than localStorage)
+// ============================================================
+const IDB_NAME = 'notez_offline';
+const IDB_STORE = 'data';
+const IDB_KEY = () => `offline_${_fbUid}`;
+
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function saveToIDB(data) {
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(data, IDB_KEY());
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function loadFromIDB() {
+  try {
+    const db = await openIDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(IDB_KEY());
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => resolve(null);
+    });
+  } catch(e) { return null; }
+}
+
+async function clearIDB() {
+  const db = await openIDB();
+  return new Promise((resolve) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).delete(IDB_KEY());
+    tx.oncomplete = resolve;
+  });
+}
+
+function setOfflineStatus(msg, color) {
+  ['offline-status','offline-status-profile'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = msg; el.style.color = color || 'var(--text3)'; }
+  });
+}
+
+async function downloadOffline() {
+  const btn = document.getElementById('offline-save-btn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Saving...'; }
+  setOfflineStatus('Fetching latest data from Firebase...', 'var(--text2)');
+
+  try {
+    // Pull fresh data from Firebase first if online
+    if (navigator.onLine) {
+      await loadFromFirebase();
+    }
+
+    const payload = {
+      notes,
+      folders,
+      settings,
+      savedAt: new Date().toISOString(),
+      uid: _fbUid
+    };
+
+    // Save to IndexedDB (no size limit issues)
+    await saveToIDB(payload);
+
+    // Also save to localStorage as backup (slim if needed)
+    saveLocal();
+
+    const noteCount = notes.length;
+    const size = new Blob([JSON.stringify(payload)]).size;
+    const sizeStr = size > 1024*1024 ? (size/1024/1024).toFixed(1)+'MB' : (size/1024).toFixed(0)+'KB';
+    setOfflineStatus(`✓ Saved ${noteCount} notes (${sizeStr}) — Last synced: ${new Date().toLocaleTimeString()}`, 'var(--success)');
+    showToast('Saved for offline access!');
+  } catch(e) {
+    setOfflineStatus('✗ Save failed: ' + e.message, 'var(--danger)');
+    showToast('Offline save failed');
+  }
+
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Save for Offline';
+  }
+}
+
+async function clearOffline() {
+  if (!confirm('Clear all offline data from this device?')) return;
+  try {
+    await clearIDB();
+    localStorage.removeItem(LS_KEY());
+    setOfflineStatus('Offline data cleared.', 'var(--text3)');
+    showToast('Offline data cleared');
+  } catch(e) {
+    showToast('Failed to clear offline data');
+  }
+}
+
+// On load — check if offline data exists and show status
+async function checkOfflineStatus() {
+  const cached = await loadFromIDB();
+  const profileEl = document.getElementById('profile-offline-status');
+  if (cached) {
+    const d = new Date(cached.savedAt);
+    const msg = `✓ ${cached.notes?.length || 0} notes — ${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+    setOfflineStatus(`✓ Offline data available — ${cached.notes?.length || 0} notes saved on ${d.toLocaleDateString()} ${d.toLocaleTimeString()}`, 'var(--success)');
+    if (profileEl) { profileEl.textContent = msg; profileEl.style.color = 'var(--success)'; }
+  } else {
+    setOfflineStatus('No offline data saved yet.', 'var(--text3)');
+    if (profileEl) { profileEl.textContent = 'No offline data saved yet.'; profileEl.style.color = 'var(--text3)'; }
+  }
+}
+
+// Override loadUserDataFromFirebase to also try IDB when fully offline
+const _origLoadUserData = loadUserDataFromFirebase;
+loadUserDataFromFirebase = async function() {
+  if (!navigator.onLine) {
+    // Offline — try IDB first, then localStorage
+    const cached = await loadFromIDB();
+    if (cached) {
+      notes = cached.notes || [];
+      folders = cached.folders || [];
+      settings = cached.settings || { theme:'dark', accent:'purple' };
+      showToast('Loaded offline data');
+      return;
+    }
+    loadLocal();
+    return;
+  }
+  await _origLoadUserData();
+};
+
+
+// ============================================================
+// OFFLINE AUTOSAVE
+// ============================================================
+let _offlineAutosaveEnabled = false;
+let _offlineAutosaveTimer = null;
+
+function toggleOfflineAutosave(enabled) {
+  _offlineAutosaveEnabled = enabled;
+  localStorage.setItem('notez_offline_autosave', enabled ? '1' : '0');
+  updateAutosaveToggleUI(enabled);
+  if (enabled) showToast('Auto-save offline enabled');
+  else showToast('Auto-save offline disabled');
+}
+
+function updateAutosaveToggleUI(enabled) {
+  // Update both settings and profile toggles
+  [
+    {track:'offline-autosave-track', thumb:'offline-autosave-thumb', cb:'offline-autosave-toggle', offset:'20px'},
+    {track:'profile-autosave-track', thumb:'profile-autosave-thumb', cb:'profile-autosave-toggle', offset:'18px'}
+  ].forEach(({track, thumb, cb, offset}) => {
+    const t = document.getElementById(track);
+    const th = document.getElementById(thumb);
+    const c = document.getElementById(cb);
+    if (!t) return;
+    if (enabled) {
+      t.style.background = 'var(--accent)';
+      t.style.borderColor = 'var(--accent)';
+      th.style.background = '#fff';
+      th.style.transform = `translateX(${offset})`;
+    } else {
+      t.style.background = 'var(--bg4)';
+      t.style.borderColor = 'var(--border)';
+      th.style.background = 'var(--text3)';
+      th.style.transform = 'translateX(0)';
+    }
+    if (c) c.checked = enabled;
+  });
+}
+
+function scheduleOfflineAutosave() {
+  if (!_offlineAutosaveEnabled) return;
+  clearTimeout(_offlineAutosaveTimer);
+  _offlineAutosaveTimer = setTimeout(async () => {
+    const payload = { notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid };
+    try {
+      await saveToIDB(payload);
+      saveLocal();
+      setOfflineStatus('✓ Auto-saved — ' + new Date().toLocaleTimeString(), 'var(--success)');
+    } catch(e) { console.warn('Autosave failed:', e); }
+  }, 3000); // debounce 3s after last change
+}
+
+initApp().then ? initApp() : initApp();
+// Init autosave pref
+window.addEventListener('load', () => {
+  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
+});
+</script>
+
+<script>
+// PWA Install prompt capture
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  window._pwaInstallPrompt = e;
+});
+window.addEventListener('appinstalled', () => { deferredPrompt = null; });
+
+// Register external service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/NoteZ/sw.js', { scope: '/NoteZ/' })
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.warn('SW failed:', err));
+  });
+}
 </script>
 </body>
 </html>
