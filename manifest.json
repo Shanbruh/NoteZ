@@ -1,40 +1,22 @@
 {
-  "name": "NoteZ - Your Notes, Perfectly Organized",
+  "name": "NoteZ",
   "short_name": "NoteZ",
-  "description": "Your notes, perfectly organized with NoteZ",
-  "start_url": "/NoteZ/",
-  "scope": "/NoteZ/",
+  "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "theme_color": "#7c6dfa",
   "background_color": "#ffffff",
-  "prefer_related_applications": false,
+  "theme_color": "#7c6dfa",
   "icons": [
     {
-      "src": "/NoteZ/logo1.png",
+      "src": "/icon-1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/NoteZ/logo2.png",
+      "src": "/icon-2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Create Note",
-      "short_name": "New Note",
-      "url": "/NoteZ/?action=new",
-      "icons": [
-        {
-          "src": "/NoteZ/logo1.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
     }
   ]
 }
