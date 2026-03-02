@@ -4363,11 +4363,15 @@ async function initApp() {
       
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'flex';
-      applySettings();
-      renderAll();
-      checkOfflineStatus();
-      document.getElementById('app-loading').style.display = 'none';
-      showToast('📡 Offline mode - using cached data');
+      document.getElementById('app-loading').style.display = 'none'; // Hide IMMEDIATELY
+      
+      // Defer heavy UI operations to not block
+      requestAnimationFrame(() => {
+        applySettings();
+        renderAll();
+        checkOfflineStatus();
+        showToast('📡 Offline mode - using cached data');
+      });
       return;
     }
     // No offline data, show login
@@ -4390,28 +4394,32 @@ async function initApp() {
       try {
         const tokenPromise = _getToken();
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Token refresh timeout')), 8000)
+          setTimeout(() => reject(new Error('Token refresh timeout')), 5000)
         );
         
         const token = await Promise.race([tokenPromise, timeoutPromise]);
         
         if (token) {
           currentUser = _fbUid;
-          await loadUserDataFromFirebase();
-          const displayName = _fbDisplayName || 'User';
+          
           document.getElementById('login-screen').style.display = 'none';
           document.getElementById('app').style.display = 'flex';
+          document.getElementById('app-loading').style.display = 'none'; // Hide immediately
           
-          // Update avatar if it exists
+          // Update avatar first (quick operation)
+          const displayName = _fbDisplayName || 'User';
           const avatarEl = document.getElementById('user-avatar-text');
           if (avatarEl) {
             avatarEl.textContent = displayName[0].toUpperCase();
             avatarEl.title = displayName;
           }
           
-          applySettings();
-          renderAll();
-          document.getElementById('app-loading').style.display = 'none';
+          // Defer heavy operations
+          requestAnimationFrame(async () => {
+            await loadUserDataFromFirebase();
+            applySettings();
+            renderAll();
+          });
           return;
         }
       } catch(tokenErr) {
@@ -4425,11 +4433,15 @@ async function initApp() {
           
           document.getElementById('login-screen').style.display = 'none';
           document.getElementById('app').style.display = 'flex';
-          applySettings();
-          renderAll();
-          checkOfflineStatus();
-          document.getElementById('app-loading').style.display = 'none';
-          showToast('⚠️ Offline mode - using cached data');
+          document.getElementById('app-loading').style.display = 'none'; // Hide IMMEDIATELY
+          
+          // Defer heavy operations
+          requestAnimationFrame(() => {
+            applySettings();
+            renderAll();
+            checkOfflineStatus();
+            showToast('⚠️ Offline mode - using cached data');
+          });
           return;
         }
         _clearSession();
