@@ -721,8 +721,8 @@
   /* LOADING OVERLAY */
   #app-loading {
     position: fixed; inset: 0; z-index: 999;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
+    background: #ffffff;
+    display: none; align-items: center; justify-content: center;
     flex-direction: column; gap: 16px;
   }
   #app-loading .spin {
@@ -1923,44 +1923,6 @@
 </div>
 
 <script>
-  // FAILSAFE: Force hide loading screen after 4 seconds if app hangs
-  (function() {
-    const splashTimer = setTimeout(() => {
-      const splash = document.getElementById('app-loading');
-      if (splash) {
-        splash.style.opacity = '0';
-        setTimeout(() => { splash.style.display = 'none'; }, 500);
-      }
-      // Ensure SOMETHING is visible
-      if (document.getElementById('login-screen').style.display === 'none' && 
-          document.getElementById('app').style.display === 'none') {
-        document.getElementById('login-screen').style.display = 'flex';
-      }
-    }, 4000);
-
-    // Patch the original hide functionality or provide global access
-    window.hideSplash = () => {
-      clearTimeout(splashTimer);
-      const splash = document.getElementById('app-loading');
-      if (splash) splash.style.display = 'none';
-    };
-  })();
-
-  // Failsafe: Hide splash screen if app fails to load due to network issues
-  setTimeout(() => {
-    const splash = document.getElementById('app-loading');
-    if (splash && splash.style.display !== 'none') {
-      console.warn('Failsafe: Force hiding loading screen');
-      splash.style.display = 'none';
-      const login = document.getElementById('login-screen');
-      const app = document.getElementById('app');
-      // If neither is visible, show login at least
-      if (login && app && login.style.display === 'none' && (app.style.display === 'none' || app.style.display === '')) {
-         login.style.display = 'flex';
-      }
-    }
-  }, 4000);
-
 
 function handleProfilePic(files) {
   if (!files || !files[0]) return;
@@ -2447,6 +2409,21 @@ function setFolderParent(parentId) {
 }
 
 // Note context menu
+
+function directUpdateFile(noteId) {
+  reuploadTarget = noteId;
+  const fileInput = document.getElementById('reupload-file-input');
+  if (fileInput) {
+    fileInput.onchange = (e) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        handleReuploadFile(files);
+      }
+    };
+    fileInput.click();
+  }
+}
+
 function openUpdateWindow(noteId) {
   const note = notes.find(n => n.id === noteId);
   if (!note) return;
@@ -2601,8 +2578,12 @@ function showNoteMenu(e, noteId) {
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
       Open
     </div>
-    <div class="ctx-item" onclick="openUpdateWindow('${noteId}'); document.querySelectorAll('.note-action-menu').forEach(m=>m.remove());">
+    <div class="ctx-item" onclick="openRenameModal('${noteId}'); document.querySelectorAll('.note-action-menu').forEach(m=>m.remove());">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Rename Note
+    </div>
+    <div class="ctx-item" onclick="directUpdateFile('${noteId}'); document.querySelectorAll('.note-action-menu').forEach(m=>m.remove());">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       Update File
     </div>
     <div class="ctx-item" onclick="downloadNote('${noteId}'); document.querySelectorAll('.note-action-menu').forEach(m=>m.remove());">
@@ -4773,9 +4754,18 @@ function scheduleOfflineAutosave() {
   }, 3000); // debounce 3s after last change
 }
 
-initApp().finally(() => { document.getElementById("app-loading").style.display = "none"; });
+initApp().then ? initApp() : initApp();
 // Init autosave pref
 window.addEventListener('load', () => {
+  // Loading failsafe
+  setTimeout(() => {
+    const loader = document.getElementById('app-loading');
+    if (loader && loader.style.display !== 'none') {
+      console.log('Loading timeout - forcing display');
+      loader.style.display = 'none';
+    }
+  }, 4000);
+
   _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
 });
 </script>
@@ -4793,6 +4783,15 @@ window.addEventListener('appinstalled', () => { deferredPrompt = null; });
 // Register external service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+  // Loading failsafe
+  setTimeout(() => {
+    const loader = document.getElementById('app-loading');
+    if (loader && loader.style.display !== 'none') {
+      console.log('Loading timeout - forcing display');
+      loader.style.display = 'none';
+    }
+  }, 4000);
+
     navigator.serviceWorker.register('/NoteZ/sw.js', { scope: '/NoteZ/' })
       .then(reg => console.log('SW registered:', reg.scope))
       .catch(err => console.warn('SW failed:', err));
