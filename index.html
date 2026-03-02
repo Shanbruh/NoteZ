@@ -721,8 +721,8 @@
   /* LOADING OVERLAY */
   #app-loading {
     position: fixed; inset: 0; z-index: 999;
-    background: #ffffff;
-    display: none; align-items: center; justify-content: center;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
     flex-direction: column; gap: 16px;
   }
   #app-loading .spin {
@@ -1923,6 +1923,44 @@
 </div>
 
 <script>
+  // FAILSAFE: Force hide loading screen after 4 seconds if app hangs
+  (function() {
+    const splashTimer = setTimeout(() => {
+      const splash = document.getElementById('app-loading');
+      if (splash) {
+        splash.style.opacity = '0';
+        setTimeout(() => { splash.style.display = 'none'; }, 500);
+      }
+      // Ensure SOMETHING is visible
+      if (document.getElementById('login-screen').style.display === 'none' && 
+          document.getElementById('app').style.display === 'none') {
+        document.getElementById('login-screen').style.display = 'flex';
+      }
+    }, 4000);
+
+    // Patch the original hide functionality or provide global access
+    window.hideSplash = () => {
+      clearTimeout(splashTimer);
+      const splash = document.getElementById('app-loading');
+      if (splash) splash.style.display = 'none';
+    };
+  })();
+
+  // Failsafe: Hide splash screen if app fails to load due to network issues
+  setTimeout(() => {
+    const splash = document.getElementById('app-loading');
+    if (splash && splash.style.display !== 'none') {
+      console.warn('Failsafe: Force hiding loading screen');
+      splash.style.display = 'none';
+      const login = document.getElementById('login-screen');
+      const app = document.getElementById('app');
+      // If neither is visible, show login at least
+      if (login && app && login.style.display === 'none' && (app.style.display === 'none' || app.style.display === '')) {
+         login.style.display = 'flex';
+      }
+    }
+  }, 4000);
+
 
 function handleProfilePic(files) {
   if (!files || !files[0]) return;
@@ -4735,7 +4773,7 @@ function scheduleOfflineAutosave() {
   }, 3000); // debounce 3s after last change
 }
 
-initApp().then ? initApp() : initApp();
+initApp().finally(() => { document.getElementById("app-loading").style.display = "none"; });
 // Init autosave pref
 window.addEventListener('load', () => {
   _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
