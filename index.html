@@ -2928,17 +2928,7 @@ function renderFolderTree() {
         noteEl.dataset.noteId = n.id;
         noteEl.style.paddingLeft = (14 + indent + 12) + 'px';
         noteEl.innerHTML = `${noteSVG} <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.name}</span><button class="folder-note-menu" onclick="event.stopPropagation();showNoteMenu(event,'${n.id}')" title="Options">⋮</button>`;
-        noteEl.onclick = (e) => {
-          e.stopPropagation();
-          if (window.innerWidth <= 850) {
-            // Mobile: navigate to folder view, never open viewer from sidebar
-            navigate('home');
-            navigateHome(n.folder || null);
-            closeMobileSidebar();
-          } else {
-            openNote(n.id);
-          }
-        };
+        noteEl.onclick = (e) => { e.stopPropagation(); openNote(n.id); closeMobileSidebar(); };
         
         // Right-click context menu for notes
         noteEl.addEventListener('contextmenu', e => showNoteMenu(e, n.id));
@@ -3035,16 +3025,7 @@ function renderFolderTree() {
       noteEl.dataset.noteId = n.id;
       noteEl.style.paddingLeft = '14px';
       noteEl.innerHTML = `${noteSVG} ${n.name}`;
-      noteEl.onclick = (e) => {
-        e.stopPropagation();
-        if (window.innerWidth <= 850) {
-          navigate('home');
-          navigateHome(n.folder || null);
-          closeMobileSidebar();
-        } else {
-          openNote(n.id);
-        }
-      };
+      noteEl.onclick = (e) => { e.stopPropagation(); openNote(n.id); closeMobileSidebar(); };
       noteEl.addEventListener('contextmenu', e => openNoteCtxMenu(e, n.id));
       rootNotesContainer.appendChild(noteEl);
     });
