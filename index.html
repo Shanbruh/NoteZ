@@ -168,6 +168,18 @@
   .sidebar-logo .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
   .sidebar-section { padding: 10px 12px 4px; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px; color: var(--text3); text-transform: uppercase; }
+  .sidebar-section:hover { background: var(--bg3); border-radius: 5px; }
+  .sec-arrow, .root-notes-arrow { 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: rotate(0deg);
+  }
+  .sidebar-section[style*="display:flex"] .sec-arrow,
+  .sidebar-section[style*="display:flex"] .root-notes-arrow {
+    min-width: 14px;
+  }
 
   .sidebar-btn {
     display: flex; align-items: center; gap: 9px;
@@ -1527,9 +1539,11 @@
     <div class="sidebar-scroll">
 
       <div style="height:8px"></div>
-      <div class="sidebar-section" onclick="toggleSidebarSection('folder-tree', this)" style="cursor:pointer; display:flex; align-items:center; gap:8px;"><span class="sec-arrow" style="transition:0.2s">▼</span> Folders</div>
+      <div class="sidebar-section" onclick="toggleSidebarSection('folder-tree', this)" style="cursor:pointer; display:flex; align-items:center; gap:8px;"><span class="sec-arrow" style="transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px;">▶</span> Folders</div>
       <div id="folder-tree"></div>
       
+      <div id="root-notes-section-header" class="sidebar-section" onclick="toggleRootNotes()" style="cursor:pointer; display:none; align-items:center; gap:8px; margin-top: 15px;"><span class="root-notes-arrow" style="transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px;">▶</span> Root Notes</div>
+      <div id="root-notes-container"></div>
     
     </div> <!-- Close sidebar-scroll -->
     
@@ -2953,25 +2967,17 @@ function renderFolderTree() {
 
   buildTree(null, container, 0);
 
-  // Add Root Notes section at the bottom of the tree
+  // Add Root Notes section at the bottom of the tree - IN SEPARATE CONTAINER
   const rootNotes = notes.filter(n => !n.folder);
+  const rootNotesContainer = document.getElementById('root-notes-container');
+  const rootNotesHeader = document.getElementById('root-notes-section-header');
+  
   if (rootNotes.length > 0) {
-    const rootNotesContainer = document.createElement('div');
-    rootNotesContainer.id = 'root-notes-container';
+    // Show the root notes section header
+    rootNotesHeader.style.display = 'flex';
     
-    const rootHeader = document.createElement('div');
-    rootHeader.className = 'sidebar-section';
-    rootHeader.style.marginTop = '15px';
-    rootHeader.style.display = 'flex';
-    rootHeader.style.alignItems = 'center';
-    rootHeader.style.gap = '8px';
-    rootHeader.style.cursor = 'pointer';
-    rootHeader.onclick = () => toggleRootNotes();
-    rootHeader.innerHTML = `<span class="root-notes-arrow" style="transition:0.2s">▼</span> <span style="flex:1">Root Notes</span>`;
-    
-    const rootNotesListContainer = document.createElement('div');
-    rootNotesListContainer.id = 'root-notes-list';
-    rootNotesListContainer.style.display = 'block';
+    // Clear and rebuild root notes container
+    rootNotesContainer.innerHTML = '';
     
     const noteSVG = `<svg viewBox="0 0 24 24" width="13" height="13" style="flex-shrink:0;opacity:0.6"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--text3)" opacity="0.5"/><path d="M14 2v6h6" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 
@@ -2994,12 +3000,20 @@ function renderFolderTree() {
         }
       };
       noteEl.addEventListener('contextmenu', e => openNoteCtxMenu(e, n.id));
-      rootNotesListContainer.appendChild(noteEl);
+      rootNotesContainer.appendChild(noteEl);
     });
-    
-    rootNotesContainer.appendChild(rootHeader);
-    rootNotesContainer.appendChild(rootNotesListContainer);
-    container.appendChild(rootNotesContainer);
+  } else {
+    // Hide root notes section if no notes
+    rootNotesHeader.style.display = 'none';
+    rootNotesContainer.innerHTML = '';
+  }
+  
+  // Initialize arrow states - both sections start open
+  const folderArrow = document.querySelector('.sec-arrow');
+  const rootNotesArrow = document.querySelector('.root-notes-arrow');
+  if (folderArrow) folderArrow.style.transform = 'rotate(90deg)';      // Folders are open
+  if (rootNotesArrow && rootNotesHeader.style.display !== 'none') {
+    rootNotesArrow.style.transform = 'rotate(90deg)';  // Root Notes are open if visible
   }
 }
 
@@ -4448,25 +4462,31 @@ window.addEventListener('popstate', function(event) {
 
 
 function toggleRootNotes() {
-  const listContainer = document.getElementById('root-notes-list');
-  const arrow = document.querySelector('.root-notes-arrow');
-  if (listContainer && arrow) {
-    const isOpen = listContainer.style.display !== 'none';
-    listContainer.style.display = isOpen ? 'none' : 'block';
-    arrow.classList.toggle('open', !isOpen);
-    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+  const header = document.getElementById('root-notes-section-header');
+  const container = document.getElementById('root-notes-container');
+  const arrow = header.querySelector('.root-notes-arrow');
+  
+  if (container && arrow && header) {
+    const isOpen = container.style.display !== 'none';
+    if (isOpen) {
+      container.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';   // Close: ▶ ▶ shows as ▶
+    } else {
+      container.style.display = 'block';
+      arrow.style.transform = 'rotate(90deg)';  // Open: ▶ rotates to ▼
+    }
   }
 }
 
 function toggleSidebarSection(id, el) {
   const target = document.getElementById(id);
   const arrow = el.querySelector('.sec-arrow');
-  if (target.style.display === 'none') {
-    target.style.display = '';
-    if(arrow) arrow.style.transform = 'rotate(0deg)';
+  if (target.style.display === 'none' || target.style.display === '') {
+    target.style.display = 'block';
+    if(arrow) arrow.style.transform = 'rotate(90deg)';  // ▶ rotates to ▼
   } else {
     target.style.display = 'none';
-    if(arrow) arrow.style.transform = 'rotate(-90deg)';
+    if(arrow) arrow.style.transform = 'rotate(0deg)';   // ▼ rotates back to ▶
   }
 }
 
