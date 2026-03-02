@@ -7,14 +7,14 @@
   "theme_color": "#7c6dfa",
   "icons": [
     {
-      "src": "/NoteZ/icon-1.svg",
+      "src": "/NoteZ/icon-1.png",
       "sizes": "192x192",
-      "type": "image/svg=xml",
+      "type": "image/png",
     },
     {
-      "src": "/NoteZ/icon-2.svg",
+      "src": "/NoteZ/icon-2.png",
       "sizes": "512x512",
-      "type": "image/svg=xml",
+      "type": "image/png",
     }
   ]
 }
