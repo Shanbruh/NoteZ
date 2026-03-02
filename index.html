@@ -181,6 +181,20 @@
     min-width: 14px;
   }
 
+  .sidebar-bottom-buttons {
+    padding: 12px 10px;
+    padding-bottom: 10px;
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+  }
+  
+  @media (max-width: 850px) {
+    .sidebar-bottom-buttons {
+      padding-bottom: calc(65px + env(safe-area-inset-bottom));
+    }
+  }
+
   .sidebar-btn {
     display: flex; align-items: center; gap: 9px;
     padding: 8px 14px;
@@ -1547,7 +1561,7 @@
     
     </div> <!-- Close sidebar-scroll -->
     
-    <div style="padding: 12px 10px; padding-bottom: calc(65px + env(safe-area-inset-bottom)); display: flex; gap: 8px; border-top: 1px solid var(--border);">
+    <div class="sidebar-bottom-buttons">
         <button class="new-folder-btn" onclick="openNewFolderModal()" style="margin:0; flex: 1; padding: 12px; justify-content: center;">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             New Folder
