@@ -4350,7 +4350,10 @@ async function initApp() {
   document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
   document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  // STEP 1: Try to restore session from localStorage (works offline)
+  // Hide loading immediately - don't wait for anything
+  document.getElementById('app-loading').style.display = 'none';
+
+  // STEP 1: Try to restore session from localStorage (fast, no waiting)
   let hasValidSession = false;
   try {
     const sess = JSON.parse(localStorage.getItem('notez_fb_session') || 'null');
@@ -4367,34 +4370,97 @@ async function initApp() {
     console.warn('Session restore error:', e);
   }
 
-  // STEP 2: Load user data (will use offline cache if offline, firebase if online)
+  // STEP 2: Race offline vs Firebase (whichever loads first)
   if (hasValidSession) {
-    try {
-      await loadUserDataFromFirebase(); // This now properly handles offline via the override
-      
-      // Update avatar
-      const avatarEl = document.getElementById('user-avatar-text');
-      if (avatarEl) {
-        avatarEl.textContent = _fbDisplayName[0].toUpperCase();
-        avatarEl.title = _fbDisplayName;
+    // Load offline data in background
+    const offlineLoadPromise = (async () => {
+      try {
+        const cached = await loadFromIDB();
+        if (cached && cached.uid === _fbUid) {
+          notes = cached.notes || [];
+          folders = cached.folders || [];
+          settings = cached.settings || { theme:'dark', accent:'purple' };
+          return true;
+        }
+        // Fallback to localStorage
+        if (loadLocal()) {
+          return true;
+        }
+        return false;
+      } catch(e) {
+        console.warn('Offline load failed:', e);
+        return false;
       }
-      
-      applySettings();
-      renderAll();
-      checkOfflineStatus();
-      
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      document.getElementById('app-loading').style.display = 'none';
-      return;
-    } catch(e) {
-      console.warn('Data load error:', e);
-      // Fall through to login
+    })();
+
+    // Try Firebase with SHORT timeout (1.5s max for bad connection detection)
+    const firebaseLoadPromise = (async () => {
+      try {
+        const tokenPromise = _getToken();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Firebase timeout')), 1500)
+        );
+        
+        const token = await Promise.race([tokenPromise, timeoutPromise]);
+        if (token) {
+          const origLoad = loadUserDataFromFirebase;
+          // Use firebase load directly, not the offline override
+          const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`);
+          const meta = await r.json();
+          if (!meta || meta.error) return false;
+          
+          const noteMeta = meta.notes || [];
+          folders = meta.folders || [];
+          settings = meta.settings || { theme:'dark', accent:'purple' };
+          
+          const loaded = await Promise.all(noteMeta.map(async nm => {
+            try {
+              const cr = await fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${nm.id}.json?auth=${token}`);
+              const content = await cr.json();
+              return { ...nm, content: content || '' };
+            } catch(e) { return { ...nm, content: '' }; }
+          }));
+          notes = loaded;
+          return true;
+        }
+        return false;
+      } catch(e) {
+        console.warn('Firebase load failed/timeout:', e.message);
+        return false;
+      }
+    })();
+
+    // Show app immediately with empty state
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    
+    // Update avatar immediately
+    const avatarEl = document.getElementById('user-avatar-text');
+    if (avatarEl) {
+      avatarEl.textContent = _fbDisplayName[0].toUpperCase();
+      avatarEl.title = _fbDisplayName;
     }
+    
+    // Race: load whichever data source responds first
+    setTimeout(async () => {
+      const results = await Promise.allSettled([firebaseLoadPromise, offlineLoadPromise]);
+      const firebaseSuccess = results[0].value === true;
+      const offlineSuccess = results[1].value === true;
+      
+      if (firebaseSuccess || offlineSuccess) {
+        applySettings();
+        renderAll();
+        checkOfflineStatus();
+        
+        if (!firebaseSuccess && offlineSuccess) {
+          showToast('📡 Offline mode - using cached data');
+        }
+      }
+    }, 0);
+    return;
   }
 
   // STEP 3: No valid session - show login
-  document.getElementById('app-loading').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
 }
 
