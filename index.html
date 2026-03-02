@@ -1533,12 +1533,12 @@
     
     </div> <!-- Close sidebar-scroll -->
     
-    <div style="padding: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); display: flex; gap: 8px; border-top: 1px solid var(--border);">
-        <button class="new-folder-btn" onclick="openNewFolderModal()" style="margin:0; flex: 1; padding: 10px; justify-content: center;">
+    <div style="padding: 12px 10px; padding-bottom: calc(65px + env(safe-area-inset-bottom)); display: flex; gap: 8px; border-top: 1px solid var(--border);">
+        <button class="new-folder-btn" onclick="openNewFolderModal()" style="margin:0; flex: 1; padding: 12px; justify-content: center;">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             New Folder
         </button>
-        <button class="sb-nav-btn" onclick="navigate('home'); navigateHome(null);" title="Go Home" style="width:42px; height:42px; background: var(--bg3); border: 1px solid var(--border); margin:0;">
+        <button class="sb-nav-btn" onclick="navigate('home'); navigateHome(null);" title="Go Home" style="width:44px; height:44px; background: var(--bg3); border: 1px solid var(--border); margin:0; flex-shrink: 0;">
             <svg viewBox="0 0 24 24" class="dt-icon"><path class="dt-bg" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path class="dt-stroke" d="M3 10.5L12 3l9 7.5" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path class="dt-stroke" d="M9 21v-6h6v6" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
     </div>
@@ -2956,12 +2956,23 @@ function renderFolderTree() {
   // Add Root Notes section at the bottom of the tree
   const rootNotes = notes.filter(n => !n.folder);
   if (rootNotes.length > 0) {
+    const rootNotesContainer = document.createElement('div');
+    rootNotesContainer.id = 'root-notes-container';
+    
     const rootHeader = document.createElement('div');
     rootHeader.className = 'sidebar-section';
     rootHeader.style.marginTop = '15px';
-    rootHeader.textContent = 'Root Notes';
-    container.appendChild(rootHeader);
-
+    rootHeader.style.display = 'flex';
+    rootHeader.style.alignItems = 'center';
+    rootHeader.style.gap = '8px';
+    rootHeader.style.cursor = 'pointer';
+    rootHeader.onclick = () => toggleRootNotes();
+    rootHeader.innerHTML = `<span class="root-notes-arrow" style="transition:0.2s">▼</span> <span style="flex:1">Root Notes</span>`;
+    
+    const rootNotesListContainer = document.createElement('div');
+    rootNotesListContainer.id = 'root-notes-list';
+    rootNotesListContainer.style.display = 'block';
+    
     const noteSVG = `<svg viewBox="0 0 24 24" width="13" height="13" style="flex-shrink:0;opacity:0.6"><path d="M6 2h9l5 5v15a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1z" fill="var(--text3)" opacity="0.5"/><path d="M14 2v6h6" fill="none" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 
     rootNotes.forEach(n => {
@@ -2983,8 +2994,12 @@ function renderFolderTree() {
         }
       };
       noteEl.addEventListener('contextmenu', e => openNoteCtxMenu(e, n.id));
-      container.appendChild(noteEl);
+      rootNotesListContainer.appendChild(noteEl);
     });
+    
+    rootNotesContainer.appendChild(rootHeader);
+    rootNotesContainer.appendChild(rootNotesListContainer);
+    container.appendChild(rootNotesContainer);
   }
 }
 
@@ -4431,6 +4446,17 @@ window.addEventListener('popstate', function(event) {
     // If not, the browser will proceed with its default back behavior.
 });
 
+
+function toggleRootNotes() {
+  const listContainer = document.getElementById('root-notes-list');
+  const arrow = document.querySelector('.root-notes-arrow');
+  if (listContainer && arrow) {
+    const isOpen = listContainer.style.display !== 'none';
+    listContainer.style.display = isOpen ? 'none' : 'block';
+    arrow.classList.toggle('open', !isOpen);
+    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+  }
+}
 
 function toggleSidebarSection(id, el) {
   const target = document.getElementById(id);
