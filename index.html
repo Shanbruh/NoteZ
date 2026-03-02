@@ -3676,7 +3676,16 @@ function cancelUpload() {
 // ============================================================
 let floatingWindowCount = 0;
 
+
 function openNote(id) {
+  // Automatically close sidebar/mobile menu when opening a note
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && sidebar.classList.contains('active')) {
+      sidebar.classList.remove('active');
+      if (overlay) overlay.style.display = 'none';
+  }
+
   const note = notes.find(n => n.id === id);
   if (!note) return;
   
