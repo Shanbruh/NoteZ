@@ -4350,7 +4350,33 @@ async function initApp() {
   document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
   document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  // Try to restore session
+  // CHECK OFFLINE FIRST
+  if (!navigator.onLine) {
+    // Device is completely offline
+    const cached = await loadFromIDB();
+    if (cached && cached.uid) {
+      // Load offline data
+      _fbUid = cached.uid;
+      notes = cached.notes || [];
+      folders = cached.folders || [];
+      settings = cached.settings || { theme:'dark', accent:'purple' };
+      
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      applySettings();
+      renderAll();
+      checkOfflineStatus();
+      document.getElementById('app-loading').style.display = 'none';
+      showToast('📡 Offline mode - using cached data');
+      return;
+    }
+    // No offline data, show login
+    document.getElementById('app-loading').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    return;
+  }
+
+  // Device appears to be online - try to restore session
   try {
     const sess = JSON.parse(localStorage.getItem('notez_fb_session') || 'null');
     if (sess && sess.refreshToken) {
@@ -4360,9 +4386,15 @@ async function initApp() {
       _fbDisplayName = sess.displayName;
       _tokenExpiry = sess.expiresIn || 0;
       
-      // Validate by getting a fresh token
+      // Validate by getting a fresh token (with timeout)
       try {
-        const token = await _getToken();
+        const tokenPromise = _getToken();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Token refresh timeout')), 8000)
+        );
+        
+        const token = await Promise.race([tokenPromise, timeoutPromise]);
+        
         if (token) {
           currentUser = _fbUid;
           await loadUserDataFromFirebase();
@@ -4383,7 +4415,23 @@ async function initApp() {
           return;
         }
       } catch(tokenErr) {
-        console.warn('Token refresh failed:', tokenErr);
+        console.warn('Token refresh failed or timed out:', tokenErr);
+        // Try offline data if available
+        const cached = await loadFromIDB();
+        if (cached && cached.uid === _fbUid) {
+          notes = cached.notes || [];
+          folders = cached.folders || [];
+          settings = cached.settings || { theme:'dark', accent:'purple' };
+          
+          document.getElementById('login-screen').style.display = 'none';
+          document.getElementById('app').style.display = 'flex';
+          applySettings();
+          renderAll();
+          checkOfflineStatus();
+          document.getElementById('app-loading').style.display = 'none';
+          showToast('⚠️ Offline mode - using cached data');
+          return;
+        }
         _clearSession();
       }
     }
