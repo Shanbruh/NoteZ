@@ -3,7 +3,7 @@
   "short_name": "NoteZ",
   "start_url": "/NoteZ/",
   "display": "standalone",
-  "background_color": "#000000",
+  "background_color": "#FFFFFF",
   "theme_color": "#7c6dfa",
   "icons": [
     {
