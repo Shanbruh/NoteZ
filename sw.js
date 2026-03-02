@@ -24,9 +24,29 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      return cached || fetch(e.request).catch(() => caches.match('/NoteZ/'));
-    })
-  );
+  // For HTML, CSS, JS - try network first, fallback to cache
+  if (e.request.url.includes('/NoteZ/') && !e.request.url.includes('firebase')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          // Cache successful responses
+          if (res.ok) {
+            const cache = caches.open(CACHE);
+            cache.then(c => c.put(e.request, res.clone()));
+          }
+          return res;
+        })
+        .catch(() => {
+          // Offline - try cache
+          return caches.match(e.request) || caches.match('/NoteZ/');
+        })
+    );
+  } else {
+    // For external requests (Firebase, fonts, etc) - use cache if available
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        return cached || fetch(e.request).catch(() => caches.match('/NoteZ/'));
+      })
+    );
+  }
 });
