@@ -94,18 +94,18 @@
   /* LOGIN */
   #login-screen {
     position: fixed; inset: 0; z-index: 100;
-    background: var(--bg);
+    background: #ffffff;
     display: flex; align-items: center; justify-content: center;
     flex-direction: column;
   }
   #login-screen .login-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 18px;
     padding: 48px 44px;
     width: 100%; max-width: 400px;
     text-align: center;
-    box-shadow: 0 8px 60px rgba(0,0,0,0.35);
+    box-shadow: 0 8px 60px rgba(0,0,0,0.10);
   }
   .login-logo {
     font-size: 2.6rem;
@@ -113,15 +113,16 @@
     letter-spacing: -1px;
     margin-bottom: 6px;
   }
+  .login-logo { color: #1a1a2e; }
   .login-logo span { color: var(--accent); }
-  .login-sub { color: var(--text2); font-size: 0.9rem; margin-bottom: 32px; }
+  .login-sub { color: #6b7280; font-size: 0.9rem; margin-bottom: 32px; }
   .login-card input {
     width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border);
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 12px 14px;
-    color: var(--text);
+    color: #1a1a2e;
     font-family: var(--font);
     font-size: 0.95rem;
     margin-bottom: 12px;
@@ -135,8 +136,8 @@
     border-radius: 8px;
     font-size: 1rem; font-weight: 700;
   }
-  .login-tabs { display: flex; gap: 0; margin-bottom: 28px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-  .login-tab { flex: 1; padding: 10px; cursor: pointer; background: transparent; border: none; color: var(--text2); font-family: var(--font); font-size: 0.9rem; transition: all var(--transition); }
+  .login-tabs { display: flex; gap: 0; margin-bottom: 28px; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; }
+  .login-tab { flex: 1; padding: 10px; cursor: pointer; background: transparent; border: none; color: #6b7280; font-family: var(--font); font-size: 0.9rem; transition: all var(--transition); }
   .login-tab.active { background: var(--accent); color: #fff; font-weight: 600; }
   .login-err { color: var(--danger); font-size: 0.83rem; margin-top: 8px; min-height: 18px; }
 
@@ -967,6 +968,12 @@
     display: inline-block;
     filter: drop-shadow(0 0 5px var(--accent-glow));
     transition: color var(--transition);
+  }
+  /* Login screen: Note is black, Z stays accent purple */
+  #login-screen .login-logo span.z {
+    color: var(--accent);
+    -webkit-text-fill-color: var(--accent);
+    filter: drop-shadow(0 0 5px var(--accent-glow));
   }
 
 
