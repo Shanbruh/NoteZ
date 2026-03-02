@@ -195,6 +195,12 @@
     }
   }
 
+  @media (max-width: 850px) and (display-mode: standalone) {
+    .sidebar-bottom-buttons {
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    }
+  }
+
   .sidebar-btn {
     display: flex; align-items: center; gap: 9px;
     padding: 8px 14px;
