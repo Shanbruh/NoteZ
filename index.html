@@ -4494,13 +4494,13 @@ function toggleRootNotes() {
   const arrow = header.querySelector('.root-notes-arrow');
   
   if (container && arrow && header) {
-    const isOpen = container.style.display !== 'none';
+    const isOpen = getComputedStyle(container).display !== 'none';
     if (isOpen) {
       container.style.display = 'none';
-      arrow.style.transform = 'rotate(0deg)';   // Close: ▶ ▶ shows as ▶
+      arrow.style.transform = 'rotate(0deg)';
     } else {
       container.style.display = 'block';
-      arrow.style.transform = 'rotate(90deg)';  // Open: ▶ rotates to ▼
+      arrow.style.transform = 'rotate(90deg)';
     }
   }
 }
@@ -4508,12 +4508,13 @@ function toggleRootNotes() {
 function toggleSidebarSection(id, el) {
   const target = document.getElementById(id);
   const arrow = el.querySelector('.sec-arrow');
-  if (target.style.display === 'none' || target.style.display === '') {
-    target.style.display = 'block';
-    if(arrow) arrow.style.transform = 'rotate(90deg)';  // ▶ rotates to ▼
-  } else {
+  const isVisible = getComputedStyle(target).display !== 'none';
+  if (isVisible) {
     target.style.display = 'none';
-    if(arrow) arrow.style.transform = 'rotate(0deg)';   // ▼ rotates back to ▶
+    if(arrow) arrow.style.transform = 'rotate(0deg)';
+  } else {
+    target.style.display = 'block';
+    if(arrow) arrow.style.transform = 'rotate(90deg)';
   }
 }
 
