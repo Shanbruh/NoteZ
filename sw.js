@@ -1,4 +1,4 @@
-const CACHE = 'notez-v1';
+const CACHE = 'notez-v2';
 const ASSETS = [
   '/NoteZ/',
   '/NoteZ/index.html',
