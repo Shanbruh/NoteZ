@@ -3691,22 +3691,25 @@ function openNote(id) {
     noteWindow.style.cssText = 'width:100%;height:100%;left:0;top:0;border-radius:0;position:fixed;z-index:9998;';
     // Do NOT add fullscreen-win — keep titlebar visible so user can close/navigate
   } else {
-    noteWindow.style.width = '780px';
-    noteWindow.style.height = '560px';
-    noteWindow.style.left = (50 + floatingWindowCount * 20) + 'px';
-    noteWindow.style.top = (50 + floatingWindowCount * 20) + 'px';
+            const winWidth = 350; // Slightly narrower (Portrait)
+    const spacing = 370; // Width + gap
+    noteWindow.style.width = winWidth + 'px';
+    noteWindow.style.height = '85vh';
+    
+    // Calculate how many windows can fit in the current screen width
+    const maxVisible = Math.max(1, Math.floor((window.innerWidth - 40) / spacing));
+    const horizontalIndex = (floatingWindowCount - 1) % maxVisible;
+    
+    noteWindow.style.left = (20 + horizontalIndex * spacing) + 'px';
+    noteWindow.style.top = '60px'; // Fixed top alignment
   }
   
   const titlebar = document.createElement('div');
   titlebar.className = 'note-window-titlebar';
   titlebar.innerHTML = `
     <span class="win-title" data-note-id="${id}">${note.name}</span>
-    <button class="win-btn" onclick="changeNoteParentFromWindow('${id}')" title="Change folder">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8h18v13a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M3 8l3-5h5l2 3h8a1 1 0 011 1M9 12v6M15 12v6"/></svg>
-    </button>
-    <button class="win-btn" onclick="openNoteInNewWindow('${id}')" title="Open another window">
-      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-    </button>
+    
+    
     <button class="win-btn fullscreen" onclick="toggleFullscreenWindow('${windowId}')" title="Fullscreen">
       <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M21 16v3a2 2 0 01-2 2h-3M8 21H5a2 2 0 01-2-2v-3"/></svg>
     </button>
