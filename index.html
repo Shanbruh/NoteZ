@@ -4350,108 +4350,72 @@ async function initApp() {
   document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
   document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  // Try to restore session
+  // Restore session from localStorage
   try {
     const sess = JSON.parse(localStorage.getItem('notez_fb_session') || 'null');
-    if (sess && sess.refreshToken) {
+    if (sess && sess.uid) {
       _fbIdToken = sess.idToken;
       _fbRefreshToken = sess.refreshToken;
       _fbUid = sess.uid;
       _fbDisplayName = sess.displayName;
       _tokenExpiry = sess.expiresIn || 0;
+      currentUser = _fbUid;
       
-      // Try to validate by getting a fresh token (with timeout)
+      // SHOW APP IMMEDIATELY with cached data
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      
+      // Update avatar
+      const avatarEl = document.getElementById('user-avatar-text');
+      if (avatarEl) {
+        avatarEl.textContent = _fbDisplayName[0].toUpperCase();
+        avatarEl.title = _fbDisplayName;
+      }
+      
+      // Load cached data FIRST (instant)
       try {
-        const tokenPromise = _getToken();
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Token timeout')), 2000)
-        );
-        
-        const token = await Promise.race([tokenPromise, timeoutPromise]);
-        
-        if (token) {
-          // Firebase token succeeded - load fresh data
-          currentUser = _fbUid;
-          await loadUserDataFromFirebase();
-          const displayName = _fbDisplayName || 'User';
-          document.getElementById('login-screen').style.display = 'none';
-          document.getElementById('app').style.display = 'flex';
-          
-          // Update avatar
-          const avatarEl = document.getElementById('user-avatar-text');
-          if (avatarEl) {
-            avatarEl.textContent = displayName[0].toUpperCase();
-            avatarEl.title = displayName;
-          }
-          
+        const cached = await loadFromIDB();
+        if (cached && cached.uid === _fbUid) {
+          notes = cached.notes || [];
+          folders = cached.folders || [];
+          settings = cached.settings || { theme:'dark', accent:'purple' };
           applySettings();
           renderAll();
-          return;
+          checkOfflineStatus();
+        } else if (loadLocal()) {
+          applySettings();
+          renderAll();
         }
-      } catch(tokenErr) {
-        // Token failed - try offline data instead of clearing session
-        console.warn('Token refresh failed, trying offline mode:', tokenErr.message);
-        
-        try {
-          const cached = await loadFromIDB();
-          if (cached && cached.uid === _fbUid) {
-            // Offline data found - use it
-            currentUser = _fbUid;
-            notes = cached.notes || [];
-            folders = cached.folders || [];
-            settings = cached.settings || { theme:'dark', accent:'purple' };
-            
-            const displayName = _fbDisplayName || 'User';
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app').style.display = 'flex';
-            
-            // Update avatar
-            const avatarEl = document.getElementById('user-avatar-text');
-            if (avatarEl) {
-              avatarEl.textContent = displayName[0].toUpperCase();
-              avatarEl.title = displayName;
-            }
-            
-            applySettings();
-            renderAll();
-            checkOfflineStatus();
-            showToast('📡 Offline mode - using cached data');
-            return;
-          }
-          
-          // No IDB data, try localStorage
-          if (loadLocal()) {
-            currentUser = _fbUid;
-            const displayName = _fbDisplayName || 'User';
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app').style.display = 'flex';
-            
-            // Update avatar
-            const avatarEl = document.getElementById('user-avatar-text');
-            if (avatarEl) {
-              avatarEl.textContent = displayName[0].toUpperCase();
-              avatarEl.title = displayName;
-            }
-            
-            applySettings();
-            renderAll();
-            showToast('📡 Offline mode - limited data');
-            return;
-          }
-        } catch(offlineErr) {
-          console.warn('Offline data load failed:', offlineErr);
-        }
-        
-        // No offline data available - only now clear session
-        _clearSession();
+      } catch(e) {
+        console.warn('Cache load failed:', e);
       }
+      
+      // Try to sync with Firebase in background (non-blocking)
+      if (navigator.onLine) {
+        setTimeout(async () => {
+          try {
+            const token = await _getToken();
+            if (token) {
+              await loadUserDataFromFirebase();
+              applySettings();
+              renderAll();
+            }
+          } catch(e) {
+            console.warn('Firebase sync failed:', e);
+            // Already showing cached data, no problem
+          }
+        }, 100);
+      } else {
+        showToast('📡 Offline - viewing cached data');
+      }
+      
+      return;
     }
   } catch(e) { 
     console.warn('Session restore error:', e);
-    _clearSession(); 
   }
 
-  // No valid session
+  // No session - show login
   document.getElementById('login-screen').style.display = 'flex';
 }
 
