@@ -1999,14 +1999,27 @@ async function saveUserData() {
 }
 
 async function loadUserDataFromFirebase() {
-  // Try Firebase first (has full history across devices)
-  const fbOk = await loadFromFirebase();
-  if (fbOk) {
-    saveLocal(); // cache locally
-    return;
+  try {
+    // Try Firebase first (has full history across devices)
+    const fbOk = await loadFromFirebase();
+    if (fbOk) {
+      saveLocal(); // cache locally
+      return;
+    }
+  } catch(e) {
+    console.warn('Firebase load failed:', e);
   }
+  
   // Fall back to localStorage
-  loadLocal();
+  try {
+    loadLocal();
+  } catch(e) {
+    console.warn('LocalStorage load failed:', e);
+    // Initialize with empty data
+    notes = [];
+    folders = [];
+    settings = { theme:'dark', accent:'purple' };
+  }
 }
 
 // ============================================================
@@ -2055,11 +2068,31 @@ async function loginSuccess(user) {
   currentUser = user.uid;
   _fbUid = user.uid;
   const displayName = user.displayName || 'User';
+  
+  // Make sure session is saved
+  if (_fbIdToken && _fbRefreshToken) {
+    localStorage.setItem('notez_fb_session', JSON.stringify({ 
+      idToken: _fbIdToken, 
+      refreshToken: _fbRefreshToken, 
+      uid: user.uid, 
+      displayName: displayName, 
+      expiresIn: _tokenExpiry 
+    }));
+  }
+  
+  // Load data from Firebase
   await loadUserDataFromFirebase();
+  
+  // Update UI
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
-  document.getElementById('user-avatar-text').textContent = displayName[0].toUpperCase();
-  document.getElementById('user-avatar-text').title = displayName;
+  
+  const avatarEl = document.getElementById('user-avatar-text');
+  if (avatarEl) {
+    avatarEl.textContent = displayName[0].toUpperCase();
+    avatarEl.title = displayName;
+  }
+  
   applySettings();
   renderAll();
 }
@@ -4171,25 +4204,50 @@ function _clearSession() {
 }
 
 async function _getToken() {
-  if (_fbIdToken && Date.now() < _tokenExpiry) return _fbIdToken;
-  // Refresh token
-  if (!_fbRefreshToken) return null;
+  // Return valid token if still fresh
+  if (_fbIdToken && _tokenExpiry && Date.now() < _tokenExpiry) {
+    return _fbIdToken;
+  }
+  
+  // Refresh token if available
+  if (!_fbRefreshToken) {
+    console.warn('No refresh token available');
+    return null;
+  }
+  
   try {
     const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB_API_KEY}`, {
-      method: 'POST', headers: {'Content-Type':'application/json'},
+      method: 'POST', 
+      headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ grant_type:'refresh_token', refresh_token: _fbRefreshToken })
     });
+    
     const d = await r.json();
+    
+    if (d.error) {
+      console.warn('Token refresh error:', d.error);
+      _clearSession();
+      return null;
+    }
+    
     if (d.id_token) {
       _fbIdToken = d.id_token;
-      _fbRefreshToken = d.refresh_token;
-      _tokenExpiry = Date.now() + (parseInt(d.expires_in) - 60) * 1000;
+      _fbRefreshToken = d.refresh_token || _fbRefreshToken;
+      _tokenExpiry = Date.now() + (parseInt(d.expires_in || 3600) - 60) * 1000;
+      
+      // Update session storage
       const sess = JSON.parse(localStorage.getItem('notez_fb_session') || '{}');
-      sess.idToken = _fbIdToken; sess.refreshToken = _fbRefreshToken; sess.expiresIn = _tokenExpiry;
+      sess.idToken = _fbIdToken; 
+      sess.refreshToken = _fbRefreshToken; 
+      sess.expiresIn = _tokenExpiry;
       localStorage.setItem('notez_fb_session', JSON.stringify(sess));
+      
       return _fbIdToken;
     }
-  } catch(e) {}
+  } catch(e) {
+    console.warn('Token refresh request failed:', e);
+  }
+  
   _clearSession();
   return null;
 }
@@ -4245,23 +4303,38 @@ async function initApp() {
       _fbUid = sess.uid;
       _fbDisplayName = sess.displayName;
       _tokenExpiry = sess.expiresIn || 0;
+      
       // Validate by getting a fresh token
-      const token = await _getToken();
-      if (token) {
-        currentUser = _fbUid;
-        await loadUserDataFromFirebase();
-        const displayName = _fbDisplayName || 'User';
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'flex';
-        document.getElementById('user-avatar-text').textContent = displayName[0].toUpperCase();
-        document.getElementById('user-avatar-text').title = displayName;
-        applySettings();
-        renderAll();
-        document.getElementById('app-loading').style.display = 'none';
-        return;
+      try {
+        const token = await _getToken();
+        if (token) {
+          currentUser = _fbUid;
+          await loadUserDataFromFirebase();
+          const displayName = _fbDisplayName || 'User';
+          document.getElementById('login-screen').style.display = 'none';
+          document.getElementById('app').style.display = 'flex';
+          
+          // Update avatar if it exists
+          const avatarEl = document.getElementById('user-avatar-text');
+          if (avatarEl) {
+            avatarEl.textContent = displayName[0].toUpperCase();
+            avatarEl.title = displayName;
+          }
+          
+          applySettings();
+          renderAll();
+          document.getElementById('app-loading').style.display = 'none';
+          return;
+        }
+      } catch(tokenErr) {
+        console.warn('Token refresh failed:', tokenErr);
+        _clearSession();
       }
     }
-  } catch(e) { _clearSession(); }
+  } catch(e) { 
+    console.warn('Session restore error:', e);
+    _clearSession(); 
+  }
 
   // No valid session
   document.getElementById('app-loading').style.display = 'none';
