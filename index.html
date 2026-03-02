@@ -4360,17 +4360,24 @@ async function initApp() {
       _fbDisplayName = sess.displayName;
       _tokenExpiry = sess.expiresIn || 0;
       
-      // Validate by getting a fresh token
+      // Try to validate by getting a fresh token (with timeout)
       try {
-        const token = await _getToken();
+        const tokenPromise = _getToken();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Token timeout')), 2000)
+        );
+        
+        const token = await Promise.race([tokenPromise, timeoutPromise]);
+        
         if (token) {
+          // Firebase token succeeded - load fresh data
           currentUser = _fbUid;
           await loadUserDataFromFirebase();
           const displayName = _fbDisplayName || 'User';
           document.getElementById('login-screen').style.display = 'none';
           document.getElementById('app').style.display = 'flex';
           
-          // Update avatar if it exists
+          // Update avatar
           const avatarEl = document.getElementById('user-avatar-text');
           if (avatarEl) {
             avatarEl.textContent = displayName[0].toUpperCase();
@@ -4379,11 +4386,63 @@ async function initApp() {
           
           applySettings();
           renderAll();
-          document.getElementById('app-loading').style.display = 'none';
           return;
         }
       } catch(tokenErr) {
-        console.warn('Token refresh failed:', tokenErr);
+        // Token failed - try offline data instead of clearing session
+        console.warn('Token refresh failed, trying offline mode:', tokenErr.message);
+        
+        try {
+          const cached = await loadFromIDB();
+          if (cached && cached.uid === _fbUid) {
+            // Offline data found - use it
+            currentUser = _fbUid;
+            notes = cached.notes || [];
+            folders = cached.folders || [];
+            settings = cached.settings || { theme:'dark', accent:'purple' };
+            
+            const displayName = _fbDisplayName || 'User';
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+            
+            // Update avatar
+            const avatarEl = document.getElementById('user-avatar-text');
+            if (avatarEl) {
+              avatarEl.textContent = displayName[0].toUpperCase();
+              avatarEl.title = displayName;
+            }
+            
+            applySettings();
+            renderAll();
+            checkOfflineStatus();
+            showToast('📡 Offline mode - using cached data');
+            return;
+          }
+          
+          // No IDB data, try localStorage
+          if (loadLocal()) {
+            currentUser = _fbUid;
+            const displayName = _fbDisplayName || 'User';
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+            
+            // Update avatar
+            const avatarEl = document.getElementById('user-avatar-text');
+            if (avatarEl) {
+              avatarEl.textContent = displayName[0].toUpperCase();
+              avatarEl.title = displayName;
+            }
+            
+            applySettings();
+            renderAll();
+            showToast('📡 Offline mode - limited data');
+            return;
+          }
+        } catch(offlineErr) {
+          console.warn('Offline data load failed:', offlineErr);
+        }
+        
+        // No offline data available - only now clear session
         _clearSession();
       }
     }
@@ -4393,7 +4452,6 @@ async function initApp() {
   }
 
   // No valid session
-  document.getElementById('app-loading').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
 }
 
