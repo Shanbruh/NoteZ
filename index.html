@@ -722,8 +722,11 @@
   #app-loading {
     position: fixed; inset: 0; z-index: 999;
     background: #ffffff;
-    display: flex; align-items: center; justify-content: center;
+    display: none; align-items: center; justify-content: center;
     flex-direction: column; gap: 16px;
+  }
+  #app-loading.show {
+    display: flex;
   }
   #app-loading .spin {
     width: 36px; height: 36px;
@@ -4350,9 +4353,6 @@ async function initApp() {
   document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
   document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  // Hide loading immediately - don't wait for anything
-  document.getElementById('app-loading').style.display = 'none';
-
   // STEP 1: Try to restore session from localStorage (fast, no waiting)
   let hasValidSession = false;
   try {
@@ -4462,6 +4462,7 @@ async function initApp() {
 
   // STEP 3: No valid session - show login
   document.getElementById('login-screen').style.display = 'flex';
+}
 }
 
 
