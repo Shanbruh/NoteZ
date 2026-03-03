@@ -163,7 +163,7 @@
     font-weight: 800;
     letter-spacing: -0.5px;
     border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: 0px;
   }
   .sidebar-logo span.z { color: var(--accent); }
   .sidebar-logo .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
@@ -1079,7 +1079,7 @@
 
   .n-logo-svg { width: 32px; height: 32px; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
   .logo-dot { display: none !important; } /* Hide the old dot */
-  .sidebar-logo { gap: 10px; padding: 18px 20px; }
+  .sidebar-logo { gap: 0px; padding: 18px 20px; }
   .load-logo-wrap { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; }
   .load-logo-wrap .n-logo-svg { width: 64px; height: 64px; }
 
@@ -1726,7 +1726,7 @@
         </button>
         <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:14px;text-align:center;padding-bottom:8px;">
           <div style="font-size:0.88rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">Note<span style="color:var(--accent);">Z</span></div>
-          <span style="font-size:0.78rem;color:var(--text2);font-family:var(--mono);letter-spacing:1px;font-weight:600;">v3.0</span>
+          <span style="font-size:0.78rem;color:var(--text2);font-family:var(--mono);letter-spacing:1px;font-weight:600;">v3.5</span>
         </div>
       </div>
     </div>
@@ -1842,7 +1842,7 @@
       </button>
       <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:10px;text-align:center;">
         <div style="font-size:0.9rem;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">Note<span style="color:var(--accent);">Z</span></div>
-        <span style="font-size:0.75rem;font-weight:700;color:var(--text2);font-family:var(--mono);letter-spacing:1px;">v3.0</span>
+        <span style="font-size:0.75rem;font-weight:700;color:var(--text2);font-family:var(--mono);letter-spacing:1px;">v3.5</span>
       </div>
     </div>
   </div>
@@ -3730,7 +3730,7 @@ function openNote(id) {
     noteWindow.style.cssText = 'width:100%;height:100%;left:0;top:0;border-radius:0;position:fixed;z-index:9998;';
     // Do NOT add fullscreen-win — keep titlebar visible so user can close/navigate
   } else {
-                // Adaptive Spawning Logic v3.0
+                // Adaptive Spawning Logic v3.5
     const winWidth = Math.min(350, window.innerWidth - 40);
     const winHeight = window.innerHeight * 0.7;
     noteWindow.style.width = winWidth + 'px';
