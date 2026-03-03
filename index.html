@@ -1986,19 +1986,28 @@ async function syncToFirebase() {
   try {
     const token = await _getToken();
     if (!token) return;
-    // Save metadata (no content — content saved per-note)
-    const meta = { notes: notes.map(({content,...r})=>r), folders, settings };
-    await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, {
-      method: 'PUT', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(meta)
-    });
-    // Save each note's content
-    await Promise.all(notes.map(n =>
-      fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${n.id}.json?auth=${token}`, {
+    // All writes share one 12-second abort controller
+    const ctrl = new AbortController();
+    const to = setTimeout(() => ctrl.abort(), 4000);
+    try {
+      // Save metadata (no content — content saved per-note)
+      const meta = { notes: notes.map(({content,...r})=>r), folders, settings };
+      await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, {
         method: 'PUT', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(n.content || '')
-      })
-    ));
+        body: JSON.stringify(meta),
+        signal: ctrl.signal
+      });
+      // Save each note's content
+      await Promise.all(notes.map(n =>
+        fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${n.id}.json?auth=${token}`, {
+          method: 'PUT', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(n.content || ''),
+          signal: ctrl.signal
+        })
+      ));
+    } finally {
+      clearTimeout(to);
+    }
   } catch(e) { console.log('Firebase sync skipped:', e.message); }
 }
 
@@ -2006,7 +2015,16 @@ async function loadFromFirebase() {
   try {
     const token = await _getToken();
     if (!token) return false;
-    const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`);
+
+    // Always use a timeout — WiFi/data connected but no internet will hang forever without one
+    const metaCtrl = new AbortController();
+    const metaTimeout = setTimeout(() => metaCtrl.abort(), 2500);
+    let r;
+    try {
+      r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, { signal: metaCtrl.signal });
+    } finally {
+      clearTimeout(metaTimeout);
+    }
     const meta = await r.json();
     if (!meta || meta.error) return false;
 
@@ -2014,10 +2032,17 @@ async function loadFromFirebase() {
     folders = meta.folders || [];
     settings = meta.settings || { theme:'dark', accent:'purple' };
 
-    // Load content for each note
+    // Load content for each note — each with its own timeout
     const loaded = await Promise.all(noteMeta.map(async nm => {
       try {
-        const cr = await fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${nm.id}.json?auth=${token}`);
+        const noteCtrl = new AbortController();
+        const noteTimeout = setTimeout(() => noteCtrl.abort(), 2500);
+        let cr;
+        try {
+          cr = await fetch(`${FB_DB_URL}/users/${_fbUid}/contents/${nm.id}.json?auth=${token}`, { signal: noteCtrl.signal });
+        } finally {
+          clearTimeout(noteTimeout);
+        }
         const content = await cr.json();
         return { ...nm, content: content || '' };
       } catch(e) { return { ...nm, content: '' }; }
@@ -2118,6 +2143,12 @@ async function loginSuccess(user) {
   
   // Load data from Firebase
   await loadUserDataFromFirebase();
+  
+  // Persist to IDB immediately — ensures offline works even before any note changes
+  try {
+    await saveToIDB({ notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid });
+    saveLocal();
+  } catch(_) {}
   
   // Update UI
   document.getElementById('login-screen').style.display = 'none';
@@ -4292,7 +4323,7 @@ async function _getToken() {
   // 3. Try to refresh, but handle network/timeout failures gracefully
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 2500); // 2.5s timeout
     
     const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB_API_KEY}`, {
       method: 'POST', 
@@ -4335,6 +4366,15 @@ async function _getToken() {
     console.warn('Network issue during token refresh. Staying logged in based on cache.');
     // IMPORTANT: Treat this as "still logged in but offline". 
     // Do NOT call _clearSession(). Return the last known token.
+    // Also extend the local expiry so we don't retry on every call (saves 8s per attempt).
+    if (_fbIdToken) {
+      _tokenExpiry = Date.now() + 24 * 60 * 60 * 1000; // extend 24h locally
+      try {
+        const s = JSON.parse(localStorage.getItem('notez_fb_session') || '{}');
+        s.expiresIn = _tokenExpiry;
+        localStorage.setItem('notez_fb_session', JSON.stringify(s));
+      } catch(_) {}
+    }
     return _fbIdToken; 
   }
   
@@ -4405,7 +4445,7 @@ async function initApp() {
     document.getElementById('app').style.display = 'flex';
     hideLoader(); // Force hide loader immediately once we know we have a session
     
-    // 3. LOAD LOCAL DATA (IndexedDB / LocalStorage)
+    // 3. LOAD LOCAL DATA (IndexedDB / LocalStorage) — always fast, never depends on network
     const loadCache = async () => {
       const idbData = await loadFromIDB();
       if (idbData && idbData.uid === _fbUid) {
@@ -4413,7 +4453,11 @@ async function initApp() {
         folders = idbData.folders || [];
         settings = idbData.settings || { theme:'dark', accent:'purple' };
       } else {
-        loadLocal(); // Fallback to localStorage notez_data_uid
+        const hadLocal = loadLocal(); // Fallback to localStorage notez_data_uid
+        // Back-fill IDB from localStorage so future offline loads are faster
+        if (hadLocal) {
+          saveToIDB({ notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid }).catch(() => {});
+        }
       }
       applySettings();
       renderAll();
@@ -4422,25 +4466,29 @@ async function initApp() {
     await loadCache();
 
     // 4. BACKGROUND SYNC (Quietly update if internet appears)
+    // The controller covers the ENTIRE sync including loadUserDataFromFirebase —
+    // do NOT clearTimeout before calling it, or loadFromFirebase runs unprotected.
     const runSync = async () => {
       try {
-        // Use a timeout for the fetch to avoid hanging on throttled internet
         const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 10000);
+        const tid = setTimeout(() => controller.abort(), 6000); // covers full sync
         
         const token = await _getToken();
         if (token) {
-           // Basic metadata fetch to see if there are updates
+           // Quick connectivity probe — if this fetch succeeds we have real internet
            const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, { signal: controller.signal });
            const meta = await r.json();
-           clearTimeout(tid);
+           // Keep timeout alive — loadUserDataFromFirebase has its own per-fetch timeouts
            
            if (meta && !meta.error) {
               await loadUserDataFromFirebase();
               applySettings();
               renderAll();
+              // Persist fresh data to IDB immediately
+              saveToIDB({ notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid }).catch(() => {});
            }
         }
+        clearTimeout(tid);
       } catch(e) {
         console.log('Background sync skipped (offline or throttled)');
       }
@@ -4700,23 +4748,33 @@ async function checkOfflineStatus() {
   }
 }
 
-// Override loadUserDataFromFirebase to also try IDB when fully offline
+// Override loadUserDataFromFirebase — ALWAYS load local first (instant, no network),
+// then try Firebase as a background enhancement.
+// We NEVER gate on navigator.onLine because it returns true on WiFi/data-connected-but-no-internet.
+// All fetches inside loadFromFirebase already have 8-second AbortController timeouts.
 const _origLoadUserData = loadUserDataFromFirebase;
 loadUserDataFromFirebase = async function() {
-  if (!navigator.onLine) {
-    // Offline — try IDB first, then localStorage
-    const cached = await loadFromIDB();
-    if (cached) {
-      notes = cached.notes || [];
-      folders = cached.folders || [];
-      settings = cached.settings || { theme:'dark', accent:'purple' };
-      showToast('Loaded offline data');
-      return;
-    }
+  // Step 1: Load local data immediately (zero network, never hangs)
+  const cached = await loadFromIDB();
+  if (cached && cached.uid === _fbUid) {
+    notes = cached.notes || [];
+    folders = cached.folders || [];
+    settings = cached.settings || { theme:'dark', accent:'purple' };
+  } else {
     loadLocal();
-    return;
   }
-  await _origLoadUserData();
+
+  // Step 2: Try Firebase for fresh data (8s timeout per fetch — safe on all network states)
+  // Any failure (offline, throttled, captive portal, timeout) keeps the local data above.
+  try {
+    const fbOk = await loadFromFirebase();
+    if (fbOk) {
+      saveLocal();
+      saveToIDB({ notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid }).catch(() => {});
+    }
+  } catch(e) {
+    console.log('Firebase load skipped, using cached data');
+  }
 };
 
 
@@ -4787,17 +4845,6 @@ window.addEventListener('load', () => {
   _offlineAutosaveEnabled = true;
 });
 
-// Force sync on refresh/load
-window.addEventListener('DOMContentLoaded', () => {
-    // Wait a few seconds for initial server fetch to complete before local sync
-    setTimeout(() => {
-        if (currentUser) {
-            console.log("Auto-syncing for offline access on load...");
-            scheduleOfflineAutosave();
-        }
-    }, 5000); 
-});
-
 </script>
 
 <script>
@@ -4810,35 +4857,14 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 window.addEventListener('appinstalled', () => { deferredPrompt = null; });
 
-// Register external service worker
+// Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-  // Loading failsafe
-  setTimeout(() => {
-    const loader = document.getElementById('app-loading');
-    if (loader && loader.style.display !== 'none') {
-      console.log('Loading timeout - forcing display');
-      if (loader) loader.style.display = 'none';
-    }
-  }, 4000);
-
     navigator.serviceWorker.register('/NoteZ/sw.js', { scope: '/NoteZ/' })
       .then(reg => console.log('SW registered:', reg.scope))
       .catch(err => console.warn('SW failed:', err));
   });
 }
-
-// Force sync on refresh/load
-window.addEventListener('DOMContentLoaded', () => {
-    // Wait a few seconds for initial server fetch to complete before local sync
-    setTimeout(() => {
-        if (currentUser) {
-            console.log("Auto-syncing for offline access on load...");
-            scheduleOfflineAutosave();
-        }
-    }, 5000); 
-});
-
 </script>
 </body>
 </html>
