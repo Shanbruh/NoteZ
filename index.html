@@ -24,7 +24,7 @@
     --text2: #9090a8;
     --text3: #5a5a72;
     --accent: #a900ff;
-    --accent2: #c74dff;
+    --accent2: #a900ff;
     --accent-glow: rgba(169, 0, 255, 0.18);
     --danger: #ff5b6b;
     --success: #3ddc97;
@@ -45,7 +45,7 @@
     --text2: #55546a;
     --text3: #9998b0;
     --accent: #6b5ce7;
-    --accent2: #8878ff;
+    --accent2: #a900ff;
     --accent-glow: rgba(107,92,231,0.12);
   }
   [data-theme="navy"] {
@@ -58,7 +58,7 @@
     --text2: #7a92cc;
     --text3: #3a5090;
     --accent: #4d9fff;
-    --accent2: #74b8ff;
+    --accent2: #a900ff;
     --accent-glow: rgba(77,159,255,0.15);
   }
 
@@ -966,14 +966,14 @@
     -webkit-text-fill-color: var(--accent);
     background-clip: unset;
     display: inline-block;
-    filter: drop-shadow(0 0 5px var(--accent-glow));
+    filter: drop-shadow(0 0 8px rgba(169, 0, 255, 0.4));
     transition: color var(--transition);
   }
   /* Login screen: Note is black, Z stays accent purple */
   #login-screen .login-logo span.z {
     color: var(--accent);
     -webkit-text-fill-color: var(--accent);
-    filter: drop-shadow(0 0 5px var(--accent-glow));
+    filter: drop-shadow(0 0 8px rgba(169, 0, 255, 0.4));
   }
 
 
