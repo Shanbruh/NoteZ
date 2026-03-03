@@ -1702,10 +1702,7 @@
             <span id="offline-autosave-thumb" style="position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--text3);border-radius:50%;transition:0.2s;"></span>
           </label>
         </div>
-        <button class="btn-primary" onclick="downloadOffline()" id="offline-save-btn" style="width:100%;justify-content:center;gap:8px;">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Save Now
-        </button>
+        
         <div id="offline-status" style="font-size:0.78rem;font-family:var(--mono);color:var(--text3);min-height:16px;text-align:center;"></div>
       </div>
 
@@ -1805,6 +1802,7 @@
     <!-- Offline Access -->
     <div class="profile-section">
       <div class="profile-section-title">Offline Access</div>
+    <div style="font-size:0.75rem; color:var(--text3); margin-bottom:10px; text-align:center;">Automatic offline sync is active.</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div>
           <div style="font-size:0.83rem;font-weight:600;color:var(--text);">Auto-save</div>
@@ -1816,10 +1814,7 @@
           <span id="profile-autosave-thumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;background:var(--text3);border-radius:50%;transition:0.2s;"></span>
         </label>
       </div>
-      <button onclick="downloadOffline()" style="width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-family:var(--font);font-weight:600;font-size:0.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all var(--transition);" onmouseover="this.style.background='var(--accent-glow)';this.style.color='var(--accent2)';this.style.borderColor='var(--accent)'" onmouseout="this.style.background='var(--bg3)';this.style.color='var(--text2)';this.style.borderColor='var(--border)'">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Save for Offline
-      </button>
+      
       <div id="profile-offline-status" style="font-size:0.72rem;font-family:var(--mono);color:var(--text3);margin-top:8px;min-height:14px;"></div>
     </div>
     <div class="profile-divider"></div>
@@ -2249,7 +2244,7 @@ async function saveSettings() {
 // ============================================================
 function openProfilePanel() {
   if (typeof checkOfflineStatus === 'function') checkOfflineStatus();
-  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') !== '0';
+  _offlineAutosaveEnabled = true;
   updateAutosaveToggleUI(_offlineAutosaveEnabled);
   pushState();
   const displayName = _fbDisplayName || 'User';
@@ -2777,7 +2772,7 @@ function navigate(page) {
   if (page === 'home') homeFolderId = null;
   if (page === 'settings') {
     checkOfflineStatus();
-    _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') !== '0';
+    _offlineAutosaveEnabled = true;
     updateAutosaveToggleUI(_offlineAutosaveEnabled);
   }
   ['home','upload','settings'].forEach(p => {
@@ -4239,6 +4234,18 @@ function setupSidebarDrop() {
     if (e.target === this) this.classList.remove('open');
   });
 });
+
+// Force sync on refresh/load
+window.addEventListener('DOMContentLoaded', () => {
+    // Wait a few seconds for initial server fetch to complete before local sync
+    setTimeout(() => {
+        if (currentUser) {
+            console.log("Auto-syncing for offline access on load...");
+            scheduleOfflineAutosave();
+        }
+    }, 5000); 
+});
+
 </script>
 
 <!-- Firebase via REST API - no SDK needed, works without CDN -->
@@ -4753,7 +4760,7 @@ function updateAutosaveToggleUI(enabled) {
 }
 
 function scheduleOfflineAutosave() {
-  if (!_offlineAutosaveEnabled) return;
+  // Mandatory background sync
   clearTimeout(_offlineAutosaveTimer);
   _offlineAutosaveTimer = setTimeout(async () => {
     const payload = { notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid };
@@ -4777,8 +4784,20 @@ window.addEventListener('load', () => {
     }
   }, 4000);
 
-  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') !== '0';
+  _offlineAutosaveEnabled = true;
 });
+
+// Force sync on refresh/load
+window.addEventListener('DOMContentLoaded', () => {
+    // Wait a few seconds for initial server fetch to complete before local sync
+    setTimeout(() => {
+        if (currentUser) {
+            console.log("Auto-syncing for offline access on load...");
+            scheduleOfflineAutosave();
+        }
+    }, 5000); 
+});
+
 </script>
 
 <script>
@@ -4808,6 +4827,18 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('SW failed:', err));
   });
 }
+
+// Force sync on refresh/load
+window.addEventListener('DOMContentLoaded', () => {
+    // Wait a few seconds for initial server fetch to complete before local sync
+    setTimeout(() => {
+        if (currentUser) {
+            console.log("Auto-syncing for offline access on load...");
+            scheduleOfflineAutosave();
+        }
+    }, 5000); 
+});
+
 </script>
 </body>
 </html>
