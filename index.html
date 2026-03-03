@@ -4272,30 +4272,41 @@ function _clearSession() {
 }
 
 async function _getToken() {
-  // Return valid token if still fresh
+  // 1. If we have a token that hasn't expired yet, use it immediately (offline or online)
   if (_fbIdToken && _tokenExpiry && Date.now() < _tokenExpiry) {
     return _fbIdToken;
   }
   
-  // Refresh token if available
+  // 2. No refresh token? We are truly logged out.
   if (!_fbRefreshToken) {
-    console.warn('No refresh token available');
     return null;
   }
   
+  // 3. Try to refresh, but handle network/timeout failures gracefully
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+    
     const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB_API_KEY}`, {
       method: 'POST', 
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ grant_type:'refresh_token', refresh_token: _fbRefreshToken })
+      body: JSON.stringify({ grant_type:'refresh_token', refresh_token: _fbRefreshToken }),
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
     
     const d = await r.json();
     
+    // Only sign out if the server EXPLICITLY says the token is invalid/revoked
     if (d.error) {
-      console.warn('Token refresh error:', d.error);
-      _clearSession();
-      return null;
+      const msg = d.error.message || "";
+      if (msg.includes('INVALID_REFRESH_TOKEN') || msg.includes('USER_DISABLED') || msg.includes('TOKEN_EXPIRED')) {
+        console.warn('Token revoked/invalid. Logging out.');
+        _clearSession();
+        return null;
+      }
+      // Otherwise (e.g. quota limit, transient server error), just proceed with existing local session
+      return _fbIdToken; 
     }
     
     if (d.id_token) {
@@ -4303,21 +4314,24 @@ async function _getToken() {
       _fbRefreshToken = d.refresh_token || _fbRefreshToken;
       _tokenExpiry = Date.now() + (parseInt(d.expires_in || 3600) - 60) * 1000;
       
-      // Update session storage
-      const sess = JSON.parse(localStorage.getItem('notez_fb_session') || '{}');
-      sess.idToken = _fbIdToken; 
-      sess.refreshToken = _fbRefreshToken; 
-      sess.expiresIn = _tokenExpiry;
-      localStorage.setItem('notez_fb_session', JSON.stringify(sess));
+      localStorage.setItem('notez_fb_session', JSON.stringify({ 
+        idToken: _fbIdToken, 
+        refreshToken: _fbRefreshToken, 
+        uid: _fbUid, 
+        displayName: _fbDisplayName, 
+        expiresIn: _tokenExpiry 
+      }));
       
       return _fbIdToken;
     }
   } catch(e) {
-    console.warn('Token refresh request failed:', e);
+    console.warn('Network issue during token refresh. Staying logged in based on cache.');
+    // IMPORTANT: Treat this as "still logged in but offline". 
+    // Do NOT call _clearSession(). Return the last known token.
+    return _fbIdToken; 
   }
   
-  _clearSession();
-  return null;
+  return _fbIdToken;
 }
 
 async function fbSignIn(email, password) {
@@ -4359,76 +4373,80 @@ async function initApp() {
   setupUploadZone();
   setupSidebarDrop();
 
+  const hideLoader = () => {
+    const loader = document.getElementById('app-loading');
+    if (loader) if (loader) loader.style.display = 'none';
+  };
+
   document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
   document.getElementById('login-username').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-  // Restore session from localStorage
-  try {
-    const sess = JSON.parse(localStorage.getItem('notez_fb_session') || 'null');
-    if (sess && sess.uid) {
-      _fbIdToken = sess.idToken;
-      _fbRefreshToken = sess.refreshToken;
-      _fbUid = sess.uid;
-      _fbDisplayName = sess.displayName;
-      _tokenExpiry = sess.expiresIn || 0;
-      currentUser = _fbUid;
-      
-      // SHOW APP IMMEDIATELY with cached data
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      
-      // Update avatar
-      const avatarEl = document.getElementById('user-avatar-text');
-      if (avatarEl) {
-        avatarEl.textContent = _fbDisplayName[0].toUpperCase();
-        avatarEl.title = _fbDisplayName;
+  // 1. Restore local session
+  let sess = null;
+  try { sess = JSON.parse(localStorage.getItem('notez_fb_session') || 'null'); } catch(e) {}
+  
+  if (sess && sess.uid) {
+    _fbIdToken = sess.idToken;
+    _fbRefreshToken = sess.refreshToken;
+    _fbUid = sess.uid;
+    _fbDisplayName = sess.displayName;
+    _tokenExpiry = sess.expiresIn || 0;
+    currentUser = _fbUid;
+    
+    // 2. PRE-LOAD UI IMMEDIATELY
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    hideLoader(); // Force hide loader immediately once we know we have a session
+    
+    // 3. LOAD LOCAL DATA (IndexedDB / LocalStorage)
+    const loadCache = async () => {
+      const idbData = await loadFromIDB();
+      if (idbData && idbData.uid === _fbUid) {
+        notes = idbData.notes || [];
+        folders = idbData.folders || [];
+        settings = idbData.settings || { theme:'dark', accent:'purple' };
+      } else {
+        loadLocal(); // Fallback to localStorage notez_data_uid
       }
-      
-      // Load cached data FIRST (instant)
+      applySettings();
+      renderAll();
+      checkOfflineStatus();
+    };
+    await loadCache();
+
+    // 4. BACKGROUND SYNC (Quietly update if internet appears)
+    const runSync = async () => {
       try {
-        const cached = await loadFromIDB();
-        if (cached && cached.uid === _fbUid) {
-          notes = cached.notes || [];
-          folders = cached.folders || [];
-          settings = cached.settings || { theme:'dark', accent:'purple' };
-          applySettings();
-          renderAll();
-          checkOfflineStatus();
-        } else if (loadLocal()) {
-          applySettings();
-          renderAll();
-        }
-      } catch(e) {
-        console.warn('Cache load failed:', e);
-      }
-      
-      // Try to sync with Firebase in background (non-blocking)
-      if (navigator.onLine) {
-        setTimeout(async () => {
-          try {
-            const token = await _getToken();
-            if (token) {
+        // Use a timeout for the fetch to avoid hanging on throttled internet
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 10000);
+        
+        const token = await _getToken();
+        if (token) {
+           // Basic metadata fetch to see if there are updates
+           const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, { signal: controller.signal });
+           const meta = await r.json();
+           clearTimeout(tid);
+           
+           if (meta && !meta.error) {
               await loadUserDataFromFirebase();
               applySettings();
               renderAll();
-            }
-          } catch(e) {
-            console.warn('Firebase sync failed:', e);
-            // Already showing cached data, no problem
-          }
-        }, 100);
-      } else {
-        showToast('📡 Offline - viewing cached data');
+           }
+        }
+      } catch(e) {
+        console.log('Background sync skipped (offline or throttled)');
       }
-      
-      return;
-    }
-  } catch(e) { 
-    console.warn('Session restore error:', e);
+    };
+    
+    // Give UI priority, sync after 500ms
+    setTimeout(runSync, 500);
+    return;
   }
 
-  // No session - show login
+  // No saved session found
   document.getElementById('login-screen').style.display = 'flex';
+  hideLoader();
 }
 
 
@@ -4755,7 +4773,7 @@ window.addEventListener('load', () => {
     const loader = document.getElementById('app-loading');
     if (loader && loader.style.display !== 'none') {
       console.log('Loading timeout - forcing display');
-      loader.style.display = 'none';
+      if (loader) loader.style.display = 'none';
     }
   }, 4000);
 
@@ -4781,7 +4799,7 @@ if ('serviceWorker' in navigator) {
     const loader = document.getElementById('app-loading');
     if (loader && loader.style.display !== 'none') {
       console.log('Loading timeout - forcing display');
-      loader.style.display = 'none';
+      if (loader) loader.style.display = 'none';
     }
   }, 4000);
 
