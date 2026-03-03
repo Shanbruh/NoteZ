@@ -407,7 +407,7 @@
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 12px;
-    box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+    box-shadow: none;
     display: flex; flex-direction: column;
     overflow: visible;
     min-width: 300px; min-height: auto;
@@ -516,13 +516,13 @@
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 14px;
-    box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+    box-shadow: none;
     display: flex; flex-direction: column;
     overflow: hidden;
     min-width: 320px; min-height: 200px;
     transition: box-shadow 0.2s ease;
   }
-  .note-window.active { box-shadow: 0 20px 100px rgba(124,109,250,0.4); }
+  .note-window.active { box-shadow: none; }
   .note-window-titlebar {
     height: 42px;
     background: var(--bg3);
@@ -1728,7 +1728,7 @@
           Sign Out
         </button>
         <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:14px;text-align:center;padding-bottom:8px;">
-          <span style="font-size:0.78rem;color:var(--text2);font-family:var(--mono);letter-spacing:1px;font-weight:600;">v1.3</span>
+          <span style="font-size:0.78rem;color:var(--text2);font-family:var(--mono);letter-spacing:1px;font-weight:600;">v1.9</span>
           <span style="display:block;font-size:0.68rem;color:var(--text3);margin-top:3px;font-family:var(--mono);">NoteZ</span>
         </div>
       </div>
@@ -1845,7 +1845,7 @@
         Sign Out
       </button>
       <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:10px;text-align:center;">
-        <span style="font-size:0.75rem;font-weight:700;color:var(--text2);font-family:var(--mono);letter-spacing:1px;">v1.3</span>
+        <span style="font-size:0.75rem;font-weight:700;color:var(--text2);font-family:var(--mono);letter-spacing:1px;">v1.9</span>
         <span style="font-size:0.65rem;color:var(--text3);font-family:var(--mono);margin-left:5px;">NoteZ</span>
       </div>
     </div>
@@ -3734,17 +3734,57 @@ function openNote(id) {
     noteWindow.style.cssText = 'width:100%;height:100%;left:0;top:0;border-radius:0;position:fixed;z-index:9998;';
     // Do NOT add fullscreen-win — keep titlebar visible so user can close/navigate
   } else {
-            const winWidth = 350; // Slightly narrower (Portrait)
-    const spacing = 370; // Width + gap
+                // Adaptive Spawning Logic v1.9
+    const winWidth = Math.min(350, window.innerWidth - 40);
+    const winHeight = window.innerHeight * 0.7;
     noteWindow.style.width = winWidth + 'px';
-    noteWindow.style.height = '85vh';
-    
-    // Calculate how many windows can fit in the current screen width
-    const maxVisible = Math.max(1, Math.floor((window.innerWidth - 40) / spacing));
-    const horizontalIndex = (floatingWindowCount - 1) % maxVisible;
-    
-    noteWindow.style.left = (20 + horizontalIndex * spacing) + 'px';
-    noteWindow.style.top = '60px'; // Fixed top alignment
+    noteWindow.style.height = winHeight + 'px';
+
+    let finalL = 20;
+    let finalT = 60;
+    let found = false;
+
+    // Check grid positions
+    for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 10; col++) {
+            let testL = 20 + (col * (winWidth + 20));
+            let testT = 60 + (row * 50);
+
+            // Boundary check: if this column exceeds screen, go to next row
+            if (testL + winWidth > window.innerWidth) break;
+
+            let overlap = false;
+            document.querySelectorAll('.note-window').forEach(o => {
+                let oL = parseInt(o.style.left) || 0;
+                let oT = parseInt(o.style.top) || 0;
+                let oW = o.offsetWidth;
+                let oH = o.offsetHeight;
+                
+                // Buffer to ensure no touching
+                if (testL < oL + oW + 10 && testL + winWidth + 10 > oL && 
+                    testT < oT + oH + 10 && testT + winHeight + 10 > oT) {
+                    overlap = true;
+                }
+            });
+
+            if (!overlap) {
+                finalL = testL;
+                finalT = testT;
+                found = true;
+                break;
+            }
+        }
+        if (found) break;
+    }
+
+    // Fallback if screen is totally packed
+    if (!found) {
+        finalL = 20 + (floatingWindowCount * 20);
+        finalT = 60 + (floatingWindowCount * 20);
+    }
+
+    noteWindow.style.left = finalL + 'px';
+    noteWindow.style.top = finalT + 'px';
   }
   
   const titlebar = document.createElement('div');
@@ -3786,7 +3826,12 @@ function openNote(id) {
   noteWindow.appendChild(resizeHandle);
   container.appendChild(noteWindow);
   
-  // Don't auto-fullscreen - user can click fullscreen button if they want
+  // Limit to max 3 consecutive iframe notviewer windows
+  const allWindows = document.querySelectorAll('.note-window');
+  if (allWindows.length > 3) {
+    allWindows[0].remove();
+  }
+  
   makeDraggable(windowId);
   makeResizable(windowId);
   
@@ -3887,6 +3932,7 @@ function makeDraggable(windowId) {
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
     document.onmousemove = elementDrag;
+    document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = 'none');
     el.classList.add('active');
   }
   
@@ -3897,26 +3943,36 @@ function makeDraggable(windowId) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     
-    let newTop = el.offsetTop - pos2;
-    let newLeft = el.offsetLeft - pos1;
+    let nT = el.offsetTop - pos2;
+    let nL = el.offsetLeft - pos1;
 
-    // Bounds check
-    const headerHeight = titlebar.offsetHeight || 42;
-    const winWidth = window.innerWidth;
-    const winHeight = window.innerHeight;
-    
-    if (newTop < 0) newTop = 0;
-    if (newTop > winHeight - headerHeight) newTop = winHeight - headerHeight;
-    if (newLeft < 0) newLeft = 0;
-    if (newLeft > winWidth - el.offsetWidth) newLeft = winWidth - el.offsetWidth;
+    // Bounds
+    if (nT < 0) nT = 0;
+    if (nT > window.innerHeight - (titlebar.offsetHeight || 42)) nT = window.innerHeight - (titlebar.offsetHeight || 42);
+    if (nL < 0) nL = 0;
+    if (nL > window.innerWidth - el.offsetWidth) nL = window.innerWidth - el.offsetWidth;
 
-    el.style.top = newTop + "px";
-    el.style.left = newLeft + "px";
+    // Collision check (v1.5 Optimized)
+    let overlap = false;
+    const others = document.querySelectorAll('.note-window');
+    for(let o of others) {
+      if (o === el || o.classList.contains('fullscreen-win')) continue;
+      if (nL < o.offsetLeft + o.offsetWidth && nL + el.offsetWidth > o.offsetLeft && 
+          nT < o.offsetTop + o.offsetHeight && nT + el.offsetHeight > o.offsetTop) {
+        overlap = true; break;
+      }
+    }
+
+    if (!overlap) {
+      el.style.top = nT + "px";
+      el.style.left = nL + "px";
+    }
   }
   
   function closeDragElement() {
     document.onmouseup = null;
     document.onmousemove = null;
+    document.querySelectorAll('iframe').forEach(f => f.style.pointerEvents = 'auto');
   }
 }
 
