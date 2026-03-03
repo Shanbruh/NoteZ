@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NoteZ">
-<meta name="theme-color" content="#a594ff" id="theme-color-meta">
+<meta name="theme-color" content="#a900ff" id="theme-color-meta">
 <link rel="apple-touch-icon" sizes="192x192" href="/NoteZ/icon-1.png">
 <link rel="manifest" href="/NoteZ/manifest.json">
 <title>NoteZ</title>
@@ -23,9 +23,9 @@
     --text: #e8e8f0;
     --text2: #9090a8;
     --text3: #5a5a72;
-    --accent: #a594ff;
-    --accent2: #c5bcff;
-    --accent-glow: rgba(165,148,255,0.18);
+    --accent: #a900ff;
+    --accent2: #c74dff;
+    --accent-glow: rgba(169, 0, 255, 0.18);
     --danger: #ff5b6b;
     --success: #3ddc97;
     --warn: #f4a24b;
@@ -1087,7 +1087,7 @@
   .dash-folder-chip {
     flex-shrink: 0;
     background: var(--accent-glow);
-    border: 1px solid rgba(165,148,255,0.28);
+    border: 1px solid rgba(169, 0, 255, 0.28);
     border-radius: 12px;
     padding: 9px 13px 9px 10px;
     display: flex;
@@ -1100,7 +1100,7 @@
   }
   .dash-folder-chip:hover {
     border-color: var(--accent);
-    background: rgba(165,148,255,0.22);
+    background: rgba(169, 0, 255, 0.22);
     transform: translateY(-1px);
   }
   .dash-folder-chip-icon {
@@ -1308,7 +1308,7 @@
 
   /* Palette of spine colors cycling per book index */
   :root {
-    --spine-0: #a594ff;
+    --spine-0: #a900ff;
     --spine-1: #2edd94;
     --spine-2: #f5a623;
     --spine-3: #4d9fff;
@@ -1324,7 +1324,7 @@
     align-items: center;
     gap: 12px;
     background: var(--bg2);
-    border: 1px solid rgba(165,148,255,0.22);
+    border: 1px solid rgba(169, 0, 255, 0.22);
     border-radius: 14px;
     padding: 12px 14px;
     margin-bottom: 20px;
@@ -1337,11 +1337,11 @@
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(165,148,255,0.45), transparent);
+    background: linear-gradient(90deg, transparent, rgba(169, 0, 255, 0.45), transparent);
   }
   .book-continue-strip:hover {
-    border-color: rgba(165,148,255,0.45);
-    box-shadow: 0 4px 20px rgba(165,148,255,0.1);
+    border-color: rgba(169, 0, 255, 0.45);
+    box-shadow: 0 4px 20px rgba(169, 0, 255, 0.1);
   }
   .bcs-spine {
     width: 5px;
@@ -1349,7 +1349,7 @@
     min-height: 38px;
     border-radius: 3px;
     background: var(--accent);
-    box-shadow: 0 0 10px rgba(165,148,255,0.55);
+    box-shadow: 0 0 10px rgba(169, 0, 255, 0.55);
     flex-shrink: 0;
   }
   .bcs-body { flex: 1; min-width: 0; }
@@ -2158,7 +2158,7 @@ const LOGO_FILTERS = {
   purple: 'invert(48%) sepia(60%) saturate(500%) hue-rotate(235deg) brightness(110%)',
 };
 const ACCENTS = {
-  purple: ['#c5bcff','#c5bcff','rgba(165,148,255,0.18)'],
+  purple: ['#c74dff','#c74dff','rgba(169, 0, 255, 0.18)'],
 };
 const TEXT_STYLES = {
   default: { font: "'Syne', sans-serif" },
@@ -3135,7 +3135,7 @@ let homeFolderId = null; // null = root, string = inside a folder
 
 // Spine color palette — one per book, cycles every 8
 const SPINE_COLORS = [
-  '#c5bcff','#2edd94','#f5a623','#4d9fff',
+  '#c74dff','#2edd94','#f5a623','#4d9fff',
   '#d46fff','#e5d24a','#ff5c6e','#3ec6c6'
 ];
 
