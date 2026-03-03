@@ -1728,7 +1728,7 @@
           Sign Out
         </button>
         <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:14px;text-align:center;padding-bottom:8px;">
-          <span style="font-size:0.78rem;color:var(--text2);font-family:var(--mono);letter-spacing:1px;font-weight:600;">v1.2</span>
+          <span style="font-size:0.78rem;color:var(--text2);font-family:var(--mono);letter-spacing:1px;font-weight:600;">v1.3</span>
           <span style="display:block;font-size:0.68rem;color:var(--text3);margin-top:3px;font-family:var(--mono);">NoteZ</span>
         </div>
       </div>
@@ -1845,7 +1845,7 @@
         Sign Out
       </button>
       <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:10px;text-align:center;">
-        <span style="font-size:0.75rem;font-weight:700;color:var(--text2);font-family:var(--mono);letter-spacing:1px;">v1.1</span>
+        <span style="font-size:0.75rem;font-weight:700;color:var(--text2);font-family:var(--mono);letter-spacing:1px;">v1.3</span>
         <span style="font-size:0.65rem;color:var(--text3);font-family:var(--mono);margin-left:5px;">NoteZ</span>
       </div>
     </div>
@@ -3896,8 +3896,22 @@ function makeDraggable(windowId) {
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    el.style.top = (el.offsetTop - pos2) + 'px';
-    el.style.left = (el.offsetLeft - pos1) + 'px';
+    
+    let newTop = el.offsetTop - pos2;
+    let newLeft = el.offsetLeft - pos1;
+
+    // Bounds check
+    const headerHeight = titlebar.offsetHeight || 42;
+    const winWidth = window.innerWidth;
+    const winHeight = window.innerHeight;
+    
+    if (newTop < 0) newTop = 0;
+    if (newTop > winHeight - headerHeight) newTop = winHeight - headerHeight;
+    if (newLeft < 0) newLeft = 0;
+    if (newLeft > winWidth - el.offsetWidth) newLeft = winWidth - el.offsetWidth;
+
+    el.style.top = newTop + "px";
+    el.style.left = newLeft + "px";
   }
   
   function closeDragElement() {
@@ -4152,8 +4166,17 @@ function setupDragResize() {
   });
   document.addEventListener('mousemove', e => {
     if (dragging) {
-      win.style.left = (startLeft + e.clientX - startX) + 'px';
-      win.style.top = (startTop + e.clientY - startY) + 'px';
+      let newLeft = startLeft + e.clientX - startX;
+      let newTop = startTop + e.clientY - startY;
+      
+      const headerHeight = titlebar.offsetHeight || 42;
+      if (newTop < 0) newTop = 0;
+      if (newTop > window.innerHeight - headerHeight) newTop = window.innerHeight - headerHeight;
+      if (newLeft < 0) newLeft = 0;
+      if (newLeft > window.innerWidth - win.offsetWidth) newLeft = window.innerWidth - win.offsetWidth;
+      
+      win.style.left = newLeft + 'px';
+      win.style.top = newTop + 'px';
     } else if (resizing) {
       const newW = Math.max(320, startW + e.clientX - startX);
       const newH = Math.max(200, startH + e.clientY - startY);
@@ -4178,8 +4201,17 @@ function setupDragResize() {
   document.addEventListener('touchmove', e => {
     if (!dragging) return;
     const t = e.touches[0];
-    win.style.left = (startLeft + t.clientX - startX) + 'px';
-    win.style.top = (startTop + t.clientY - startY) + 'px';
+    let newLeft = startLeft + t.clientX - startX;
+    let newTop = startTop + t.clientY - startY;
+
+    const headerHeight = titlebar.offsetHeight || 42;
+    if (newTop < 0) newTop = 0;
+    if (newTop > window.innerHeight - headerHeight) newTop = window.innerHeight - headerHeight;
+    if (newLeft < 0) newLeft = 0;
+    if (newLeft > window.innerWidth - win.offsetWidth) newLeft = window.innerWidth - win.offsetWidth;
+
+    win.style.left = newLeft + 'px';
+    win.style.top = newTop + 'px';
   }, {passive:true});
   document.addEventListener('touchend', () => { dragging = false; resizing = false; });
 }
