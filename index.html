@@ -1697,7 +1697,7 @@
             <div style="font-size:0.75rem;color:var(--text3);margin-top:2px;">Sync to device when notes change</div>
           </div>
           <label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;">
-            <input type="checkbox" id="offline-autosave-toggle" onchange="toggleOfflineAutosave(this.checked)" style="opacity:0;width:0;height:0;position:absolute;">
+            <input type="checkbox" id="offline-autosave-toggle" checked onchange="toggleOfflineAutosave(this.checked)" style="opacity:0;width:0;height:0;position:absolute;">
             <span id="offline-autosave-track" style="position:absolute;cursor:pointer;inset:0;background:var(--bg4);border-radius:24px;transition:0.2s;border:1px solid var(--border);"></span>
             <span id="offline-autosave-thumb" style="position:absolute;left:3px;top:3px;width:16px;height:16px;background:var(--text3);border-radius:50%;transition:0.2s;"></span>
           </label>
@@ -1811,7 +1811,7 @@
           <div style="font-size:0.7rem;color:var(--text3);">Sync when notes change</div>
         </div>
         <label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;">
-          <input type="checkbox" id="profile-autosave-toggle" onchange="toggleOfflineAutosave(this.checked)" style="opacity:0;width:0;height:0;position:absolute;">
+          <input type="checkbox" id="profile-autosave-toggle" checked onchange="toggleOfflineAutosave(this.checked)" style="opacity:0;width:0;height:0;position:absolute;">
           <span id="profile-autosave-track" style="position:absolute;cursor:pointer;inset:0;background:var(--bg4);border-radius:22px;transition:0.2s;border:1px solid var(--border);"></span>
           <span id="profile-autosave-thumb" style="position:absolute;left:3px;top:3px;width:14px;height:14px;background:var(--text3);border-radius:50%;transition:0.2s;"></span>
         </label>
@@ -2249,7 +2249,7 @@ async function saveSettings() {
 // ============================================================
 function openProfilePanel() {
   if (typeof checkOfflineStatus === 'function') checkOfflineStatus();
-  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
+  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') !== '0';
   updateAutosaveToggleUI(_offlineAutosaveEnabled);
   pushState();
   const displayName = _fbDisplayName || 'User';
@@ -2777,7 +2777,7 @@ function navigate(page) {
   if (page === 'home') homeFolderId = null;
   if (page === 'settings') {
     checkOfflineStatus();
-    _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
+    _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') !== '0';
     updateAutosaveToggleUI(_offlineAutosaveEnabled);
   }
   ['home','upload','settings'].forEach(p => {
@@ -4716,7 +4716,7 @@ loadUserDataFromFirebase = async function() {
 // ============================================================
 // OFFLINE AUTOSAVE
 // ============================================================
-let _offlineAutosaveEnabled = false;
+let _offlineAutosaveEnabled = true;
 let _offlineAutosaveTimer = null;
 
 function toggleOfflineAutosave(enabled) {
@@ -4777,7 +4777,7 @@ window.addEventListener('load', () => {
     }
   }, 4000);
 
-  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') === '1';
+  _offlineAutosaveEnabled = localStorage.getItem('notez_offline_autosave') !== '0';
 });
 </script>
 
