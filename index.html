@@ -3261,8 +3261,8 @@ function renderNotes() {
 
   // "Continue reading" strip — most recently opened folder that has notes
   if (!homeFolderId && subfolders.length > 0) {
-    // Find last-accessed folder (use notes sorted by id as proxy, or just pick first)
-    const lastNote = [...notes].sort((a,b) => (b.uploadedAt||0) - (a.uploadedAt||0))[0];
+    // Find last-accessed folder by actual open time, fall back to upload time
+    const lastNote = [...notes].sort((a,b) => (b.lastOpenedAt||b.uploadedAt||0) - (a.lastOpenedAt||a.uploadedAt||0))[0];
     const lastFolder = lastNote ? folders.find(f => f.id === lastNote.folder) : subfolders[0];
     if (lastFolder) {
       const folderNotes = notes.filter(n => n.folder === lastFolder.id);
@@ -3397,8 +3397,9 @@ function makeBookCard(f, idx) {
   const directNotes = notes.filter(n => n.folder === f.id);
   const chCount = totalNotes;
 
-  const lastNote = [...directNotes].sort((a,b) => (b.uploadedAt||0) - (a.uploadedAt||0))[0];
-  const dateStr = lastNote && lastNote.uploadedAt ? formatBookDate(lastNote.uploadedAt) : '';
+  const lastNote = [...directNotes].sort((a,b) => (b.lastOpenedAt||b.uploadedAt||0) - (a.lastOpenedAt||a.uploadedAt||0))[0];
+  const lastTimestamp = lastNote && (lastNote.lastOpenedAt || lastNote.uploadedAt);
+  const dateStr = lastTimestamp ? formatBookDate(lastTimestamp) : '';
 
   const spineColor = SPINE_COLORS[idx % SPINE_COLORS.length];
 
@@ -3695,7 +3696,11 @@ function openNote(id) {
 
   const note = notes.find(n => n.id === id);
   if (!note) return;
-  
+
+  // Track last-opened time — synced to Firebase so all devices stay in sync
+  note.lastOpenedAt = Date.now();
+  saveUserData(); // saves locally + pushes to Firebase account
+
   const windowId = 'floating-note-' + (floatingWindowCount++);
   const container = document.getElementById('floating-windows');
   
