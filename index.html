@@ -736,7 +736,7 @@
   #app-loading {
     position: fixed; inset: 0; z-index: 999;
     background: #ffffff;
-    display: none; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-direction: column; gap: 16px;
   }
   #app-loading .spin {
@@ -4503,18 +4503,39 @@ async function _getToken() {
       signal: controller.signal
     });
     clearTimeout(timeoutId);
-    
-    const d = await r.json();
+
+    // Guard against captive-portal HTML or proxy responses that aren't JSON
+    let d;
+    try {
+      d = await r.json();
+    } catch(_jsonErr) {
+      // Non-JSON body (captive portal redirect page, proxy error page, etc.)
+      // Treat identically to a network error: stay logged in with cached token.
+      return _fbIdToken;
+    }
     
     // Only sign out if the server EXPLICITLY says the token is invalid/revoked
     if (d.error) {
       const msg = d.error.message || "";
-      if (msg.includes('INVALID_REFRESH_TOKEN') || msg.includes('USER_DISABLED') || msg.includes('TOKEN_EXPIRED')) {
-        console.warn('Token revoked/invalid. Logging out.');
+      if (msg.includes('USER_DISABLED') || msg.includes('USER_NOT_FOUND')) {
+        // Account disabled or deleted — must log out
+        console.warn('Account disabled/deleted. Logging out.');
         _clearSession();
         return null;
       }
-      // Otherwise (e.g. quota limit, transient server error), just proceed with existing local session
+      if (msg.includes('INVALID_REFRESH_TOKEN') || msg.includes('TOKEN_EXPIRED')) {
+        // Could be a multi-tab race where another tab already rotated the refresh token,
+        // or the Firebase session genuinely expired (>7 days offline / password change).
+        // If our local ID token is still within its window, honour it (covers the race case).
+        if (_fbIdToken && _tokenExpiry && Date.now() < _tokenExpiry + 5 * 60 * 1000) {
+          // Give a 5-minute grace period — background sync will retry later
+          return _fbIdToken;
+        }
+        console.warn('Refresh token expired/invalid. Logging out.');
+        _clearSession();
+        return null;
+      }
+      // Any other error (quota exceeded, transient server fault) — stay logged in
       return _fbIdToken; 
     }
     
@@ -4636,45 +4657,41 @@ async function initApp() {
     };
     await loadCache();
 
-    // 4. BACKGROUND SYNC (Quietly update if internet appears)
-    // The controller covers the ENTIRE sync including loadUserDataFromFirebase —
-    // do NOT clearTimeout before calling it, or loadFromFirebase runs unprotected.
-    const runSync = async () => {
-      try {
-        const controller = new AbortController();
-        const tid = setTimeout(() => controller.abort(), 6000); // covers full sync
-        
-        const token = await _getToken();
-        if (token) {
-           // Quick connectivity probe — if this fetch succeeds we have real internet
-           const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, { signal: controller.signal });
-           const meta = await r.json();
-           // Keep timeout alive — loadUserDataFromFirebase has its own per-fetch timeouts
-           
-           if (meta && !meta.error) {
-              await loadUserDataFromFirebase();
-              applySettings();
-              renderAll();
-              // Persist fresh data to IDB immediately
-              saveToIDB({ notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid }).catch(() => {});
-           }
-        }
-        clearTimeout(tid);
-      } catch(e) {
-        console.log('Background sync skipped (offline or throttled)');
-      }
-    };
-    
-    // Give UI priority, sync after 500ms
+    // 4. BACKGROUND SYNC — runs quietly after UI is painted; any network failure is safe to ignore
+    // Give UI render priority first, then attempt sync
     setTimeout(runSync, 500);
     return;
   }
 
-  // No saved session found
+  // No saved session found — show login
   document.getElementById('login-screen').style.display = 'flex';
   hideLoader();
 }
 
+// Defined outside initApp so hoisting isn't needed; called via setTimeout above
+async function runSync() {
+  const controller = new AbortController();
+  const tid = setTimeout(() => controller.abort(), 6000);
+  try {
+    const token = await _getToken();
+    if (token) {
+      // Quick probe — if Firebase responds we have real internet
+      const r = await fetch(`${FB_DB_URL}/users/${_fbUid}/meta.json?auth=${token}`, { signal: controller.signal });
+      let meta = null;
+      try { meta = await r.json(); } catch(_) { /* captive portal / non-JSON body — skip sync */ }
+      if (meta && !meta.error) {
+        await loadUserDataFromFirebase();
+        applySettings();
+        renderAll();
+        saveToIDB({ notes, folders, settings, savedAt: new Date().toISOString(), uid: _fbUid }).catch(() => {});
+      }
+    }
+  } catch(e) {
+    console.log('Background sync skipped (offline or throttled)');
+  } finally {
+    clearTimeout(tid); // always cancel — prevents phantom AbortController timeouts
+  }
+}
 
 function toggleSidebar() {
   if (window.innerWidth <= 850) pushState();
