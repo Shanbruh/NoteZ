@@ -43,10 +43,13 @@ self.addEventListener('fetch', e => {
   // ── RULE 1: Never touch Firebase / Google auth endpoints ──────────────────
   if (shouldBypass(url)) return; // Let browser handle natively
 
-  // ── RULE 2: App-shell (NoteZ pages) — CACHE FIRST ─────────────────────────
-  // Immediately serve from cache so the app loads instantly even on
-  // WiFi-with-no-internet. Silently revalidate cache in the background.
-  if (url.includes('./')) {
+  // ── RULE 2: App-shell (navigation requests) — CACHE FIRST ────────────────
+  // `e.request.mode === 'navigate'` correctly targets HTML page navigations
+  // (initial load, hard-refresh, standalone PWA launch) and NOT asset requests.
+  // The old check `url.includes('./')` never matched absolute URLs, so the
+  // stale-while-revalidate path was dead code — this fixes it.
+  // Serves instantly from cache so the app loads even on WiFi-with-no-internet.
+  if (e.request.mode === 'navigate') {
     e.respondWith(
       caches.open(CACHE).then(async cache => {
         const cached = await cache.match(e.request);
