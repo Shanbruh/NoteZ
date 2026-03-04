@@ -3,11 +3,11 @@
 
 const CACHE = 'notez-v3';
 const ASSETS = [
-  '/NoteZ/',
-  '/NoteZ/index.html',
-  '/NoteZ/icon-1.png',
-  '/NoteZ/icon-2.png',
-  '/NoteZ/manifest.json'
+  './',
+  'index.html',
+  'icon-1.png',
+  'icon-2.png',
+  'manifest.json'
 ];
 
 // Domains we MUST NOT intercept (main thread manages timeouts for these)
@@ -46,7 +46,7 @@ self.addEventListener('fetch', e => {
   // ── RULE 2: App-shell (NoteZ pages) — CACHE FIRST ─────────────────────────
   // Immediately serve from cache so the app loads instantly even on
   // WiFi-with-no-internet. Silently revalidate cache in the background.
-  if (url.includes('/NoteZ/')) {
+  if (url.includes('./')) {
     e.respondWith(
       caches.open(CACHE).then(async cache => {
         const cached = await cache.match(e.request);
