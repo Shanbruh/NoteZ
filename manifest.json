@@ -1,20 +1,20 @@
 {
   "name": "NoteZ",
   "short_name": "NoteZ",
-  "start_url": "/NoteZ/index.html",
-  "scope": "/NoteZ/",
+  "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#7c6dfa",
   "icons": [
     {
-      "src": "/NoteZ/icon-1.png",
+      "src": "icon-1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/NoteZ/icon-2.png",
+      "src": "icon-2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
