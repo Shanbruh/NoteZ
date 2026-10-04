@@ -1,0 +1,23 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "notez-backend/**",
+      "notez-backend-langchain/**",
+      "**/venv/**",
+      "**/__pycache__/**",
+      "**/*.pyc",
+      "**/.env",
+      "**/.env.*"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
