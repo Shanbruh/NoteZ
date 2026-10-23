@@ -1,95 +1,197 @@
-# NoteZ AI backend — LangChain edition
+# NoteZ — AI-Powered Notes
 
-This replaces the earlier plain Node/Express proxy. Same job — hold the real
-Gemini key server-side, verify sign-in, stream the response back — but the
-actual call to Gemini now goes through **LangChain** (`ChatGoogleGenerativeAI`)
-instead of a raw `fetch`. The frontend (`index.html`) needed **no changes**
-for this migration: it already points at `http://localhost:8787/api/chat`
-and sends/expects the same OpenAI-style request and streaming response shape,
-which this server produces too.
+**NoteZ** is a web-based note-taking app that combines a focused notes workspace with AI-assisted chat and retrieval. It is built as a Progressive Web App (PWA), with a static frontend hosted on Firebase and a separate Python API for server-side AI requests.
 
+- **Live app:** https://ai-notez.web.app
+- **Repository:** https://github.com/Shanbruh/NoteZ
+
+> The frontend and backend are separate parts of the project. Firebase Hosting serves the web app; it does not run the Python API.
+
+## Features
+
+- **Notes workspace** — create and manage notes in the app.
+- **AI assistance** — chat with an AI model through the NoteZ backend.
+- **Retrieval and indexing** — note-related indexing and retrieval support for finding relevant context.
+- **Streaming responses** — the backend streams AI output using Server-Sent Events (SSE).
+- **Authentication-aware requests** — Firebase ID tokens can be verified by the backend.
+- **Usage limits** — configurable daily request caps for authenticated users and anonymous traffic.
+- **Installable PWA** — web-app manifest, service worker, and cached assets support an app-like experience.
+- **Offline-aware shell** — the service worker caches the app shell and selected CDN assets.
+- **Math and PDF support** — MathJax and PDF.js are precached by the service worker.
+- **Firebase deployment** — static frontend deployment is configured with `firebase.json`.
+
+Feature availability can depend on the current frontend configuration and whether the AI backend is running.
+
+## Architecture
+
+```text
+                         ┌──────────────────────────┐
+                         │ User's browser / PWA     │
+                         │ index.html               │
+                         │ notes UI + AI interface  │
+                         └────────────┬─────────────┘
+                                      │
+                   ┌──────────────────┴──────────────────┐
+                   │                                     │
+                   ▼                                     ▼
+        ┌─────────────────────┐             ┌────────────────────────┐
+        │ Firebase services   │             │ NoteZ AI API            │
+        │ Authentication /    │             │ FastAPI + Python        │
+        │ app data as wired   │             │ POST /api/chat          │
+        └─────────────────────┘             └────────────┬───────────┘
+                                                        │
+                                                        ▼
+                                           ┌────────────────────────┐
+                                           │ LangChain              │
+                                           │ ChatGoogleGenerativeAI │
+                                           └────────────┬───────────┘
+                                                        │
+                                                        ▼
+                                           ┌────────────────────────┐
+                                           │ Gemini API             │
+                                           └────────────────────────┘
+
+       Firebase Hosting serves the static frontend; the API is deployed separately.
 ```
-Browser (NoteZ)  →  this server (FastAPI + LangChain)  →  Gemini API
-                 ←  streamed back, same SSE format as before ←
+
+### Frontend
+
+The primary UI currently lives in `index.html`. The service worker (`sw.js`) handles caching and bypasses non-GET requests so AI POST/streaming calls are not intercepted by the cache layer. `manifest.json` defines the installable PWA metadata and icons.
+
+### AI backend
+
+The root-level `main.py` implements a FastAPI service:
+
+- `GET /health` — reports service health and whether keys/Firebase verification are configured.
+- `POST /api/chat` — accepts an OpenAI-style chat request and returns either a JSON completion or an SSE stream.
+- LangChain's `ChatGoogleGenerativeAI` sends the model request to Gemini.
+- Gemini keys are read from environment variables and rotated between requests.
+- Firebase ID-token verification identifies signed-in users when configured.
+- In-memory daily quotas limit authenticated and anonymous requests. These counters reset when the process restarts and are not shared between multiple instances.
+
+## Technology stack
+
+| Layer | Technology |
+|---|---|
+| Web app | HTML, CSS, JavaScript in `index.html` |
+| Installability and caching | PWA manifest, Service Worker, Cache API |
+| Hosting | Firebase Hosting |
+| Authentication / app services | Firebase, as configured by the frontend |
+| API server | Python, FastAPI, Uvicorn |
+| AI orchestration | LangChain |
+| Model provider | Google Gemini API |
+| Streaming | Server-Sent Events (SSE) |
+| Supporting libraries | HTTPX, python-dotenv, MathJax, PDF.js |
+
+## Repository layout
+
+```text
+NoteZ/
+├── index.html          # Main web app UI
+├── sw.js               # Service worker and asset caching
+├── manifest.json       # PWA metadata and icons
+├── icon-1.png          # App icon asset
+├── icon-2.png          # Icon path used by the current manifest/service worker
+├── main.py             # FastAPI + LangChain AI backend
+├── requirements.txt    # Python backend dependencies
+├── .env.example        # Backend environment-variable template
+├── .gitignore          # Ignore rules for local/generated files
+├── .firebaserc         # Firebase project selection
+├── firebase.json       # Firebase Hosting configuration
+├── DEPLOYMENT.md       # Deployment notes
+└── README.md           # Project overview and setup
 ```
 
-## 1. Install and configure
+## Run the AI backend locally
 
+You need Python 3.10+ (use a version supported by the installed dependencies) and a Gemini API key. Firebase Web API key configuration enables the backend's Firebase ID-token verification.
+
+### 1. Create and activate a virtual environment
+
+**Windows PowerShell:**
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+**macOS / Linux:**
 ```bash
-cd notez-backend-langchain
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+### 2. Configure environment variables
+
+Copy the template to `.env` in the repository root.
+
+**Windows PowerShell:**
+```powershell
+Copy-Item .env.example .env
+```
+
+**macOS / Linux:**
+```bash
 cp .env.example .env
 ```
 
-Fill in `.env`:
-- `GEMINI_API_KEYS` — your Gemini key(s), comma-separated for fallback
-- `FIREBASE_WEB_API_KEY` — the same Web API key your frontend already uses
-  for sign-in (search `FB_API_KEY` in `index.html`)
+Edit `.env` and set at least:
 
-## 2. Run it
+- `GEMINI_API_KEYS` — one or more comma-separated Gemini API keys.
+- `FIREBASE_WEB_API_KEY` — the Firebase project's Web API key, if using token verification.
+- `PORT` — optional; defaults to `8787`.
+- `ALLOWED_ORIGIN` — set this to the exact deployed frontend origin for production rather than leaving `*`.
+- `AUTH_DAILY_LIMIT` and `ANON_DAILY_LIMIT` — optional daily request limits.
+
+**Never commit your real `.env` file or Gemini API keys.** Keep secrets on the backend; do not put provider keys in browser code.
+
+### 3. Start the API
 
 ```bash
 python main.py
 ```
 
-```
-NoteZ AI backend (LangChain) listening on http://localhost:8787
-  Gemini keys configured: 1
-  Firebase verification:  enabled
-  Allowed origin:         *
-```
+By default, the API listens on `http://localhost:8787`.
 
-With this running, NoteZ's AI chat works exactly as before — same streaming,
-same speed — just routed through LangChain now instead of a raw API call.
+- Health check: http://localhost:8787/health
+- Chat endpoint: `POST http://localhost:8787/api/chat`
 
-## 3. On GitHub Pages — read this before you plan around it
+The frontend must be configured to point its AI request URL at the running backend. A locally running API is not automatically available to the public website.
 
-GitHub Pages can host your **frontend** (`index.html`) for free, permanently,
-with no laptop required — that part's a genuinely good fit. But it's static
-file hosting only; it cannot run this Python server. So even with everything
-else in place, this backend still needs to live somewhere that can run a
-process 24/7 — your laptop, or a small host. GitHub itself doesn't offer a
-free way to keep a server like this running continuously (Actions/Codespaces
-aren't built for that).
+## Deploy
 
-Practically, that means: frontend → GitHub Pages. Backend → one of the two
-options below.
+### Frontend — Firebase Hosting
 
-## 4. Exposing the backend
+Install the Firebase CLI, authenticate, and deploy from the repository root:
 
-**Option A — your laptop (what you asked for):**
 ```bash
-cloudflared tunnel --url http://localhost:8787
+firebase deploy --only hosting
 ```
-This prints a public `https://xxxx.trycloudflare.com` URL. Put
-`https://xxxx.trycloudflare.com/api/chat` into `index.html`'s `GROQ_URL`, and
-set `ALLOWED_ORIGIN` in `.env` to your GitHub Pages URL. Only stays up while
-your laptop is on and `cloudflared` is running.
 
-**Option B — a small always-on host** (next step if you want NoteZ reachable
-at all times without your laptop staying on): Railway, Render, or a cheap VPS
-all run this exact `main.py` unchanged — same `pip install -r
-requirements.txt && python main.py`, just on infrastructure that doesn't sleep.
+The Hosting configuration excludes backend source and local build artifacts from the static deployment.
 
-Either way, update `GROQ_URL` in `index.html` to point at wherever this ends
-up running, and `ALLOWED_ORIGIN` in `.env` to your actual frontend URL once
-you lock one in.
+### Backend — separate Python hosting
 
-## 5. Tuning the limits
+Firebase Hosting is static hosting and does not run `main.py`. Deploy the API separately to a Python-capable host, or use a tunnel for temporary local testing. Configure the frontend's API URL and set `ALLOWED_ORIGIN` to the deployed frontend origin before production use.
 
-`AUTH_DAILY_LIMIT` / `ANON_DAILY_LIMIT` in `.env` cap requests per logged-in
-user / per anonymous (Test Mode) IP per day — your actual cost control now
-that the key can't be stolen from the browser. Tune to your real budget.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for project-specific deployment notes.
 
-## What changed from the Node version
+## Security and operational notes
 
-- Same `/api/chat` endpoint, same request/response shape — `index.html`
-  doesn't know or care which backend is behind `GROQ_URL`.
-- The Gemini call itself is now made through LangChain's
-  `ChatGoogleGenerativeAI`, not a raw `fetch`. This is what makes adding a
-  second provider (Groq, etc.) later a matter of adding another LangChain
-  chat model, not rewriting the request/streaming plumbing.
-- Firebase token verification, daily quotas, and key rotation all carried
-  over with the same logic, just in Python.
+- Keep Gemini API keys in backend environment variables.
+- Set a restrictive `ALLOWED_ORIGIN` in production; CORS is not authentication.
+- The current daily quota store is in memory, so it is suitable only for a single-process/simple deployment. Use shared persistent storage for multi-instance production.
+- The anonymous quota is keyed by the request IP as seen by the app; configure proxy handling carefully if deploying behind a reverse proxy.
+- Do not treat a successful `/health` response as proof that model requests will succeed; provider keys, quotas, network access, and model availability still matter.
+
+## Contributing
+
+1. Fork the repository.
+2. Create a branch for your change.
+3. Test the frontend and backend paths affected by the change.
+4. Open a pull request describing the change and how it was tested.
+
+## License
+
+No license file is currently included. Unless a license is added, the repository should not be assumed to grant broad permission to reuse or redistribute the code.
