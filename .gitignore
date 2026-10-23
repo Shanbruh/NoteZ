@@ -1,0 +1,26 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / frontend tooling (if introduced)
+node_modules/
+.npm/
+.eslintcache/
+
+# Firebase generated state and logs
+.firebase/
+firebase-debug.log*
+firebase-debug.*.log*
+
+# Logs, temporary files, and OS metadata
+*.log
+.DS_Store
+Thumbs.db
