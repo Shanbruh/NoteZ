@@ -1,6 +1,6 @@
-# NoteZ — AI-Powered Notes
+# NoteZ — AI Voice Notes & Smart Notes
 
-**NoteZ** is a web-based note-taking app that combines a focused notes workspace with AI-assisted chat and retrieval. It is built as a Progressive Web App (PWA), with a static frontend hosted on Firebase and a separate Python API for server-side AI requests.
+**NoteZ** is a web-based AI voice-note and note-taking app. It brings a notes workspace together with AI assistance in an installable Progressive Web App (PWA). The frontend is hosted as a static site on Firebase, while a separate Python API handles server-side AI requests.
 
 - **Live app:** https://ai-notez.web.app
 - **Repository:** https://github.com/Shanbruh/NoteZ
@@ -9,7 +9,7 @@
 
 ## Features
 
-- **Notes workspace** — create and manage notes in the app.
+- **Voice notes and note organization** — a web-based workspace for capturing and working with notes.
 - **AI assistance** — chat with an AI model through the NoteZ backend.
 - **Retrieval and indexing** — note-related indexing and retrieval support for finding relevant context.
 - **Streaming responses** — the backend streams AI output using Server-Sent Events (SSE).
