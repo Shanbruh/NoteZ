@@ -11,7 +11,11 @@
       "**/__pycache__/**",
       "**/*.pyc",
       "**/.env",
-      "**/.env.*"
+      "**/.env.*",
+      "main.py",
+      "requirements.txt",
+      "DEPLOYMENT.md",
+      "env.example"
     ],
     "rewrites": [
       {
